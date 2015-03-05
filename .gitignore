@@ -1,0 +1,5 @@
+.env.local
+xmlfiles/
+bin/
+pkg/
+src/github.com
