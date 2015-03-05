@@ -1,4 +1,4 @@
-BINARIES = rundeck-get-history rundeck-get-job rundeck-list-jobs rundeck-list-executions rundeck-get-tokens
+BINARIES = rundeck-get-history rundeck-get-job rundeck-list-jobs rundeck-list-executions rundeck-get-tokens rundeck-list-projects
 
 all: clean test rundeck rundeck-bin
 

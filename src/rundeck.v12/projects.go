@@ -27,3 +27,10 @@ type ConfigProperty struct {
 	Key     string   `xml:"key,attr"`
 	Value   string   `xml:"value,attr"`
 }
+
+func (c *RundeckClient) ListProjects() (Projects, error) {
+	options := make(map[string]string)
+	var data Projects
+	err := c.Get(&data, "projects", options)
+	return data, err
+}
