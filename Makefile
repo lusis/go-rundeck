@@ -1,5 +1,6 @@
 BINARIES = rundeck-get-history rundeck-get-job rundeck-list-jobs rundeck-list-executions rundeck-get-tokens rundeck-list-projects
 
+GOPATH := $(GOPATH):$(TRAVIS_BUILD_DIR)
 all: clean test rundeck rundeck-bin
 
 test:
@@ -17,4 +18,4 @@ rundeck-bin:
 clean:
 	@rm -rf bin/ pkg/
 
-.PHONY: all clean test rundeck rundeck-bin
+.PHONY: all clean test rundeck rundeck-bin 
