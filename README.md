@@ -1,4 +1,5 @@
 # go-rundeck
+[![Build Status](https://travis-ci.org/lusis/go-rundeck.svg?branch=master)](https://travis-ci.org/lusis/go-rundeck)
 Go library and utilities for interacting with [Rundeck](http://rundeck.org)
 
 ## Usage
