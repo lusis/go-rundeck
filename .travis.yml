@@ -3,5 +3,8 @@ language: go
 go:
   - 1.4
   - tip
+env:
+  - GOPATH=${GOPATH}:${TRAVIS_BUILD_DIR}
 
 script: make all
+
