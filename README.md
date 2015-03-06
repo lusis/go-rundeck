@@ -72,3 +72,9 @@ RUNDECK_URL=http://rundeck.local:4440 RUNDECK_TOKEN=XXXXXXX bin/rundeck-list-pro
 | FOOPROJ | A project   | http://rundeck.local:4440/api/12/project/FOOPROJ          |
 +---------+-------------+-----------------------------------------------------------+
 ```
+
+## TODO
+- Flesh out more tests
+- Add mock for http
+- More utilities
+- Wrapper cli for sub-utilities
