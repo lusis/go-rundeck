@@ -1,4 +1,4 @@
-BINARIES = rundeck-get-history rundeck-get-job rundeck-list-jobs rundeck-list-executions rundeck-get-tokens rundeck-list-projects
+BINARIES = rundeck-get-history rundeck-get-job rundeck-list-jobs rundeck-list-executions rundeck-get-tokens rundeck-list-projects rundeck-xml-get
 
 GOPATH := $(GOPATH):$(TRAVIS_BUILD_DIR)
 all: clean test rundeck rundeck-bin

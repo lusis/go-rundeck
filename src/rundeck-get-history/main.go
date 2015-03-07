@@ -12,7 +12,7 @@ import (
 func main() {
 	var projectid string
 	if len(os.Args) <= 1 {
-		fmt.Printf("Usage: rundeck-get-job <project id>\n")
+		fmt.Printf("Usage: rundeck-get-history <project id>\n")
 		os.Exit(1)
 	}
 	projectid = os.Args[1]
