@@ -2,6 +2,7 @@ package rundeck
 
 import (
 	"encoding/xml"
+	"errors"
 	"reflect"
 	"strings"
 )
@@ -211,12 +212,59 @@ func (c *RundeckClient) GetJob(id string) (JobList, error) {
 	return data, err
 }
 
+func (c *RundeckClient) GetRequiredOpts(j string) (map[string]string, error) {
+	u := make(map[string]string)
+	var data JobList
+	err := c.Get(&data, "job/"+j, u)
+	if err != nil {
+		return u, err
+	} else {
+		if data.Job.Context.Options != nil {
+			for _, o := range *data.Job.Context.Options {
+				if o.Required {
+					if o.DefaultValue == "" {
+						u[o.Name] = "<no default>"
+					} else {
+						u[o.Name] = o.DefaultValue
+					}
+				}
+			}
+		}
+		return u, nil
+	}
+}
+
 func (c *RundeckClient) RunJob(id string, options RunOptions) (Executions, error) {
 	u := options.toQueryParams()
 	var data Executions
 
 	err := c.Get(&data, "job/"+id+"/run", u)
 	return data, err
+}
+
+func (c *RundeckClient) FindJobByName(name string, project string) (JobDetails, error) {
+	var job JobDetails
+	var err error
+	jobs, err := c.ListJobs(project)
+	if err != nil {
+		//
+	} else {
+		if len(jobs.Jobs) > 0 {
+			for _, d := range jobs.Jobs {
+				if d.Name == name {
+					joblist, err := c.GetJob(d.ID)
+					if err != nil {
+						//
+					} else {
+						job = joblist.Job
+					}
+				}
+			}
+		} else {
+			err = errors.New("No matches found")
+		}
+	}
+	return job, err
 }
 
 func (c *RundeckClient) ListJobs(projectId string) (Jobs, error) {
