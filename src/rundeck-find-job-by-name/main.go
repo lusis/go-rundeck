@@ -23,7 +23,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("%s\n", err)
 	} else {
-		scope := data
+		scope := *data
 		table := tablewriter.NewWriter(os.Stdout)
 		table.SetHeader([]string{"ID", "Name", "Description", "Group", "Steps", "Node Filters"})
 		var steps []string

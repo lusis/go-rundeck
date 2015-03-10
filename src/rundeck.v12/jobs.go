@@ -242,8 +242,8 @@ func (c *RundeckClient) RunJob(id string, options RunOptions) (Executions, error
 	return data, err
 }
 
-func (c *RundeckClient) FindJobByName(name string, project string) (JobDetails, error) {
-	var job JobDetails
+func (c *RundeckClient) FindJobByName(name string, project string) (*JobDetails, error) {
+	var job *JobDetails
 	var err error
 	jobs, err := c.ListJobs(project)
 	if err != nil {
@@ -256,7 +256,7 @@ func (c *RundeckClient) FindJobByName(name string, project string) (JobDetails, 
 					if err != nil {
 						//
 					} else {
-						job = joblist.Job
+						job = &joblist.Job
 					}
 				}
 			}
