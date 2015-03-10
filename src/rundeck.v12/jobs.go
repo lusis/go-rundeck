@@ -147,12 +147,13 @@ type JobRefStep struct {
 }
 
 type JobContext struct {
-	XMLName xml.Name   `xml:"context"`
-	Project string     `xml:"project"`
-	Options JobOptions `xml:"options,omitempty"`
+	XMLName xml.Name     `xml:"context"`
+	Project string       `xml:"project"`
+	Options *[]JobOption `xml:"options>option,omitempty"`
 }
 
 type JobOptions struct {
+	XMLName xml.Name
 	Options []JobOption `xml:"option"`
 }
 
