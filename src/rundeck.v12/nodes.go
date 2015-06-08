@@ -15,6 +15,7 @@ type Node struct {
 	Hostname    string   `xml:"hostname,attr,omitempty"`
 	OsArch      string   `xml:"osArch,attr,omitempty"`
 	OsFamily    string   `xml:"osFamily,attr,omitempty"`
+	OsName      string   `xml:"osName,attr,omitempty"`
 	OsVersion   string   `xml:"osVersion,attr,omitempty"`
 	Username    string   `xml:"username,attr,omitempty"`
 }
@@ -38,4 +39,12 @@ type NodeWithSteps struct {
 	XMLName xml.Name   `xml:"node"`
 	Name    string     `xml:"name,attr"`
 	Steps   []NodeStep `xml:"steps>step"`
+}
+
+func (c *RundeckClient) ListNodes(projectId string) (Nodes, error) {
+	options := make(map[string]string)
+	options["project"] = projectId
+	var data Nodes
+	err := c.Get(&data, "resources", options)
+	return data, err
 }
