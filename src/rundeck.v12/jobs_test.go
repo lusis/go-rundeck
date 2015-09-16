@@ -2,10 +2,37 @@ package rundeck
 
 import (
 	"encoding/xml"
+	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
 )
+
+func TestJobOne(t *testing.T) {
+	xmlfile, err := os.Open("assets/test/job1.xml")
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	defer xmlfile.Close()
+	xmlData, _ := ioutil.ReadAll(xmlfile)
+	var s JobList
+	xml.Unmarshal(xmlData, &s)
+	scope := s.Job
+	options := *scope.Context.Options
+	assert.Len(t, options, 4, "Should have 4 options")
+	for _, o := range options {
+		if o.Name == "password" {
+			assert.True(t, o.Required, "Password should be required")
+			assert.True(t, o.ValueExposed, "valueExposed should be true")
+		}
+		if o.Name == "lastname" {
+			assert.False(t, o.Required, "Last name should not be required")
+			assert.False(t, o.ValueExposed, "valueExposed should be false")
+		}
+	}
+	assert.Equal(t, "node-first", scope.Sequence.Strategy, "Strategy should be node-first")
+	assert.Len(t, scope.Sequence.Steps, 2, "Should have two steps")
+}
 
 func TestJobs(t *testing.T) {
 	xmlfile, err := os.Open("assets/test/jobs.xml")

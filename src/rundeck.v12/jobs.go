@@ -162,6 +162,8 @@ type JobOption struct {
 	XMLName      xml.Name `xml:"option"`
 	Name         string   `xml:"name,attr"`
 	Required     bool     `xml:"required,attr,omitempty"`
+	Secure       bool     `xml:"secure,attr,omitempty"`
+	ValueExposed bool     `xml:"valueExposed,attr,omitempty"`
 	DefaultValue string   `xml:"value,attr,omitempty"`
 	Description  string   `xml:"description,omitempty"`
 }
