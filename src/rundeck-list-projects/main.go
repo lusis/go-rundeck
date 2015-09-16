@@ -27,7 +27,7 @@ func main() {
 				d.Description,
 				d.Url,
 			})
-			table.Render()
 		}
+		table.Render()
 	}
 }
