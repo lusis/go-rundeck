@@ -18,6 +18,11 @@ func (rc *RundeckClient) Delete(i interface{}, path string) error {
 	return rc.makeRequest(i, "DELETE", path, o)
 }
 
+func (rc *RundeckClient) Post(i interface{}, path string, data *string, options map[string]string) error {
+	options["xmlBatch"] = *data
+	return rc.makeRequest(i, "POST", path, options)
+}
+
 func (client *RundeckClient) RawGet(path string, qp map[string]string) string {
 	qs := url.Values{}
 	for k, v := range qp {
@@ -42,7 +47,18 @@ func (client *RundeckClient) RawGet(path string, qp map[string]string) string {
 		if err != nil {
 			return err.Error()
 		} else {
-			return string(contents[:])
+			if r.StatusCode == 404 {
+				errormsg := fmt.Sprintf("No such item (%s)\n", r.Status)
+				return errormsg
+			}
+			if (r.StatusCode < 200) || (r.StatusCode > 299) {
+				var data RundeckError
+				xml.Unmarshal(contents, &data)
+				errormsg := fmt.Sprintf("non-2xx response (code: %d): %s\n", r.StatusCode, data.Message)
+				return errormsg
+			} else {
+				return string(contents[:])
+			}
 		}
 	}
 
@@ -78,8 +94,7 @@ func (client *RundeckClient) makeRequest(i interface{}, method string, path stri
 			errormsg := fmt.Sprintf("No such item (%s)", r.Status)
 			return errors.New(errormsg)
 		}
-
-		if (r.StatusCode < 200) && (r.StatusCode > 299) {
+		if (r.StatusCode < 200) || (r.StatusCode > 299) {
 			var data RundeckError
 			xml.Unmarshal(contents, &data)
 			errormsg := fmt.Sprintf("non-2xx response (code: %d): %s", r.StatusCode, data.Message)

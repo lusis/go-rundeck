@@ -3,6 +3,9 @@ package rundeck
 import (
 	"encoding/xml"
 	"errors"
+	"fmt"
+	"io/ioutil"
+	"os"
 	"reflect"
 	"strings"
 )
@@ -17,6 +20,44 @@ type Job struct {
 	// These two come from Execution output
 	AverageDuration int64   `xml:"averageDuration,attr,omitempty"`
 	Options         Options `xml:"options,omitempty"`
+	// These four come from Import output (depending on success,error,skipped)
+	Index int    `xml:"index,attr,omitempty"`
+	Href  string `xml:"href,attr,omitempty"`
+	Error string `xml:"error,omitempty"`
+	Url   string `xml:"url,omitempty"`
+}
+
+type JobImportResultJob struct {
+	XMLName xml.Name `xml:"job"`
+	ID      string   `xml:"id,omitempty"`
+	Name    string   `xml:"name"`
+	Group   string   `xml:"group"`
+	Project string   `xml:"project"`
+	Index   int      `xml:"index,attr,omitempty"`
+	Href    string   `xml:"href,attr,omitempty"`
+	Error   string   `xml:"error,omitempty"`
+	Url     string   `xml:"url,omitempty"`
+}
+type JobImportResult struct {
+	XMLName    xml.Name `xml:"result"`
+	Success    bool     `xml:"success,attr,omitempty"`
+	Error      bool     `xml:"error,attr,omitempty"`
+	APIVersion int64    `xml:"apiversion,attr"`
+	Succeeded  struct {
+		XMLName xml.Name             `xml:"succeeded"`
+		Count   int64                `xml:"count,attr"`
+		Jobs    []JobImportResultJob `xml:"job,omitempty"`
+	} `xml:"succeeded,omitempty"`
+	Failed struct {
+		XMLName xml.Name             `xml:"failed"`
+		Count   int64                `xml:"count,attr"`
+		Jobs    []JobImportResultJob `xml:"job,omitempty"`
+	} `xml:"failed,omitempty"`
+	Skipped struct {
+		XMLName xml.Name             `xml:"skipped"`
+		Count   int64                `xml:"count,attr"`
+		Jobs    []JobImportResultJob `xml:"job,omitempty"`
+	} `xml:"skipped,omitempty"`
 }
 
 type Options struct {
@@ -231,9 +272,56 @@ func (c *RundeckClient) DeleteJob(id string) (RundeckResult, error) {
 		return res, nil
 	}
 }
+func (c *RundeckClient) ExportJob(id string, format string) string {
+	if format != "xml" && format != "yaml" {
+		errString := fmt.Sprintf("Unknown/unsupported format \"%s\"", format)
+		return errString
+	}
+	var opts map[string]string
+	opts = make(map[string]string)
+	opts["format"] = format
+	res := c.RawGet("job/"+id, opts)
+	return res
+}
 
-func (c *RundeckClient) ImportJob(j *ImportParams) (string, error) {
-	return "12345", nil
+func (c *RundeckClient) ImportJob(j ImportParams) (string, error) {
+	var res JobImportResult
+	var opts map[string]string
+	opts = make(map[string]string)
+	opts["project"] = j.Project
+	opts["format"] = j.Format
+	opts["dupeOption"] = j.Dupe
+	opts["uuidOption"] = j.Uuid
+
+	jobfile, err := os.Open(j.Filename)
+	if err != nil {
+		return "", err
+	}
+	defer jobfile.Close()
+	data, _ := ioutil.ReadAll(jobfile)
+	contents := string(data)
+	err = c.Post(&res, "jobs/import", &contents, opts)
+	//fmt.Printf("%+v\n", res)
+	if err != nil {
+		return "", err
+	} else {
+		if res.Skipped.Count > 0 {
+			var errString []string
+			for _, e := range res.Skipped.Jobs {
+				errString = append(errString, e.Error)
+			}
+			return "", errors.New(strings.Join(errString, "\n"))
+		}
+		if res.Failed.Count > 0 {
+			var errString []string
+			for _, e := range res.Failed.Jobs {
+				errString = append(errString, e.Error)
+			}
+			return "", errors.New(strings.Join(errString, "\n"))
+		}
+		retStr := fmt.Sprintf("%s (ID: %s)", res.Succeeded.Jobs[0].Name, res.Succeeded.Jobs[0].ID)
+		return retStr, nil
+	}
 }
 
 func (c *RundeckClient) GetRequiredOpts(j string) (map[string]string, error) {

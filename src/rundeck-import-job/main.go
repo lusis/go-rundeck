@@ -9,10 +9,10 @@ import (
 )
 
 var (
-	filename = kingpin.Flag("file", "Full /path/to/file to import").Required().String()
+	filename = kingpin.Flag("file", "Full /path/to/file to import").Required().ExistingFile()
 	format   = kingpin.Flag("format", "Format to import").Default("xml").Enum("xml", "yaml")
 	dupe     = kingpin.Flag("dupe", "How to handle existing jobs with same name").Default("create").Enum("create", "update", "skip")
-	uuid     = kingpin.Flag("uuid", "Preserve or strip uuids").Default("preserve").Enum("preserve", "strip")
+	uuid     = kingpin.Flag("uuid", "Preserve or strip uuids").Default("preserve").Enum("preserve", "remove")
 	project  = kingpin.Flag("project", "Project name for imported job").Required().String()
 )
 
@@ -26,7 +26,7 @@ func main() {
 		Uuid:     *uuid,
 		Project:  *project,
 	}
-	jobid, err := client.ImportJob(&importParams)
+	jobid, err := client.ImportJob(importParams)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		os.Exit(1)
