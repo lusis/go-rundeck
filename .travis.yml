@@ -4,5 +4,8 @@ go:
   - 1.4
   - tip
 
-script: make all
+script:
+  # needed for tests since it's not grabbed by go get ./...
+  - go get github.com/stretchr/testify/assert
+  - make all
 

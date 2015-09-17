@@ -13,6 +13,11 @@ func (rc *RundeckClient) Get(i interface{}, path string, options map[string]stri
 	return rc.makeRequest(i, "GET", path, options)
 }
 
+func (rc *RundeckClient) Delete(i interface{}, path string) error {
+	o := make(map[string]string)
+	return rc.makeRequest(i, "DELETE", path, o)
+}
+
 func (client *RundeckClient) RawGet(path string, qp map[string]string) string {
 	qs := url.Values{}
 	for k, v := range qp {
@@ -70,13 +75,15 @@ func (client *RundeckClient) makeRequest(i interface{}, method string, path stri
 			return err
 		}
 		if r.StatusCode == 404 {
-			return errors.New(r.Status)
+			errormsg := fmt.Sprintf("No such item (%s)", r.Status)
+			return errors.New(errormsg)
 		}
 
-		if r.StatusCode != 200 {
+		if (r.StatusCode < 200) && (r.StatusCode > 299) {
 			var data RundeckError
 			xml.Unmarshal(contents, &data)
-			return errors.New("non-200 response: " + data.Message)
+			errormsg := fmt.Sprintf("non-2xx response (code: %d): %s", r.StatusCode, data.Message)
+			return errors.New(errormsg)
 		} else {
 			xml.Unmarshal(contents, &i)
 			return nil

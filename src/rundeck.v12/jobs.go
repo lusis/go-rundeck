@@ -207,11 +207,33 @@ type JobDispatch struct {
 	RankOrder         string   `xml:"rankOrder"`
 }
 
+type ImportParams struct {
+	Filename string
+	Format   string
+	Dupe     string
+	Uuid     string
+	Project  string
+}
+
 func (c *RundeckClient) GetJob(id string) (JobList, error) {
 	u := make(map[string]string)
 	var data JobList
 	err := c.Get(&data, "job/"+id, u)
 	return data, err
+}
+
+func (c *RundeckClient) DeleteJob(id string) (RundeckResult, error) {
+	var res RundeckResult
+	err := c.Delete(&res, "job/"+id)
+	if err != nil {
+		return res, err
+	} else {
+		return res, nil
+	}
+}
+
+func (c *RundeckClient) ImportJob(j *ImportParams) (string, error) {
+	return "12345", nil
 }
 
 func (c *RundeckClient) GetRequiredOpts(j string) (map[string]string, error) {
