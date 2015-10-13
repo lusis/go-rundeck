@@ -19,7 +19,9 @@ func (rc *RundeckClient) Delete(i interface{}, path string) error {
 }
 
 func (rc *RundeckClient) Post(i interface{}, path string, data *string, options map[string]string) error {
-	options["xmlBatch"] = *data
+	if data != nil {
+		options["xmlBatch"] = *data
+	}
 	return rc.makeRequest(i, "POST", path, options)
 }
 
@@ -93,6 +95,9 @@ func (client *RundeckClient) makeRequest(i interface{}, method string, path stri
 		if r.StatusCode == 404 {
 			errormsg := fmt.Sprintf("No such item (%s)", r.Status)
 			return errors.New(errormsg)
+		}
+		if r.StatusCode == 204 {
+			return nil
 		}
 		if (r.StatusCode < 200) || (r.StatusCode > 299) {
 			var data RundeckError

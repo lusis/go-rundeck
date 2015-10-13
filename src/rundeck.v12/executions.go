@@ -1,6 +1,11 @@
 package rundeck
 
-import "encoding/xml"
+import (
+	"encoding/xml"
+	"errors"
+	"strconv"
+	"strings"
+)
 
 type Execution struct {
 	XMLName         xml.Name          `xml:"execution"`
@@ -56,9 +61,75 @@ type ExecutionStep struct {
 	NodeStates     []NodeState `xml:"nodeStates>nodeState"`
 }
 
+type ExecutionsDeleted struct {
+	XMLName       xml.Name `xml:"deleteExecutions"`
+	RequestCount  int64    `xml:"requestCount,attr"`
+	AllSuccessful bool     `xml:"allSuccessful,attr"`
+	Successful    struct {
+		XMLName xml.Name `xml:"successful"`
+		Count   int64    `xml:"count,attr"`
+	} `xml:"successful"`
+	Failed struct {
+		XMLName  xml.Name                `xml:"failed"`
+		Count    int64                   `xml:"count,attr"`
+		Failures []FailedExecutionDelete `xml:"execution,omitempty"`
+	} `xml:"failed"`
+}
+
+type FailedExecutionDelete struct {
+	XMLName xml.Name `xml:"execution"`
+	ID      int64    `xml:"id,attr"`
+	Message string   `xml:"message,attr"`
+}
+
 func (c *RundeckClient) ListExecutions(projectId string, options map[string]string) (Executions, error) {
 	options["project"] = projectId
 	var data Executions
 	err := c.Get(&data, "executions", options)
 	return data, err
+}
+
+func (c *RundeckClient) ListRunningExecutions(projectId string) (executions Executions, err error) {
+	options := make(map[string]string)
+	options["project"] = projectId
+	err = c.Get(executions, "executions/running", options)
+	return executions, err
+}
+
+func (c *RundeckClient) DeleteExecutions(ids []string) (ExecutionsDeleted, error) {
+	var data ExecutionsDeleted
+	opts := make(map[string]string)
+	opts["ids"] = strings.Join(ids, ",")
+	err := c.Post(&data, "executions/delete", nil, opts)
+	if err != nil {
+		return data, err
+	} else {
+		return data, nil
+	}
+}
+
+func (c *RundeckClient) DeleteAllExecutionsFor(project string, max int64) (ExecutionsDeleted, error) {
+	var data ExecutionsDeleted
+	eopts := make(map[string]string)
+	eopts["max"] = strconv.FormatInt(max, 10)
+	e, err := c.ListExecutions(project, eopts)
+	if err != nil {
+		return data, err
+	}
+
+	var toDelete []string
+	for _, execution := range e.Executions {
+		toDelete = append(toDelete, execution.ID)
+	}
+	if len(toDelete) == 0 {
+		return data, errors.New("No executions found for project: " + project)
+	}
+	opts := make(map[string]string)
+	opts["ids"] = strings.Join(toDelete, ",")
+	err = c.Post(&data, "executions/delete", nil, opts)
+	if err != nil {
+		return data, err
+	} else {
+		return data, nil
+	}
 }

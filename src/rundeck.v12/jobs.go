@@ -78,8 +78,9 @@ type Jobs struct {
 }
 
 type RunOptions struct {
+	Filter    string `qp:"filter,omitempty"`
 	LogLevel  string `qp:"loglevel,omitempty"`
-	AsUser    string `qp:"asUser,omitempty"`
+	RunAs     string `qp:"runAs,omitempty"`
 	Arguments string `qp:"argString,omitempty"`
 }
 
@@ -301,7 +302,6 @@ func (c *RundeckClient) ImportJob(j ImportParams) (string, error) {
 	data, _ := ioutil.ReadAll(jobfile)
 	contents := string(data)
 	err = c.Post(&res, "jobs/import", &contents, opts)
-	//fmt.Printf("%+v\n", res)
 	if err != nil {
 		return "", err
 	} else {
@@ -350,7 +350,7 @@ func (c *RundeckClient) RunJob(id string, options RunOptions) (Executions, error
 	u := options.toQueryParams()
 	var data Executions
 
-	err := c.Get(&data, "job/"+id+"/run", u)
+	err := c.Post(&data, "job/"+id+"/run", nil, u)
 	return data, err
 }
 

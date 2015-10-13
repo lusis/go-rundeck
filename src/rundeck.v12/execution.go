@@ -45,3 +45,13 @@ func (c *RundeckClient) GetExecutionOutput(executionId string) (ExecutionOutput,
 	err := c.Get(&data, "execution/"+executionId+"/output", u)
 	return data, err
 }
+
+func (c *RundeckClient) DeleteExecution(id string) (RundeckResult, error) {
+	var res RundeckResult
+	err := c.Delete(&res, "execution/"+id)
+	if err != nil {
+		return res, err
+	} else {
+		return res, nil
+	}
+}

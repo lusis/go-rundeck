@@ -1,6 +1,11 @@
-BINARIES = rundeck-get-history rundeck-get-job rundeck-list-jobs rundeck-list-executions rundeck-get-tokens rundeck-list-projects rundeck-xml-get rundeck-find-job-by-name rundeck-get-jobopts rundeck-delete-job rundeck-import-job rundeck-export-job
+BINARIES = rundeck-get-history rundeck-get-job rundeck-list-jobs rundeck-list-executions rundeck-get-tokens rundeck-list-projects rundeck-xml-get rundeck-find-job-by-name rundeck-get-jobopts rundeck-delete-job rundeck-import-job rundeck-export-job rundeck-delete-execution rundeck-bulk-delete-executions rundeck-delete-executions-for rundeck-run-job rundeck-list-running-executions
 
-GOPATH := $(GOPATH):$(TRAVIS_BUILD_DIR)
+ifeq ($(TRAVIS_BUILD_DIR),)
+	GOPATH := $(GOPATH)
+else
+	GOPATH := $(GOPATH):$(TRAVIS_BUILD_DIR)
+endif
+
 all: clean test rundeck rundeck-bin
 
 test:
