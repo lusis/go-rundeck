@@ -3,9 +3,10 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 	"strings"
 
-	rundeck "rundeck.v12"
+	rundeck "rundeck.v13"
 )
 
 var usage = `
@@ -56,6 +57,12 @@ func main() {
 	query_opts := make(map[string]string)
 	paramConvert(myparams, &query_opts)
 	client := rundeck.NewClientFromEnv()
-	data := client.RawGet(*path, query_opts)
-	fmt.Printf("%s\n", data)
+	var data []byte
+	err := client.Get(&data, *path, query_opts)
+	if err != nil {
+		fmt.Printf(err.Error())
+		os.Exit(1)
+	} else {
+		fmt.Printf("%s\n", string(data))
+	}
 }

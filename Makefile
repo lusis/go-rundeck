@@ -1,4 +1,5 @@
-BINARIES = rundeck-get-history rundeck-get-job rundeck-list-jobs rundeck-list-executions rundeck-get-tokens rundeck-list-projects rundeck-xml-get rundeck-find-job-by-name rundeck-get-jobopts rundeck-delete-job rundeck-import-job rundeck-export-job rundeck-delete-execution rundeck-bulk-delete-executions rundeck-delete-executions-for rundeck-run-job rundeck-list-running-executions
+BINARIES := $(shell find src/ -maxdepth 1 -type d -name 'rundeck-*' -exec sh -c 'echo $(basename {})' \;)
+BINLIST := $(subst src/,,$(BINARIES))
 
 ifeq ($(TRAVIS_BUILD_DIR),)
 	GOPATH := $(GOPATH)
@@ -6,21 +7,21 @@ else
 	GOPATH := $(GOPATH):$(TRAVIS_BUILD_DIR)
 endif
 
-all: clean test rundeck rundeck-bin
+all: clean test rundeck $(BINLIST)
 
 test:
-	@go test rundeck.v12 -v
+	@go test rundeck.v13 -v
 
 rundeck:
 	@mkdir -p bin/
 	@go get ./... 
-	@go install rundeck.v12
+	@go install rundeck.v13
 
-rundeck-bin:
-	@mkdir -p bin/
-	$(foreach bin,$(BINARIES),go install $(bin);)
+$(BINLIST):
+	@echo $@
+	@go install $@
 
 clean:
 	@rm -rf bin/ pkg/
 
-.PHONY: all clean test rundeck rundeck-bin 
+.PHONY: all clean test rundeck $(BINLIST)

@@ -6,20 +6,21 @@ import (
 	"strconv"
 
 	"github.com/olekukonko/tablewriter"
-	rundeck "rundeck.v12"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	rundeck "rundeck.v13"
+)
+
+var (
+	projectid = kingpin.Arg("projectid", "").Required().String()
+	max       = kingpin.Flag("max", "max number of results to return").Default("200").String()
 )
 
 func main() {
-	var projectid string
-	if len(os.Args) <= 1 {
-		fmt.Printf("Usage: rundeck-list-executions <project id>\n")
-		os.Exit(1)
-	}
-	projectid = os.Args[1]
+	kingpin.Parse()
 	client := rundeck.NewClientFromEnv()
 	options := make(map[string]string)
-	options["max"] = "200"
-	data, err := client.ListExecutions(projectid, options)
+	options["max"] = *max
+	data, err := client.ListProjectExecutions(*projectid, options)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 	} else {

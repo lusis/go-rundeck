@@ -15,7 +15,7 @@ package main
 import (
 	"fmt"
 
-	rundeck "github.com/lusis/go-rundeck/src/rundeck.v12"
+	rundeck "github.com/lusis/go-rundeck/src/rundeck.v13"
 )
 
 func main() {
@@ -73,6 +73,14 @@ RUNDECK_URL=http://rundeck.local:4440 RUNDECK_TOKEN=XXXXXXX bin/rundeck-list-pro
 | FOOPROJ | A project   | http://rundeck.local:4440/api/12/project/FOOPROJ          |
 +---------+-------------+-----------------------------------------------------------+
 ```
+
+## Note on versioning
+The initial release of this repo was built for rundeck API v12. Each rundeck release adds new or changed functionality.
+I'm now using a v13 install of Rundeck. There were very few api changes but v14 is bringing in a lot of changes.
+
+For now I plan on keeping a different directory for EACH version on the master branch even though there will be quite a bit of code duplication. I reserve the right to make changes to the internals of the library as well. Some of this is happening with v13 as I ended up shooting myself in the foot with the initial implementation and didn't leave room to change with the rundeck API.
+
+The question becomes how to handle the bundled utilities. I'm likely going to break those out into separate repos and version them separately.
 
 ## TODO
 - Flesh out more tests

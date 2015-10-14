@@ -5,7 +5,7 @@ import (
 	"os"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
-	rundeck "rundeck.v12"
+	rundeck "rundeck.v13"
 )
 
 var (
@@ -15,7 +15,7 @@ var (
 func main() {
 	kingpin.Parse()
 	client := rundeck.NewClientFromEnv()
-	res, err := client.DeleteAllExecutionsFor(*project, 200)
+	res, err := client.DeleteAllExecutionsForProject(*project, 200)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		os.Exit(1)
