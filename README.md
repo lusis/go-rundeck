@@ -1,6 +1,15 @@
 # go-rundeck
 [![Build Status](https://travis-ci.org/lusis/go-rundeck.svg?branch=master)](https://travis-ci.org/lusis/go-rundeck)
-Go library and utilities for interacting with [Rundeck](http://rundeck.org)
+Go library and utilities for interacting with [Rundeck](http://rundeck.org).
+It currently supports configuration via environment variables only and supports either token authentication or username/password authentication. (v13 only)
+
+# Configuration
+- set `RUNDECK_URL` to the base url of your rundeck installation (i.e. `http://localhost:4000` or `https://my.rundeck.domain.com`)
+
+- set *EITHER* `RUNDECK_TOKEN` or `RUNDECK_USERNAME` and `RUNDECK_PASSWORD` (only if using `v13` api)
+- if all three are set `RUNDECK_TOKEN` takes precendence
+
+Again, username/password authentication are ONLY supported in `rundeck.v13` and higher. The original `rundeck.v12` only supports token authentication.
 
 ## Usage
 There are two ways to use this:
@@ -20,9 +29,10 @@ import (
 
 func main() {
 	/*
-		NewClientFromEnv requires two environement variables:
+		NewClientFromEnv requires two (or three) environement variables:
 		- RUNDECK_URL
 		- RUNDECK_TOKEN
+		if RUNDECK_TOKEN is empty, RUNDECK_USERNAME/RUNDECK_PASSWORD are required
 	*/
 	client := rundeck.NewClientFromEnv()
 	data, err := client.ListProjects()
