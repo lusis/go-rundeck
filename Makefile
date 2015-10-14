@@ -30,6 +30,6 @@ $(BINLIST): deps
 	@go install $@
 
 clean:
-	@rm -rf bin/ pkg/ src/github.com src/gopkg.in src/golang.org
+	@rm -rf bin/ pkg/ #src/github.com src/gopkg.in src/golang.org
 
 .PHONY: all clean deps test rundeck $(BINLIST)

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"gopkg.in/jmcvetta/napping.v2"
 	"net/http"
+	"net/http/cookiejar"
 	"net/url"
 )
 
@@ -43,7 +44,32 @@ func (client *RundeckClient) makeRequest(i *[]byte, payload []byte, method strin
 		u.RawQuery = qs.Encode()
 	}
 	headers := http.Header{}
-	headers.Add("X-Rundeck-Auth-Token", client.Config.Token)
+	headers.Add("user-agent", "rundeck-go.v13")
+	jar, _ := cookiejar.New(nil)
+	client.Client.Client.Jar = jar
+	if client.Config.AuthMethod == "basic" {
+		authQs := url.Values{}
+		authQs.Add("j_username", client.Config.Username)
+		authQs.Add("j_password", client.Config.Password)
+		authPayload := bytes.NewBuffer(nil)
+		base_auth_url := client.Config.BaseURL + "/j_security_check"
+		cookieReq := napping.Request{
+			Url:        base_auth_url,
+			Params:     &authQs,
+			Method:     "POST",
+			RawPayload: true,
+			Payload:    authPayload,
+		}
+		r, err := client.Client.Send(&cookieReq)
+		if err != nil {
+			return err
+		}
+		if r.Status() != 200 {
+			return errors.New(r.RawText())
+		}
+	} else {
+		headers.Add("X-Rundeck-Auth-Token", client.Config.Token)
+	}
 	headers.Add("Accept", "application/xml")
 	headers.Add("user-agent", "rundeck-go.v13")
 	req := napping.Request{

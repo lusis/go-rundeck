@@ -1,4 +1,9 @@
 # v13
+- Added support for username/password auth as non-admins cannot use api tokens. Precendence order is as follows:
+  - If `RUNDECK_TOKEN` is set, that will be used
+  - If `RUNDECK_TOKEN` is not set, `RUNDECK_USERNAME`/`RUNDECK_PASSWORD` are required.
+  - Every request will attempt to reauthenticate with the rundeck server when username/password auth is being used
+
 ## Core API
 - Changed API for `client.<method>` (i.e. `GET`,`PUT`,`POST`,`DELETE`) to be more flexible in the fact of rundeck API changes
 

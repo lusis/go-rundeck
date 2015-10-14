@@ -9,9 +9,12 @@ import (
 )
 
 type ClientConfig struct {
-	BaseURL   string
-	Token     string
-	VerifySSL bool
+	BaseURL    string
+	Token      string
+	VerifySSL  bool
+	Username   string
+	Password   string
+	AuthMethod string
 }
 
 type RundeckClient struct {
@@ -30,7 +33,9 @@ func NewClient(config *ClientConfig) (c RundeckClient) {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: verifySSL()},
 	}
-	client := &http.Client{Transport: tr}
+	client := &http.Client{
+		Transport: tr,
+	}
 	s := napping.Session{
 		Client: client,
 	}
@@ -38,16 +43,33 @@ func NewClient(config *ClientConfig) (c RundeckClient) {
 }
 
 func clientConfigFrom(from string) (c *ClientConfig) {
+	config := ClientConfig{}
+
 	switch from {
 	case "environment":
-		if os.Getenv("RUNDECK_TOKEN") == "" || os.Getenv("RUNDECK_URL") == "" {
-			fmt.Printf("You must set the environment variables  RUNDECK_URL and RUNDECK_TOKEN\n")
+		if os.Getenv("RUNDECK_TOKEN") == "" {
+			if os.Getenv("RUNDECK_USER") == "" && os.Getenv("RUNDECK_PASSWORD") == "" {
+				fmt.Printf("You must set either RUNDECK_TOKEN or RUNDECK_USERNAME and RUNDECK_PASSWORD\n")
+				os.Exit(1)
+			} else {
+				config.AuthMethod = "basic"
+			}
+		} else {
+			config.AuthMethod = "token"
+		}
+
+		if os.Getenv("RUNDECK_URL") == "" {
+			fmt.Printf("You must set the environment variable RUNDECK_URL\n")
 			os.Exit(1)
+		} else {
+			config.BaseURL = os.Getenv("RUNDECK_URL")
 		}
 	}
-	config := ClientConfig{
-		BaseURL: os.Getenv("RUNDECK_URL"),
-		Token:   os.Getenv("RUNDECK_TOKEN"),
+	if config.AuthMethod == "token" {
+		config.Token = os.Getenv("RUNDECK_TOKEN")
+	} else {
+		config.Username = os.Getenv("RUNDECK_USERNAME")
+		config.Password = os.Getenv("RUNDECK_PASSWORD")
 	}
 	return &config
 }
