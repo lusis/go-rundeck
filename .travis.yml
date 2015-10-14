@@ -6,6 +6,7 @@ go:
 
 script:
   # needed for tests since it's not grabbed by go get ./...
+  - go get gopkg.in/jmcvetta/napping.v2
   - go get github.com/stretchr/testify/assert
   - make all
 
