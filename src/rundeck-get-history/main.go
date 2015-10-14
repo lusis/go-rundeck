@@ -5,19 +5,19 @@ import (
 	"os"
 
 	"github.com/olekukonko/tablewriter"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
-	rundeck "rundeck.v12"
+	rundeck "rundeck.v13"
+)
+
+var (
+	projectid = kingpin.Arg("projectid", "").Required().String()
 )
 
 func main() {
-	var projectid string
-	if len(os.Args) <= 1 {
-		fmt.Printf("Usage: rundeck-get-history <project id>\n")
-		os.Exit(1)
-	}
-	projectid = os.Args[1]
+	kingpin.Parse()
 	client := rundeck.NewClientFromEnv()
-	top, err := client.GetHistory(projectid)
+	top, err := client.GetHistory(*projectid)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 	} else {

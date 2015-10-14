@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	rundeck "rundeck.v12"
+	rundeck "rundeck.v13"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	}
 	jobid = os.Args[1]
 	client := rundeck.NewClientFromEnv()
-	_, err := client.DeleteJob(jobid)
+	err := client.DeleteJob(jobid)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		os.Exit(1)

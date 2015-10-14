@@ -6,18 +6,18 @@ import (
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
-	rundeck "rundeck.v12"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	rundeck "rundeck.v13"
+)
+
+var (
+	jobid = kingpin.Arg("jobid", "").Required().String()
 )
 
 func main() {
-	var jobid string
-	if len(os.Args) <= 1 {
-		fmt.Printf("Usage: rundeck-get-jobopts <job uuid>\n")
-		os.Exit(1)
-	}
-	jobid = os.Args[1]
+	kingpin.Parse()
 	client := rundeck.NewClientFromEnv()
-	data, err := client.GetJob(jobid)
+	data, err := client.GetJob(*jobid)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 	} else {
