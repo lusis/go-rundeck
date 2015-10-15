@@ -53,8 +53,8 @@ func main() {
 				d.Status,
 				strconv.Itoa(len(d.SuccessfulNodes.Nodes)) + "/" + strconv.Itoa(len(d.FailedNodes.Nodes)),
 				d.User,
-				strconv.FormatInt(d.DateStarted.UnixTime, 10),
-				strconv.FormatInt(d.DateEnded.UnixTime, 10),
+				d.DateStarted,
+				d.DateEnded,
 				d.Project,
 			})
 		}
