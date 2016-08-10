@@ -94,6 +94,5 @@ The question becomes how to handle the bundled utilities. I'm likely going to br
 
 ## TODO
 - Flesh out more tests
-- Add mock for http
 - More utilities
 - Wrapper cli for sub-utilities
