@@ -10,20 +10,18 @@ endif
 all: clean deps test rundeck $(BINLIST)
 
 deps:
-	@go get gopkg.in/jmcvetta/napping.v2
-	@go get gopkg.in/alecthomas/kingpin.v2
-	@go get github.com/stretchr/testify/assert
-	@go get github.com/olekukonko/tablewriter
-	@go get github.com/kr/pty
+	@go get -t -d ./...
 
 test: deps
 	@go test rundeck.v12 -v
 	@go test rundeck.v13 -v
+	@go test rundeck.v17 -v
 
 rundeck: deps
 	@mkdir -p bin/
-	@go get -t ./...
-	@go install rundeck.v13
+	@go install rundeck.v17
+
+binaries: $(BINLIST)
 
 $(BINLIST): deps
 	@echo $@

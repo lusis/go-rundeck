@@ -5,7 +5,7 @@ import (
 	"os"
 
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
-	rundeck "rundeck.v13"
+	rundeck "rundeck.v17"
 )
 
 var (

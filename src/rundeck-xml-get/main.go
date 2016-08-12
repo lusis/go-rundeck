@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	rundeck "rundeck.v13"
+	rundeck "rundeck.v17"
 )
 
 var usage = `
