@@ -15,11 +15,15 @@ type ClientConfig struct {
 	Username   string
 	Password   string
 	AuthMethod string
+	Transport  *http.Transport
+	HTTPClient *http.Client
 }
 
 type RundeckClient struct {
-	Client *napping.Session
-	Config *ClientConfig
+	Client     *napping.Session
+	HTTPClient *http.Client
+	Config     *ClientConfig
+	Transport  *http.Transport
 }
 
 func NewClient(config *ClientConfig) (c RundeckClient) {
@@ -30,14 +34,16 @@ func NewClient(config *ClientConfig) (c RundeckClient) {
 			return true
 		}
 	}
-	tr := &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: verifySSL()},
+	if config.Transport == nil {
+		config.Transport = new(http.Transport)
 	}
-	client := &http.Client{
-		Transport: tr,
+	config.Transport.TLSClientConfig = &tls.Config{InsecureSkipVerify: verifySSL()}
+	if config.HTTPClient == nil {
+		config.HTTPClient = new(http.Client)
 	}
+	config.HTTPClient.Transport = config.Transport
 	s := napping.Session{
-		Client: client,
+		Client: config.HTTPClient,
 	}
 	return RundeckClient{Client: &s, Config: config}
 }
