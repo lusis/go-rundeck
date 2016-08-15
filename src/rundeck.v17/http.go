@@ -29,9 +29,16 @@ func (rc *RundeckClient) Put(i *[]byte, path string, data []byte, options interf
 }
 
 func (client *RundeckClient) makeRequest(i *[]byte, payload []byte, method string, path string, params interface{}) error {
+	headers := http.Header{}
 	qs := url.Values{}
 	if params != nil {
 		for q, p := range params.(map[string]string) {
+			if q == "content_type" {
+				headers.Add("Accept", p)
+				delete(params.(map[string]string), "content_type")
+			} else {
+				headers.Add("Accept", "application/xml")
+			}
 			qs.Add(q, p)
 		}
 	}
@@ -43,7 +50,6 @@ func (client *RundeckClient) makeRequest(i *[]byte, payload []byte, method strin
 	if params != nil && len(params.(map[string]string)) != 0 {
 		u.RawQuery = qs.Encode()
 	}
-	headers := http.Header{}
 	headers.Add("user-agent", "rundeck-go.v17")
 	jar, _ := cookiejar.New(nil)
 	client.Client.Client.Jar = jar
@@ -70,7 +76,7 @@ func (client *RundeckClient) makeRequest(i *[]byte, payload []byte, method strin
 	} else {
 		headers.Add("X-Rundeck-Auth-Token", client.Config.Token)
 	}
-	headers.Add("Accept", "application/xml")
+
 	headers.Add("user-agent", "rundeck-go.v17")
 	req := napping.Request{
 		Url:                 base_req_path,
