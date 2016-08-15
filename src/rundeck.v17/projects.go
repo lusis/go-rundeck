@@ -2,6 +2,7 @@ package rundeck
 
 import (
 	"encoding/xml"
+	"fmt"
 )
 
 type Project struct {
@@ -37,4 +38,26 @@ func (c *RundeckClient) ListProjects() (data Projects, err error) {
 		xml.Unmarshal(res, &data)
 		return data, nil
 	}
+}
+
+func (c *RundeckClient) MakeProject(p NewProject) error {
+	var res []byte
+	data, err := xml.Marshal(p)
+	if err != nil {
+		return err
+	}
+	err = c.Post(&res, "projects", data, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *RundeckClient) DeleteProject(p string) error {
+	url := fmt.Sprintf("project/%s", p)
+	err := c.Delete(url, nil)
+	if err != nil {
+		return err
+	}
+	return nil
 }

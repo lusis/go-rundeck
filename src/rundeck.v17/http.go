@@ -35,6 +35,7 @@ func (client *RundeckClient) makeRequest(i *[]byte, payload []byte, method strin
 		for q, p := range params.(map[string]string) {
 			if q == "content_type" {
 				headers.Add("Accept", p)
+				headers.Add("Content-Type", p)
 				delete(params.(map[string]string), "content_type")
 			} else {
 				qs.Add(q, p)
@@ -43,6 +44,9 @@ func (client *RundeckClient) makeRequest(i *[]byte, payload []byte, method strin
 	}
 	if headers.Get("Accept") == "" {
 		headers.Add("Accept", "application/xml")
+	}
+	if (method == "POST" || method == "PUT") && headers.Get("Content-Type") == "" {
+		headers.Add("Content-Type", "application/xml")
 	}
 	base_req_path := client.Config.BaseURL + "/api/17/" + path
 	u, err := url.Parse(base_req_path)
@@ -83,11 +87,13 @@ func (client *RundeckClient) makeRequest(i *[]byte, payload []byte, method strin
 	req := napping.Request{
 		Url:                 base_req_path,
 		Header:              &headers,
-		Params:              &qs,
 		Method:              method,
 		RawPayload:          true,
 		Payload:             bytes.NewBuffer(payload),
 		CaptureResponseBody: true,
+	}
+	if len(qs) != 0 {
+		req.Params = &qs
 	}
 	r, err := client.Client.Send(&req)
 	if err != nil {
