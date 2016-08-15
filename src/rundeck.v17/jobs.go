@@ -392,11 +392,10 @@ func (c *RundeckClient) FindJobByName(name string, project string) (*JobDetails,
 }
 
 func (c *RundeckClient) ListJobs(projectId string) (Jobs, error) {
-	options := make(map[string]string)
-	options["project"] = projectId
 	var res []byte
 	var data Jobs
-	err := c.Get(&res, "jobs", options)
+	url := fmt.Sprintf("project/%s/jobs", projectId)
+	err := c.Get(&res, url, nil)
 	if err != nil {
 		return data, err
 	} else {
