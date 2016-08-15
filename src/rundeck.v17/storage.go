@@ -33,3 +33,8 @@ type ResourceMeta struct {
 	AuthCreatedUsername string   `xml:"Rundeck-auth-created-username"`
 	KeyType             string   `xml:"Rundeck-key-type"`
 }
+
+// returns the raw data associated with a storage item
+//func (r *Resource) GetRaw() (data string, err error) {
+//
+//}

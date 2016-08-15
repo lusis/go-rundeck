@@ -37,10 +37,12 @@ func (client *RundeckClient) makeRequest(i *[]byte, payload []byte, method strin
 				headers.Add("Accept", p)
 				delete(params.(map[string]string), "content_type")
 			} else {
-				headers.Add("Accept", "application/xml")
+				qs.Add(q, p)
 			}
-			qs.Add(q, p)
 		}
+	}
+	if headers.Get("Accept") == "" {
+		headers.Add("Accept", "application/xml")
 	}
 	base_req_path := client.Config.BaseURL + "/api/17/" + path
 	u, err := url.Parse(base_req_path)
