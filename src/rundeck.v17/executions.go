@@ -3,7 +3,6 @@ package rundeck
 import (
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -55,7 +54,6 @@ func (c *RundeckClient) ListProjectExecutions(projectId string, options map[stri
 	var data Executions
 	err := c.Get(&res, "executions", options)
 	xml.Unmarshal(res, &data)
-	fmt.Printf("%s\n", string(res))
 	return data, err
 }
 
