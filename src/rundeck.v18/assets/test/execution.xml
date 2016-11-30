@@ -1,0 +1,17 @@
+<output>
+	<id>23</id>
+	<offset>424</offset>
+	<completed>true</completed>
+	<execCompleted>true</execCompleted>
+	<hasFailedNodes>false</hasFailedNodes>
+	<execState>succeeded</execState>
+	<lastModified>1433212362000</lastModified>
+	<execDuration>409</execDuration>
+	<percentLoaded>98.6046511627907</percentLoaded>
+	<totalSize>430</totalSize>
+	<entries>
+		<entry time='02:32:42' absolute_time='2015-06-02T02:32:42Z' log='hello' level='NORMAL' user='rundeck' command='' stepctx='1' node='localhost' />
+		<entry time='02:33:42' absolute_time='2015-06-02T02:33:42Z' log='bye' level='NORMAL' user='rundeck' command='' stepctx='1' node='localhost' />
+	</entries>
+</output>
+
