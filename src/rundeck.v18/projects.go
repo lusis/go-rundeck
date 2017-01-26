@@ -29,7 +29,7 @@ type ConfigProperty struct {
 	Value   string   `xml:"value,attr"`
 }
 
-func (c *RundeckClient) GetProject(name string) (p Project, error) {
+func (c *RundeckClient) GetProject(name string) (p Project, err error) {
 	var res []byte
 	err := c.Get(&res, "project/"+name, nil)
 	if err != nil {
