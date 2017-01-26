@@ -31,7 +31,7 @@ type ConfigProperty struct {
 
 func (c *RundeckClient) GetProject(name string) (p Project, error) {
 	var res []byte
-	err := c.Get(&res, "project/"+name)
+	err := c.Get(&res, "project/"+name, nil)
 	if err != nil {
 		return p, err
 	} else {
