@@ -68,6 +68,17 @@ type ExecutionState struct {
 	Nodes       []NodeWithSteps `xml:"executionState>nodes>node"`
 }
 
+type ExecutionAbort struct {
+	XMLName   xml.Name `xml:"abort"`
+	Status    string   `xml:"status,attr"`
+	Execution struct {
+		HRef      string `xml:"href,attr"`
+		Permalink string `xml:"permalink,attr"`
+		ID        string `xml:"id,attr"`
+		Status    string `xml:"status,attr"`
+	} `xml:"execution"`
+}
+
 func (c *RundeckClient) GetExecution(executionId string) (exec Execution, err error) {
 	var res []byte
 	var execs Executions
@@ -99,4 +110,17 @@ func (c *RundeckClient) GetExecutionOutput(executionId string) (ExecutionOutput,
 
 func (c *RundeckClient) DeleteExecution(id string) error {
 	return c.Delete("execution/"+id, nil)
+}
+
+func (c *RundeckClient) AbortExecution(id string) (ExecutionAbort, error) {
+	var res []byte
+	var exec ExecutionAbort
+	err := c.Get(&res, "execution/"+id+"/abort", nil)
+	if err != nil {
+		return exec, err
+	}
+	if xmlerr := xml.Unmarshal(res, &exec); xmlerr != nil {
+		return exec, xmlerr
+	}
+	return exec, nil
 }
