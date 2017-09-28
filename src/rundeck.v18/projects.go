@@ -29,6 +29,17 @@ type ConfigProperty struct {
 	Value   string   `xml:"value,attr"`
 }
 
+func (c *RundeckClient) GetProject(name string) (p Project, err error) {
+	var res []byte
+	err = c.Get(&res, "project/"+name, nil)
+	if err != nil {
+		return p, err
+	} else {
+		xml.Unmarshal(res, &p)
+		return p, nil
+	}
+}
+
 func (c *RundeckClient) ListProjects() (data Projects, err error) {
 	var res []byte
 	err = c.Get(&res, "projects", nil)
