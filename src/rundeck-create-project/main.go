@@ -9,7 +9,8 @@ import (
 )
 
 var (
-	project = kingpin.Flag("project", "New project name").Required().String()
+	project     = kingpin.Arg("project", "New project name").Required().String()
+	description = kingpin.Flag("description", "Description of the project").String()
 )
 
 func main() {
@@ -18,6 +19,9 @@ func main() {
 
 	newProject := rundeck.NewProject{
 		Name: *project,
+	}
+	if description != nil {
+		newProject.Description = *description
 	}
 	err := client.MakeProject(newProject)
 	if err != nil {

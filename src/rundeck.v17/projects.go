@@ -18,9 +18,10 @@ type Projects struct {
 }
 
 type NewProject struct {
-	XMLName xml.Name         `xml:"project"`
-	Name    string           `xml:"name"`
-	Config  []ConfigProperty `xml:"config,omitempty"`
+	XMLName     xml.Name         `xml:"project"`
+	Name        string           `xml:"name"`
+	Description string           `xml:"description"`
+	Config      []ConfigProperty `xml:"config,omitempty"`
 }
 
 type ConfigProperty struct {

@@ -21,7 +21,7 @@ func main() {
 		fmt.Printf(err.Error())
 		os.Exit(1)
 	} else {
-		fmt.Printf(res)
+		fmt.Printf("%s\n", res)
 		os.Exit(0)
 	}
 }

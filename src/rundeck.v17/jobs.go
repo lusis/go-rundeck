@@ -352,6 +352,26 @@ func (c *RundeckClient) GetRequiredOpts(j string) (map[string]string, error) {
 	}
 }
 
+func (c *RundeckClient) DisableExecution(id string) error {
+	var res []byte
+	err := c.Post(&res, "job/"+id+"/execution/disable", nil, nil)
+	if err != nil {
+		return err
+	} else {
+		return nil
+	}
+}
+
+func (c *RundeckClient) EnableExecution(id string) error {
+	var res []byte
+	err := c.Post(&res, "job/"+id+"/execution/enable", nil, nil)
+	if err != nil {
+		return err
+	} else {
+		return nil
+	}
+}
+
 func (c *RundeckClient) RunJob(id string, options RunOptions) (Executions, error) {
 	u := options.toQueryParams()
 	var res []byte
