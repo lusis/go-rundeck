@@ -2,6 +2,7 @@ package rundeck
 
 import (
 	"encoding/xml"
+	"fmt"
 )
 
 type AclPolicies struct {
@@ -33,4 +34,19 @@ func (c *RundeckClient) GetSystemAclPolicies() (data AclPolicies, err error) {
 		xml.Unmarshal(res, &data)
 		return data, nil
 	}
+}
+
+func (c *RundeckClient) CreateSystemAclPolicy(name string, contents []byte) error {
+	var res []byte
+	u := make(map[string]string)
+	u["content_type"] = "application/yaml"
+	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
+	payload := fmt.Sprintf("<contents><![CDATA[%s]]></contents>", string(contents))
+	fmt.Printf("%s\n", payload)
+	err := c.Post(&res, url, []byte(payload), u)
+	if err != nil {
+		fmt.Printf("%#v\n", string(res))
+		return err
+	}
+	return nil
 }
