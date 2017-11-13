@@ -71,6 +71,7 @@ func (c *RundeckClient) DeleteExecutions(ids []string) (ExecutionsDeleted, error
 	var data ExecutionsDeleted
 	opts := make(map[string]string)
 	opts["ids"] = strings.Join(ids, ",")
+	opts["content_type"] = "application/x-www-form-urlencoded"
 	err := c.Post(&res, "executions/delete", nil, opts)
 	xml.Unmarshal(res, &data)
 	return data, err
