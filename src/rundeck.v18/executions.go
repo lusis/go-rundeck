@@ -3,7 +3,6 @@ package rundeck
 import (
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -55,7 +54,6 @@ func (c *RundeckClient) ListProjectExecutions(projectId string, options map[stri
 	var data Executions
 	err := c.Get(&res, "executions", options)
 	xml.Unmarshal(res, &data)
-	fmt.Printf("%s\n", string(res))
 	return data, err
 }
 
@@ -73,6 +71,7 @@ func (c *RundeckClient) DeleteExecutions(ids []string) (ExecutionsDeleted, error
 	var data ExecutionsDeleted
 	opts := make(map[string]string)
 	opts["ids"] = strings.Join(ids, ",")
+	opts["content_type"] = "application/x-www-form-urlencoded"
 	err := c.Post(&res, "executions/delete", nil, opts)
 	xml.Unmarshal(res, &data)
 	return data, err
