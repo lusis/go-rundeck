@@ -10,7 +10,7 @@ endif
 all: clean test $(BINLIST)
 
 test:
-	@go test ./... -v
+	@script/test
 
 build-test-container:
 	@cd docker; docker build --rm -t go-rundeck-test:2.6.9 .; cd -
@@ -22,15 +22,11 @@ stop-test-container:
 	@docker stop go-rundeck-test
 	@docker rm go-rundeck-test
 
-rundeck: 
-	@mkdir -p bin/
-	@go install r
-
 binaries: $(BINLIST)
 
-$(BINLIST): deps
+$(BINLIST):
 	@echo $@
-	@go install $@
+	@go install ./$@
 
 clean:
 	@rm -rf bin/
