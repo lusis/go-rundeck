@@ -1,4 +1,4 @@
-BINARIES := $(shell find src/ -maxdepth 1 -type d -name 'rundeck-*' -exec sh -c 'echo $(basename {})' \;)
+BINARIES := $(shell find cmd/ -maxdepth 1 -type d -name 'rundeck-*' -exec sh -c 'echo $(basename {})' \;)
 BINLIST := $(subst src/,,$(BINARIES))
 
 ifeq ($(TRAVIS_BUILD_DIR),)
@@ -7,15 +7,10 @@ else
 	GOPATH := $(GOPATH):$(TRAVIS_BUILD_DIR)
 endif
 
-all: clean deps test rundeck $(BINLIST)
+all: clean test $(BINLIST)
 
-deps:
-	@go get -t -d ./...
-
-test: deps
-	@go test rundeck.v12 -v
-	@go test rundeck.v13 -v
-	@go test rundeck.v17 -v
+test:
+	@go test ./... -v
 
 build-test-container:
 	@cd docker; docker build --rm -t go-rundeck-test:2.6.9 .; cd -
@@ -27,9 +22,9 @@ stop-test-container:
 	@docker stop go-rundeck-test
 	@docker rm go-rundeck-test
 
-rundeck: deps
+rundeck: 
 	@mkdir -p bin/
-	@go install rundeck.v17
+	@go install r
 
 binaries: $(BINLIST)
 
@@ -38,6 +33,6 @@ $(BINLIST): deps
 	@go install $@
 
 clean:
-	@rm -rf bin/ pkg/ #src/github.com src/gopkg.in src/golang.org
+	@rm -rf bin/
 
-.PHONY: all clean deps test rundeck $(BINLIST)
+.PHONY: all clean test $(BINLIST)
