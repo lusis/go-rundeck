@@ -5,10 +5,11 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"gopkg.in/jmcvetta/napping.v2"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+
+	"gopkg.in/jmcvetta/napping.v2"
 )
 
 func (rc *RundeckClient) Get(i *[]byte, path string, options interface{}) error {
@@ -86,7 +87,7 @@ func (client *RundeckClient) makeRequest(i *[]byte, payload []byte, method strin
 		return err
 	} else {
 		if r.Status() == 404 {
-			errormsg := fmt.Sprintf("No such item (%s)", r.Status)
+			errormsg := fmt.Sprintf("No such item (%s)", r.Status())
 			return errors.New(errormsg)
 		}
 		if r.Status() == 204 {
