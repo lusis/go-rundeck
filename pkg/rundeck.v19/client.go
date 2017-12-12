@@ -9,6 +9,10 @@ import (
 	napping "gopkg.in/jmcvetta/napping.v2"
 )
 
+// MaxRundeckVersion is the maximum version of the api this library supports
+// can be overridden
+const MaxRundeckVersion = "19"
+
 // ClientConfig represents a client configuration
 type ClientConfig struct {
 	BaseURL    string
@@ -17,6 +21,7 @@ type ClientConfig struct {
 	Username   string
 	Password   string
 	AuthMethod string
+	APIVersion string
 	Transport  *http.Transport
 	HTTPClient *http.Client
 }
@@ -65,6 +70,11 @@ func clientConfigFrom(from string) (c *ClientConfig) {
 			}
 		} else {
 			config.AuthMethod = "token"
+		}
+		if os.Getenv("RUNDECK_VERSION") == "" {
+			config.APIVersion = MaxRundeckVersion
+		} else {
+			config.APIVersion = os.Getenv("RUNDECK_VERSION")
 		}
 
 		if os.Getenv("RUNDECK_URL") == "" {
