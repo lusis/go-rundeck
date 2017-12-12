@@ -23,7 +23,7 @@ func main() {
 		Filename: *filename,
 		Format:   *format,
 		Dupe:     *dupe,
-		Uuid:     *uuid,
+		UUID:     *uuid,
 		Project:  *project,
 	}
 	jobid, err := client.ImportJob(importParams)

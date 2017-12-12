@@ -3,11 +3,11 @@ package rundeck
 import (
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"strconv"
 	"strings"
 )
 
+// Executions represents a collection of `Execution`
 type Executions struct {
 	Count      int64       `xml:"count,attr"`
 	Total      int64       `xml:"total,attr"`
@@ -16,6 +16,7 @@ type Executions struct {
 	Executions []Execution `xml:"execution"`
 }
 
+// ExecutionStep represents an execution step
 type ExecutionStep struct {
 	XMLName        xml.Name    `xml:"step"`
 	StepCtx        int64       `xml:"stepctx,attr"`
@@ -28,6 +29,7 @@ type ExecutionStep struct {
 	NodeStates     []NodeState `xml:"nodeStates>nodeState"`
 }
 
+// ExecutionsDeleted represents a deleted Executions
 type ExecutionsDeleted struct {
 	XMLName       xml.Name `xml:"deleteExecutions"`
 	RequestCount  int64    `xml:"requestCount,attr"`
@@ -43,42 +45,52 @@ type ExecutionsDeleted struct {
 	} `xml:"failed"`
 }
 
+// FailedExecutionDelete represents a failed execution delete
 type FailedExecutionDelete struct {
 	XMLName xml.Name `xml:"execution"`
 	ID      int64    `xml:"id,attr"`
 	Message string   `xml:"message,attr"`
 }
 
-func (c *RundeckClient) ListProjectExecutions(projectId string, options map[string]string) (Executions, error) {
+// ListProjectExecutions lists a projects executions
+func (c *Client) ListProjectExecutions(projectID string, options map[string]string) (Executions, error) {
 	var res []byte
-	options["project"] = projectId
+	options["project"] = projectID
 	var data Executions
-	err := c.Get(&res, "executions", options)
-	xml.Unmarshal(res, &data)
-	fmt.Printf("%s\n", string(res))
-	return data, err
+	if err := c.Get(&res, "executions", options); err != nil {
+		return data, err
+	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }
 
-func (c *RundeckClient) ListRunningExecutions(projectId string) (executions Executions, err error) {
+// ListRunningExecutions lists running executions
+func (c *Client) ListRunningExecutions(projectID string) (executions Executions, err error) {
 	options := make(map[string]string)
-	options["project"] = projectId
+	options["project"] = projectID
 	var res []byte
-	err = c.Get(&res, "executions/running", options)
-	xml.Unmarshal(res, &executions)
-	return executions, err
+	if err := c.Get(&res, "executions/running", options); err != nil {
+		return executions, err
+	}
+	xmlErr := xml.Unmarshal(res, &executions)
+	return executions, xmlErr
 }
 
-func (c *RundeckClient) DeleteExecutions(ids []string) (ExecutionsDeleted, error) {
+// DeleteExecutions deletes a list of executions by id
+func (c *Client) DeleteExecutions(ids []string) (ExecutionsDeleted, error) {
 	var res []byte
 	var data ExecutionsDeleted
 	opts := make(map[string]string)
 	opts["ids"] = strings.Join(ids, ",")
-	err := c.Post(&res, "executions/delete", nil, opts)
-	xml.Unmarshal(res, &data)
-	return data, err
+	if err := c.Post(&res, "executions/delete", nil, opts); err != nil {
+		return data, err
+	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }
 
-func (c *RundeckClient) DeleteAllExecutionsForProject(project string, max int64) (ExecutionsDeleted, error) {
+// DeleteAllExecutionsForProject deletes all executions for a project up to the max (default: 10)
+func (c *Client) DeleteAllExecutionsForProject(project string, max int64) (ExecutionsDeleted, error) {
 	var data ExecutionsDeleted
 	eopts := make(map[string]string)
 	eopts["max"] = strconv.FormatInt(max, 10)
@@ -97,7 +109,9 @@ func (c *RundeckClient) DeleteAllExecutionsForProject(project string, max int64)
 	opts := make(map[string]string)
 	opts["ids"] = strings.Join(toDelete, ",")
 	var res []byte
-	err = c.Post(&res, "executions/delete", nil, opts)
-	xml.Unmarshal(res, &data)
-	return data, err
+	if err := c.Post(&res, "executions/delete", nil, opts); err != nil {
+		return data, err
+	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }

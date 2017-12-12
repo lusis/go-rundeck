@@ -12,10 +12,10 @@ func TestHistory(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	defer xmlfile.Close()
+	defer func() { _ = xmlfile.Close() }()
 	xmlData, _ := ioutil.ReadAll(xmlfile)
 	var s Events
-	xml.Unmarshal(xmlData, &s)
+	_ = xml.Unmarshal(xmlData, &s)
 
 	intexpects(s.Count, 2, t)
 	intexpects(s.Total, 630, t)

@@ -13,27 +13,27 @@ import (
 )
 
 // Get performs an authenticated HTTP GET
-func (rc *RundeckClient) Get(i *[]byte, path string, options interface{}) error {
+func (rc *Client) Get(i *[]byte, path string, options interface{}) error {
 	return rc.makeRequest(i, nil, "GET", path, options)
 }
 
 // Delete performs an authenticated HTTP DELETE
-func (rc *RundeckClient) Delete(path string, options interface{}) error {
+func (rc *Client) Delete(path string, options interface{}) error {
 	var b []byte
 	return rc.makeRequest(&b, nil, "DELETE", path, options)
 }
 
 // Post performs an authenticated HTTP POST
-func (rc *RundeckClient) Post(i *[]byte, path string, data []byte, options interface{}) error {
+func (rc *Client) Post(i *[]byte, path string, data []byte, options interface{}) error {
 	return rc.makeRequest(i, data, "POST", path, options)
 }
 
 // Put performs an authenticated HTTP Put
-func (rc *RundeckClient) Put(i *[]byte, path string, data []byte, options interface{}) error {
+func (rc *Client) Put(i *[]byte, path string, data []byte, options interface{}) error {
 	return rc.makeRequest(i, data, "PUT", path, options)
 }
 
-func (rc *RundeckClient) makeRequest(i *[]byte, payload []byte, method string, path string, params interface{}) error {
+func (rc *Client) makeRequest(i *[]byte, payload []byte, method string, path string, params interface{}) error {
 	headers := http.Header{}
 	qs := url.Values{}
 	if params != nil {
@@ -114,7 +114,7 @@ func (rc *RundeckClient) makeRequest(i *[]byte, payload []byte, method string, p
 		return nil
 	}
 	if (r.Status() < 200) || (r.Status() > 299) {
-		var data RundeckError
+		var data Error
 		err := xml.Unmarshal([]byte(r.RawText()), &data)
 		if err != nil {
 			return err

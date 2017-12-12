@@ -54,11 +54,11 @@ func main() {
 	flag.Var(&myparams, "q", "key=value query parameter. Specify multiple times if neccessary")
 	flag.Usage = func() { fmt.Printf("%s", usage) }
 	flag.Parse()
-	query_opts := make(map[string]string)
-	paramConvert(myparams, &query_opts)
+	queryOpts := make(map[string]string)
+	paramConvert(myparams, &queryOpts)
 	client := rundeck.NewClientFromEnv()
 	var data []byte
-	err := client.Get(&data, *path, query_opts)
+	err := client.Get(&data, *path, queryOpts)
 	if err != nil {
 		fmt.Printf(err.Error())
 		os.Exit(1)

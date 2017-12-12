@@ -12,17 +12,17 @@ func TestSystemInfo(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	defer xmlfile.Close()
+	defer func() { _ = xmlfile.Close() }()
 	xmlData, _ := ioutil.ReadAll(xmlfile)
 	var s SystemInfo
-	xml.Unmarshal(xmlData, &s)
+	_ = xml.Unmarshal(xmlData, &s)
 
 	strexpects(s.Timestamp.Epoch, "1424757528120", t)
 	strexpects(s.Timestamp.Unit, "ms", t)
 	strexpects(s.Rundeck.Version, "2.4.2", t)
 	strexpects(s.Rundeck.Build, "2.4.2-1", t)
 	strexpects(s.Rundeck.Node, "rundeck.domain", t)
-	intexpects(s.Rundeck.ApiVersion, 12, t)
+	intexpects(s.Rundeck.APIVersion, 12, t)
 	strexpects(s.Rundeck.ServerUUID, "", t)
 	strexpects(s.OS.Arch, "amd64", t)
 	strexpects(s.OS.Name, "Linux", t)

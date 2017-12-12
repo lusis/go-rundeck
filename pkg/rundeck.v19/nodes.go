@@ -2,10 +2,12 @@ package rundeck
 
 import "encoding/xml"
 
+// Nodes is a collection of `Node`
 type Nodes struct {
 	Nodes []Node `xml:"node"`
 }
 
+// Node represents a node
 // TODO: Convert to a Basic Node that just has "name,attr"
 type Node struct {
 	XMLName     xml.Name `xml:"node"`
@@ -20,6 +22,7 @@ type Node struct {
 	Username    string   `xml:"username,attr,omitempty"`
 }
 
+// NodeState represents a node's state
 type NodeState struct {
 	XMLName        xml.Name `xml:"nodeState"`
 	Name           string   `xml:"name,attr"`
@@ -29,28 +32,30 @@ type NodeState struct {
 	ExecutionState string   `xml:"executionState"`
 }
 
+// NodeStep represents a node step
 type NodeStep struct {
 	XMLName        xml.Name `xml:"step"`
 	StepCtx        int64    `xml:"stepctx"`
 	ExecutionState string   `xml:"executionState"`
 }
 
+// NodeWithSteps represents a node with its steps
 type NodeWithSteps struct {
 	XMLName xml.Name   `xml:"node"`
 	Name    string     `xml:"name,attr"`
 	Steps   []NodeStep `xml:"steps>step"`
 }
 
-func (c *RundeckClient) ListNodes(projectId string) (Nodes, error) {
+// ListNodes lists nodes
+func (c *Client) ListNodes(projectID string) (Nodes, error) {
 	options := make(map[string]string)
-	options["project"] = projectId
+	options["project"] = projectID
 	var res []byte
 	var data Nodes
 	err := c.Get(&res, "resources", options)
 	if err != nil {
 		return data, err
-	} else {
-		xml.Unmarshal(res, &data)
-		return data, nil
 	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }

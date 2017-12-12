@@ -2,6 +2,7 @@ package rundeck
 
 import "encoding/xml"
 
+// Events represents a collection of `Event`
 type Events struct {
 	XMLName xml.Name `xml:"events"`
 	Count   int64    `xml:"count,attr"`
@@ -11,6 +12,7 @@ type Events struct {
 	Events  []Event  `xml:"event"`
 }
 
+// Event represents an Event
 type Event struct {
 	XMLName     xml.Name `xml:"event"`
 	StartTime   string   `xml:"starttime,attr"`
@@ -39,12 +41,15 @@ type Event struct {
 	} `xml:"execution,omitempty"`
 }
 
-func (c *RundeckClient) GetHistory(project string) (Events, error) {
+// GetHistory returns the history for a project
+func (c *Client) GetHistory(project string) (Events, error) {
 	u := make(map[string]string)
 	u["project"] = project
 	var data Events
 	var res []byte
-	err := c.Get(&res, "history", u)
-	xml.Unmarshal(res, &data)
-	return data, err
+	if err := c.Get(&res, "history", u); err != nil {
+		return data, err
+	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }

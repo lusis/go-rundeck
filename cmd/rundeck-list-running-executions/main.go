@@ -41,8 +41,8 @@ func main() {
 			}
 			table.Render()
 		} else if *format == "csv" {
-			if *header == true {
-				fmt.Printf("ID%s%Status%sUser", *sep)
+			if *header {
+				fmt.Printf("ID%sStatus%sUser", *sep, *sep)
 			}
 			for _, d := range res.Executions {
 				fmt.Printf("%s%s%s%s%s\n", d.ID, *sep, d.Status, *sep, d.User)

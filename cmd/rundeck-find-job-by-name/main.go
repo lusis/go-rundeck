@@ -11,14 +11,14 @@ import (
 )
 
 var (
-	jobid     = kingpin.Arg("jobname", "").Required().String()
 	projectid = kingpin.Arg("projectname", "").Required().String()
+	jobid     = kingpin.Arg("jobname", "").Required().Strings()
 )
 
 func main() {
 	kingpin.Parse()
 	client := rundeck.NewClientFromEnv()
-	data, err := client.FindJobByName(*jobid, *projectid)
+	data, err := client.FindJobByName(strings.Join(*jobid, " "), *projectid)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 	} else {
@@ -40,9 +40,7 @@ func main() {
 			}
 			steps = append(steps, stepDescription)
 		}
-		for _, n := range scope.NodeFilters.Filter {
-			nodefilters = append(nodefilters, n)
-		}
+		nodefilters = append(nodefilters, scope.NodeFilters.Filter...)
 		table.Append([]string{scope.ID, scope.Name, scope.Description, scope.Group, strings.Join(steps, "\n"), strings.Join(nodefilters, "\n")})
 		table.Render()
 	}

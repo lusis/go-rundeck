@@ -11,7 +11,7 @@ type ExecutionID struct {
 }
 
 // RunAdhoc runs an adhoc job
-func (c *RundeckClient) RunAdhoc(projectID string, exec string, nodeFilter string) (ExecutionID, error) {
+func (c *Client) RunAdhoc(projectID string, exec string, nodeFilter string) (ExecutionID, error) {
 	options := make(map[string]string)
 	options["project"] = projectID
 	options["exec"] = exec

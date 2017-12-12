@@ -27,20 +27,19 @@ type ACLListContents struct {
 }
 
 // GetSystemACLPolicies gets the system ACL Policies
-func (c *RundeckClient) GetSystemACLPolicies() (data ACLPolicies, err error) {
+func (c *Client) GetSystemACLPolicies() (data ACLPolicies, err error) {
 	u := make(map[string]string)
 	var res []byte
 	err = c.Get(&res, "system/acl/", u)
 	if err != nil {
 		return data, err
-	} else {
-		xml.Unmarshal(res, &data)
-		return data, nil
 	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }
 
 // CreateSystemACLPolicy creates a system acl policy
-func (c *RundeckClient) CreateSystemACLPolicy(name string, contents []byte) error {
+func (c *Client) CreateSystemACLPolicy(name string, contents []byte) error {
 	var res []byte
 	u := make(map[string]string)
 	u["content_type"] = "application/yaml"
