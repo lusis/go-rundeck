@@ -2,6 +2,7 @@ package rundeck
 
 import "encoding/xml"
 
+// Execution represents a job execution
 type Execution struct {
 	XMLName         xml.Name `xml:"execution"`
 	ID              string   `xml:"id,attr"`
@@ -20,10 +21,12 @@ type Execution struct {
 	FailedNodes     Nodes    `xml:"failedNodes,omitempty"`
 }
 
+// ExecutionDateTime represents an execution timestamp in unixtime format
 type ExecutionDateTime struct {
 	UnixTime int64 `xml:"unixtime,attr"`
 }
 
+// ExecutionOutput represents the output of an execution
 type ExecutionOutput struct {
 	XMLName        xml.Name               `xml:"output"`
 	ID             int64                  `xml:"id"`
@@ -38,10 +41,12 @@ type ExecutionOutput struct {
 	Entries        ExecutionOutputEntries `xml:"entries"`
 }
 
+// ExecutionOutputEntries is a collection of `ExecutionOutputEntry`
 type ExecutionOutputEntries struct {
 	Entry []ExecutionOutputEntry `xml:"entry"`
 }
 
+// ExecutionOutputEntry represents a single execution output entry
 type ExecutionOutputEntry struct {
 	XMLName      xml.Name
 	Time         string `xml:"time,attr"`
@@ -54,10 +59,11 @@ type ExecutionOutputEntry struct {
 	Node         string `xml:"node,attr"`
 }
 
+// ExecutionState represents an execution state
 type ExecutionState struct {
 	XMLName     xml.Name        `xml:"result"`
 	Success     bool            `xml:"success,attr"`
-	ApiVersion  int64           `xml:"apiversion,attr"`
+	APIVersion  int64           `xml:"apiversion,attr"`
 	StartTime   string          `xml:"executionState>startTime"`
 	StepCount   int64           `xml:"executionState>stepCount"`
 	AllNodes    []Node          `xml:"executionState>allNodes>nodes>node,omitempty"`
@@ -69,10 +75,11 @@ type ExecutionState struct {
 	Nodes       []NodeWithSteps `xml:"executionState>nodes>node"`
 }
 
-func (c *RundeckClient) GetExecution(executionId string) (exec Execution, err error) {
+// GetExecution returns the details of a job execution
+func (c *Client) GetExecution(executionID string) (exec Execution, err error) {
 	var res []byte
 	var execs Executions
-	err = c.Get(&res, "execution/"+executionId, nil)
+	err = c.Get(&res, "execution/"+executionID, nil)
 	xmlerr := xml.Unmarshal(res, &execs)
 	if xmlerr != nil {
 		return exec, xmlerr
@@ -80,44 +87,46 @@ func (c *RundeckClient) GetExecution(executionId string) (exec Execution, err er
 	return execs.Executions[0], err
 }
 
-func (c *RundeckClient) GetExecutionState(executionId string) (ExecutionState, error) {
+// GetExecutionState returns the state of an execution
+func (c *Client) GetExecutionState(executionID string) (ExecutionState, error) {
 	u := make(map[string]string)
 	var res []byte
 	var data ExecutionState
-	err := c.Get(&res, "execution/"+executionId+"/state", u)
-	xml.Unmarshal(res, &data)
+	err := c.Get(&res, "execution/"+executionID+"/state", u)
+	if xmlErr := xml.Unmarshal(res, &data); xmlErr != nil {
+		return data, xmlErr
+	}
 	return data, err
 }
 
-func (c *RundeckClient) GetExecutionOutput(executionId string) (ExecutionOutput, error) {
+// GetExecutionOutput returns the output of an execution
+func (c *Client) GetExecutionOutput(executionID string) (ExecutionOutput, error) {
 	u := make(map[string]string)
 	var res []byte
 	var data ExecutionOutput
-	err := c.Get(&res, "execution/"+executionId+"/output", u)
-	xml.Unmarshal(res, &data)
+	err := c.Get(&res, "execution/"+executionID+"/output", u)
+	if xmlErr := xml.Unmarshal(res, &data); xmlErr != nil {
+		return data, xmlErr
+	}
 	return data, err
 }
 
-func (c *RundeckClient) DeleteExecution(id string) error {
+// DeleteExecution deletes an execution
+func (c *Client) DeleteExecution(id string) error {
 	return c.Delete("execution/"+id, nil)
 }
 
-func (c *RundeckClient) DisableExecution(id string) error {
+// DisableExecution disables an execution
+func (c *Client) DisableExecution(id string) error {
 	var res []byte
 	err := c.Post(&res, "job/"+id+"/execution/disable", nil, nil)
-	if err != nil {
-		return err
-	} else {
-		return nil
-	}
+	return err
+
 }
 
-func (c *RundeckClient) EnableExecution(id string) error {
+// EnableExecution enables an execution
+func (c *Client) EnableExecution(id string) error {
 	var res []byte
 	err := c.Post(&res, "job/"+id+"/execution/enable", nil, nil)
-	if err != nil {
-		return err
-	} else {
-		return nil
-	}
+	return err
 }

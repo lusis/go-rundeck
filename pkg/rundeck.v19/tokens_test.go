@@ -12,10 +12,10 @@ func TestTokens(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	defer xmlfile.Close()
+	defer func() { _ = xmlfile.Close() }()
 	xmlData, _ := ioutil.ReadAll(xmlfile)
 	var s Tokens
-	xml.Unmarshal(xmlData, &s)
+	_ = xml.Unmarshal(xmlData, &s)
 	intexpects(int64(len(s.Tokens)), s.Count, t)
 	if &s.AllUsers == nil {
 		t.Errorf("Missing AllUsers field")
@@ -32,10 +32,10 @@ func TestUserToken(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	defer xmlfile.Close()
+	defer func() { _ = xmlfile.Close() }()
 	xmlData, _ := ioutil.ReadAll(xmlfile)
 	var s Tokens
-	xml.Unmarshal(xmlData, &s)
+	_ = xml.Unmarshal(xmlData, &s)
 	intexpects(int64(len(s.Tokens)), s.Count, t)
 	usertoken := s.Tokens[0]
 	strexpects(*s.User, usertoken.User, t)

@@ -26,8 +26,8 @@ type ClientConfig struct {
 	HTTPClient *http.Client
 }
 
-// RundeckClient represents a rundeck client
-type RundeckClient struct {
+// Client represents a rundeck client
+type Client struct {
 	Client     *napping.Session
 	HTTPClient *http.Client
 	Config     *ClientConfig
@@ -35,7 +35,7 @@ type RundeckClient struct {
 }
 
 // NewClient creates a new client from the provided `ClientConfig`
-func NewClient(config *ClientConfig) (c RundeckClient) {
+func NewClient(config *ClientConfig) (c Client) {
 	verifySSL := func() bool {
 		if !config.VerifySSL {
 			return false
@@ -53,7 +53,7 @@ func NewClient(config *ClientConfig) (c RundeckClient) {
 	s := napping.Session{
 		Client: config.HTTPClient,
 	}
-	return RundeckClient{Client: &s, Config: config}
+	return Client{Client: &s, Config: config}
 }
 
 func clientConfigFrom(from string) (c *ClientConfig) {
@@ -94,7 +94,7 @@ func clientConfigFrom(from string) (c *ClientConfig) {
 }
 
 // NewClientFromEnv returns a new client from provided env vars
-func NewClientFromEnv() (c RundeckClient) {
+func NewClientFromEnv() (c Client) {
 	config := clientConfigFrom("environment")
 	client := NewClient(config)
 	return client

@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	path             = kingpin.Arg("path", "path to dump (e.g. executions/12234)").Required().String()
-	query_parameters = kingpin.Flag("query_params", "key=value query parameter. specify multiple times if neccessary").Strings()
-	content_type     = kingpin.Flag("content_type", "an alternate content type if neccessary").Default("application/xml").String()
+	path            = kingpin.Arg("path", "path to dump (e.g. executions/12234)").Required().String()
+	queryParameters = kingpin.Flag("query_params", "key=value query parameter. specify multiple times if neccessary").Strings()
+	contentType     = kingpin.Flag("content_type", "an alternate content type if neccessary").Default("application/xml").String()
 )
 
 func buildParams(p *map[string]string, value string) error {
@@ -29,11 +29,11 @@ func main() {
 	kingpin.Parse()
 	client := rundeck.NewClientFromEnv()
 	var data []byte
-	if content_type != nil {
-		myParams["content_type"] = *content_type
+	if contentType != nil {
+		myParams["content_type"] = *contentType
 	}
 
-	for _, param := range *query_parameters {
+	for _, param := range *queryParameters {
 		e := buildParams(&myParams, param)
 		if e != nil {
 			fmt.Printf(e.Error())

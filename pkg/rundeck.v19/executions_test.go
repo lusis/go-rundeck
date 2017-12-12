@@ -2,10 +2,11 @@ package rundeck
 
 import (
 	"encoding/xml"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestDeletedExecutionsOutput(t *testing.T) {
@@ -13,7 +14,7 @@ func TestDeletedExecutionsOutput(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	defer xmlfile.Close()
+	defer func() { _ = xmlfile.Close() }()
 	xmlData, _ := ioutil.ReadAll(xmlfile)
 	var s ExecutionsDeleted
 	err = xml.Unmarshal(xmlData, &s)

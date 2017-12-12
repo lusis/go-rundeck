@@ -2,10 +2,11 @@ package rundeck
 
 import (
 	"encoding/xml"
-	"github.com/stretchr/testify/assert"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestJobOne(t *testing.T) {
@@ -13,10 +14,10 @@ func TestJobOne(t *testing.T) {
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	defer xmlfile.Close()
+	defer func() { _ = xmlfile.Close() }()
 	xmlData, _ := ioutil.ReadAll(xmlfile)
 	var s JobList
-	xml.Unmarshal(xmlData, &s)
+	_ = xml.Unmarshal(xmlData, &s)
 	scope := s.Job
 	options := *scope.Context.Options
 	assert.Len(t, options, 4, "Should have 4 options")
@@ -39,10 +40,10 @@ func TestJobs(t *testing.T) {
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
-	defer xmlfile.Close()
+	defer func() { _ = xmlfile.Close() }()
 	xmlData, _ := ioutil.ReadAll(xmlfile)
 	var s Jobs
-	xml.Unmarshal(xmlData, &s)
+	_ = xml.Unmarshal(xmlData, &s)
 
 	intexpects(s.Count, 3, t)
 	intexpects(int64(len(s.Jobs)), s.Count, t)

@@ -40,9 +40,7 @@ func main() {
 			}
 			steps = append(steps, stepDescription)
 		}
-		for _, n := range scope.NodeFilters.Filter {
-			nodefilters = append(nodefilters, n)
-		}
+		nodefilters = append(nodefilters, scope.NodeFilters.Filter...)
 		table.Append([]string{scope.ID, scope.Name, scope.Description, scope.Group, strings.Join(steps, "\n"), strings.Join(nodefilters, "\n")})
 		table.Render()
 	}

@@ -36,7 +36,7 @@ func main() {
 				table.Append([]string{
 					d.Name,
 					d.Description,
-					d.Url,
+					d.URL,
 				})
 			}
 			table.Render()
@@ -45,11 +45,11 @@ func main() {
 				fmt.Printf("%s\n", d.Name)
 			}
 		} else if *format == "csv" {
-			if *header == true {
+			if *header {
 				fmt.Printf("%s%s%s%s%s\n", "NAME", *sep, "DESCRIPTION", *sep, "URL")
 			}
 			for _, d := range data.Projects {
-				fmt.Printf("%s%s%s%s%s\n", d.Name, *sep, d.Description, *sep, d.Url)
+				fmt.Printf("%s%s%s%s%s\n", d.Name, *sep, d.Description, *sep, d.URL)
 			}
 		} else {
 			fmt.Printf("Unknown output format: %s\n", *format)

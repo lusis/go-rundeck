@@ -26,7 +26,7 @@ type Job struct {
 	Index int    `xml:"index,attr,omitempty"`
 	Href  string `xml:"href,attr,omitempty"`
 	Error string `xml:"error,omitempty"`
-	Url   string `xml:"url,omitempty"`
+	URL   string `xml:"url,omitempty"`
 }
 
 // JobInfo represents a rundeck jobinfo
@@ -55,7 +55,7 @@ type JobImportResultJob struct {
 	Index   int      `xml:"index,attr,omitempty"`
 	Href    string   `xml:"href,attr,omitempty"`
 	Error   string   `xml:"error,omitempty"`
-	Url     string   `xml:"url,omitempty"`
+	URL     string   `xml:"url,omitempty"`
 }
 
 // JobImportResult represents an imported job result
@@ -168,7 +168,7 @@ type ScriptStep struct {
 	Script            *string `xml:"script,omitempty"`
 	ScriptArgs        *string `xml:"scriptargs,omitempty"`
 	ScriptFile        *string `xml:"scriptfile,omitempty"`
-	ScriptUrl         *string `xml:"scripturl,omitempty"`
+	ScriptURL         *string `xml:"scripturl,omitempty"`
 	ScriptInterpreter *string `xml:"scriptinterpreter,omitempty"`
 }
 
@@ -266,48 +266,48 @@ type ImportParams struct {
 	Filename string
 	Format   string
 	Dupe     string
-	Uuid     string
+	UUID     string
 	Project  string
 }
 
 // GetJob gets a job
-func (c *RundeckClient) GetJob(id string) (JobList, error) {
+func (c *Client) GetJob(id string) (JobList, error) {
 	u := make(map[string]string)
 	var res []byte
 	var data JobList
-	err := c.Get(&res, "job/"+id, u)
-	xml.Unmarshal(res, &data)
-	return data, err
+	if err := c.Get(&res, "job/"+id, u); err != nil {
+		return data, err
+	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }
 
-// GetJobInfo gets a jobs detail
-func (c *RundeckClient) GetJobinfo(id string) (JobInfo, error) {
+// GetJobinfo gets a jobs detail
+func (c *Client) GetJobinfo(id string) (JobInfo, error) {
 	u := make(map[string]string)
 	var res []byte
 	var data JobInfo
 	err := c.Get(&res, "job/"+id+"/info", u)
 	if err != nil {
 		return data, err
-	} else {
-		xml.Unmarshal(res, &data)
-		return data, nil
 	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }
 
 // DeleteJob deletes a job
-func (c *RundeckClient) DeleteJob(id string) error {
+func (c *Client) DeleteJob(id string) error {
 	return c.Delete("job/"+id, nil)
 }
 
 // ExportJob exports a job
-func (c *RundeckClient) ExportJob(id string, format string) (s string, e error) {
+func (c *Client) ExportJob(id string, format string) (s string, e error) {
 	if format != "xml" && format != "yaml" {
 		errString := fmt.Sprintf("Unknown/unsupported format \"%s\"", format)
 		return s, errors.New(errString)
 	}
 	var res []byte
-	var opts map[string]string
-	opts = make(map[string]string)
+	opts := make(map[string]string)
 	opts["format"] = format
 	err := c.Get(&res, "job/"+id, opts)
 	if err != nil {
@@ -320,73 +320,78 @@ func (c *RundeckClient) ExportJob(id string, format string) (s string, e error) 
 }
 
 // ImportJob imports a job
-func (c *RundeckClient) ImportJob(j ImportParams) (string, error) {
+func (c *Client) ImportJob(j ImportParams) (string, error) {
 	var res []byte
 	var jobRes JobImportResult
-	var opts map[string]string
-	opts = make(map[string]string)
+	opts := make(map[string]string)
 	opts["project"] = j.Project
 	opts["format"] = j.Format
 	opts["dupeOption"] = j.Dupe
-	opts["uuidOption"] = j.Uuid
+	opts["uuidOption"] = j.UUID
 
 	jobfile, err := os.Open(j.Filename)
 	if err != nil {
 		return "", err
 	}
-	defer jobfile.Close()
-	data, _ := ioutil.ReadAll(jobfile)
-	err = c.Post(&res, "jobs/import", data, opts)
-	xml.Unmarshal(res, &jobRes)
-	if err != nil {
-		return "", err
-	} else {
-		if jobRes.Skipped.Count > 0 {
-			var errString []string
-			for _, e := range jobRes.Skipped.Jobs {
-				errString = append(errString, e.Error)
-			}
-			return "", errors.New(strings.Join(errString, "\n"))
-		}
-		if jobRes.Failed.Count > 0 {
-			var errString []string
-			for _, e := range jobRes.Failed.Jobs {
-				errString = append(errString, e.Error)
-			}
-			return "", errors.New(strings.Join(errString, "\n"))
-		}
-		retStr := fmt.Sprintf("%s (ID: %s)", jobRes.Succeeded.Jobs[0].Name, jobRes.Succeeded.Jobs[0].ID)
-		return retStr, nil
+	defer func() { _ = jobfile.Close() }()
+	data, readErr := ioutil.ReadAll(jobfile)
+	if readErr != nil {
+		return "", readErr
 	}
+	if postErr := c.Post(&res, "jobs/import", data, opts); postErr != nil {
+		return "", postErr
+	}
+	xmlErr := xml.Unmarshal(res, &jobRes)
+	if xmlErr != nil {
+		return "", err
+	}
+	if jobRes.Skipped.Count > 0 {
+		var errString []string
+		for _, e := range jobRes.Skipped.Jobs {
+			errString = append(errString, e.Error)
+		}
+		return "", errors.New(strings.Join(errString, "\n"))
+	}
+	if jobRes.Failed.Count > 0 {
+		var errString []string
+		for _, e := range jobRes.Failed.Jobs {
+			errString = append(errString, e.Error)
+		}
+		return "", errors.New(strings.Join(errString, "\n"))
+	}
+	retStr := fmt.Sprintf("%s (ID: %s)", jobRes.Succeeded.Jobs[0].Name, jobRes.Succeeded.Jobs[0].ID)
+	return retStr, nil
 }
 
 // GetRequiredOpts returns the required options for a job
-func (c *RundeckClient) GetRequiredOpts(j string) (map[string]string, error) {
+func (c *Client) GetRequiredOpts(j string) (map[string]string, error) {
 	u := make(map[string]string)
 	var res []byte
 	var data JobList
 	err := c.Get(&res, "job/"+j, u)
 	if err != nil {
 		return u, err
-	} else {
-		xml.Unmarshal(res, &data)
-		if data.Job.Context.Options != nil {
-			for _, o := range *data.Job.Context.Options {
-				if o.Required {
-					if o.DefaultValue == "" {
-						u[o.Name] = "<no default>"
-					} else {
-						u[o.Name] = o.DefaultValue
-					}
+	}
+	xmlErr := xml.Unmarshal(res, &data)
+	if xmlErr != nil {
+		return u, xmlErr
+	}
+	if data.Job.Context.Options != nil {
+		for _, o := range *data.Job.Context.Options {
+			if o.Required {
+				if o.DefaultValue == "" {
+					u[o.Name] = "<no default>"
+				} else {
+					u[o.Name] = o.DefaultValue
 				}
 			}
 		}
-		return u, nil
 	}
+	return u, nil
 }
 
 // RunJob runs a job
-func (c *RundeckClient) RunJob(id string, options RunOptions) (Executions, error) {
+func (c *Client) RunJob(id string, options RunOptions) (Executions, error) {
 	u := make(map[string]string)
 	u["content_type"] = "application/json"
 	var res []byte
@@ -399,48 +404,44 @@ func (c *RundeckClient) RunJob(id string, options RunOptions) (Executions, error
 	err = c.Post(&res, "job/"+id+"/run", opts, u)
 	if err != nil {
 		return data, err
-	} else {
-		xml.Unmarshal(res, &data)
-		return data, nil
 	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }
 
 // FindJobByName runs a job by name
-func (c *RundeckClient) FindJobByName(name string, project string) (*JobDetails, error) {
+func (c *Client) FindJobByName(name string, project string) (*JobDetails, error) {
 	var job *JobDetails
-	var err error
 	jobs, err := c.ListJobs(project)
 	if err != nil {
-		//
-	} else {
-		if len(jobs.Jobs) > 0 {
-			for _, d := range jobs.Jobs {
-				if d.Name == name {
-					joblist, err := c.GetJob(d.ID)
-					if err != nil {
-						//
-					} else {
-						job = &joblist.Job
-					}
-				}
-			}
-		} else {
-			err = errors.New("No matches found")
-		}
+		return job, err
 	}
-	return job, err
+	if len(jobs.Jobs) > 0 {
+		for _, d := range jobs.Jobs {
+			if d.Name == name {
+				joblist, err := c.GetJob(d.ID)
+				if err != nil {
+					return job, err
+				}
+				job = &joblist.Job
+			}
+		}
+	} else {
+		err := errors.New("No matches found")
+		return job, err
+	}
+	return job, nil
 }
 
 // ListJobs lists the jobs for a project
-func (c *RundeckClient) ListJobs(projectId string) (Jobs, error) {
+func (c *Client) ListJobs(projectID string) (Jobs, error) {
 	var res []byte
 	var data Jobs
-	url := fmt.Sprintf("project/%s/jobs", projectId)
+	url := fmt.Sprintf("project/%s/jobs", projectID)
 	err := c.Get(&res, url, nil)
 	if err != nil {
 		return data, err
-	} else {
-		xml.Unmarshal(res, &data)
-		return data, nil
 	}
+	xmlErr := xml.Unmarshal(res, &data)
+	return data, xmlErr
 }

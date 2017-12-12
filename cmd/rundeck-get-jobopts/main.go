@@ -27,8 +27,7 @@ func main() {
 		table.SetAutoWrapText(false)
 		var options []string
 		for _, d := range *scope.Context.Options {
-			var option string
-			option = fmt.Sprintf("%s", d.Name)
+			option := d.Name
 			if d.Required {
 				option = fmt.Sprintf("%s (required)", option)
 			}

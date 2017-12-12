@@ -4,10 +4,12 @@ import (
 	"encoding/xml"
 )
 
+// Resources is a collection of `Resource`
 type Resources struct {
 	Resources []Resource `xml:"resource"`
 }
 
+// Resource represents a resource
 type Resource struct {
 	XMLName      xml.Name     `xml:"resource"`
 	Path         string       `xml:"path,attr"`
@@ -18,12 +20,14 @@ type Resource struct {
 	Contents     Contents     `xml:"contents,omitempty"`
 }
 
+// Contents represents contents
 type Contents struct {
 	XMLName   xml.Name   `xml:"contents"`
 	Count     int64      `xml:"count"`
 	Resources []Resource `xml:"resource"`
 }
 
+// ResourceMeta represents resource metadata
 type ResourceMeta struct {
 	XMLName             xml.Name `xml:"resource-meta"`
 	ContentType         string   `xml:"Rundeck-content-type"`
