@@ -11,14 +11,14 @@ import (
 )
 
 var (
-	jobid     = kingpin.Arg("jobname", "").Required().String()
 	projectid = kingpin.Arg("projectname", "").Required().String()
+	jobid     = kingpin.Arg("jobname", "").Required().Strings()
 )
 
 func main() {
 	kingpin.Parse()
 	client := rundeck.NewClientFromEnv()
-	data, err := client.FindJobByName(*jobid, *projectid)
+	data, err := client.FindJobByName(strings.Join(*jobid, " "), *projectid)
 	if err != nil {
 		fmt.Printf("%s\n", err)
 	} else {
