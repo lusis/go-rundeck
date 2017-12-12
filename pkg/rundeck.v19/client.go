@@ -73,6 +73,8 @@ func clientConfigFrom(from string) (c *ClientConfig) {
 		}
 		if os.Getenv("RUNDECK_VERSION") == "" {
 			config.APIVersion = MaxRundeckVersion
+		} else {
+			config.APIVersion = os.Getenv("RUNDECK_VERSION")
 		}
 
 		if os.Getenv("RUNDECK_URL") == "" {
