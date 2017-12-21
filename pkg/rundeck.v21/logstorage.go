@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 )
 
-// LogStorage represents log storage configuration
+// LogStorage represents log storage
 type LogStorage struct {
 	XMLName         xml.Name `xml:"logStorage"`
 	Enabled         bool     `xml:"enabled,attr"`
@@ -17,15 +17,13 @@ type LogStorage struct {
 	MissingCount    int64    `xml:"missingCount"`
 }
 
-// GetLogStorage returns the log storage configuration
-func (c *RundeckClient) GetLogStorage() (data LogStorage, err error) {
-	u := make(map[string]string)
-	var res []byte
-	err = c.Get(&res, "system/logstorage", u)
+// GetLogStorage gets the logstorage
+func (c *Client) GetLogStorage() (*LogStorage, error) {
+	ls := &LogStorage{}
+	data, err := c.httpGet("system/logstorage", requestXML())
 	if err != nil {
-		return data, err
-	} else {
-		xml.Unmarshal(res, &data)
-		return data, nil
+		return nil, err
 	}
+	xmlErr := xml.Unmarshal(data, &ls)
+	return ls, xmlErr
 }

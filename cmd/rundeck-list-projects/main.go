@@ -7,7 +7,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
+	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
 )
 
 var (

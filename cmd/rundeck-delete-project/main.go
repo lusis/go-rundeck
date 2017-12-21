@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
+	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 

@@ -12,6 +12,9 @@ RUN curl -L http://dl.bintray.com/rundeck/rundeck-deb/rundeck-2.10.1-1-GA.deb -o
 ADD rundeckd.init /etc/init.d/rundeckd
 ADD admin.aclpolicy /etc/rundeck/admin.aclpolicy
 ADD apitoken.aclpolicy /etc/rundeck/apitoken.aclpolicy
+ADD realm.properties /etc/rundeck/realm.properties
+ADD rundeckdb.mv.db /var/lib/rundeck/data/rundeckdb.mv.db
+RUN chown rundeck:rundeck /var/lib/rundeck/data/rundeckdb.mv.db
 RUN chmod +x /etc/init.d/rundeckd
 
 CMD /etc/init.d/rundeckd foreground
