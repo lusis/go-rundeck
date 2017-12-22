@@ -428,7 +428,7 @@ func (c *Client) FindJobByName(name string, project string) (*JobDetails, error)
 func (c *Client) ListJobs(projectID string) (*Jobs, error) {
 	data := &Jobs{}
 	url := fmt.Sprintf("project/%s/jobs", projectID)
-	res, err := c.httpGet(url)
+	res, err := c.httpGet(url, requestXML())
 	if err != nil {
 		return nil, err
 	}
