@@ -1,0 +1,5 @@
+#!/bin/bash
+go get github.com/axw/gocov/gocov
+go get gopkg.in/matm/v1/gocov-html
+go get github.com/AlekSi/gocov-xml
+gocov test . | gocov report
