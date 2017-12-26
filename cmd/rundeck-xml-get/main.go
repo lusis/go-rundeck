@@ -63,6 +63,7 @@ func main() {
 		fmt.Printf(err.Error())
 		os.Exit(1)
 	} else {
+		fmt.Println("**** THIS TOOL IS DEPRECATED. PLEASE USE rundeck-http-get instead *****")
 		fmt.Printf("%s\n", string(data))
 	}
 }

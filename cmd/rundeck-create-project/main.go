@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
+	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
@@ -15,7 +16,10 @@ var (
 
 func main() {
 	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
+	client, clientErr := rundeck.NewClientFromEnv()
+	if clientErr != nil {
+		log.Fatal(clientErr.Error())
+	}
 
 	newProject := rundeck.NewProject{
 		Name: *project,
