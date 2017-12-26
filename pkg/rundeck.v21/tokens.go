@@ -4,7 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+
+	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
+
+// Token is a token
+type Token struct {
+	responses.TokenResponse
+}
 
 // TokenOption is a type for options in creating new tokens
 type TokenOption func(*Token) error
@@ -23,18 +30,6 @@ func TokenRoles(roles ...string) TokenOption {
 		t.Roles = append(t.Roles, roles...)
 		return nil
 	}
-}
-
-// Token represents a user and token
-type Token struct {
-	ID         string   `json:"id,omitempty"`
-	User       string   `json:"user,omitempty"`
-	Token      string   `json:"token,omitempty"`
-	Creator    string   `json:"creator,omitempty"`
-	Expiration string   `json:"expiration,omitempty"`
-	Roles      []string `json:"roles,omitempty"`
-	Expired    bool     `json:"expired,omitempty"`
-	Duration   string   `json:"duration,omitempty"`
 }
 
 // GetTokens gets all tokens

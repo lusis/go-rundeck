@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
+	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
 	"github.com/olekukonko/tablewriter"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -17,7 +18,10 @@ var (
 
 func main() {
 	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
+	client, clientErr := rundeck.NewClientFromEnv()
+	if clientErr != nil {
+		log.Fatal(clientErr.Error())
+	}
 	options := make(map[string]string)
 	options["max"] = *max
 	data, err := client.ListProjectExecutions(*projectid, options)
@@ -39,22 +43,26 @@ func main() {
 		for _, d := range data.Executions {
 			var description string
 			var name string
-			if d.Job != nil {
+			if &d.Job != nil {
 				name = d.Job.Name
 				description = d.Job.Description
 			} else {
 				name = "<adhoc>"
 				description = d.Description
 			}
+			dateEnded := ""
+			if d.DateEnded.Date != nil {
+				dateEnded = d.DateEnded.Date.String()
+			}
 			table.Append([]string{
-				d.ID,
+				strconv.Itoa(d.ID),
 				name,
 				description,
 				d.Status,
-				strconv.Itoa(len(d.SuccessfulNodes.Nodes)) + "/" + strconv.Itoa(len(d.FailedNodes.Nodes)),
+				strconv.Itoa(len(d.SuccessfulNodes)) + "/" + strconv.Itoa(len(d.FailedNodes)),
 				d.User,
-				d.DateStarted,
-				d.DateEnded,
+				d.DateStarted.Date.String(),
+				dateEnded,
 				d.Project,
 			})
 		}

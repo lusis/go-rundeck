@@ -1,0 +1,13 @@
+{
+    "path": "",
+    "type": "directory",
+    "href": "[API Href]",
+    "resources": [
+      {
+        "path": "name.aclpolicy",
+        "type": "file",
+        "name": "name.aclpolicy",
+        "href": "[API Href]"
+      }
+    ]
+  }

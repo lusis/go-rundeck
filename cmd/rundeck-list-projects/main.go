@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/olekukonko/tablewriter"
@@ -19,7 +20,10 @@ var (
 
 func main() {
 	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
+	client, clientErr := rundeck.NewClientFromEnv()
+	if clientErr != nil {
+		log.Fatal(clientErr.Error())
+	}
 	data, err := client.ListProjects()
 	if err != nil {
 		fmt.Printf("%s\n", err)
@@ -32,7 +36,7 @@ func main() {
 				"Description",
 				"URL",
 			})
-			for _, d := range data.Projects {
+			for _, d := range *data {
 				table.Append([]string{
 					d.Name,
 					d.Description,
@@ -41,14 +45,14 @@ func main() {
 			}
 			table.Render()
 		} else if *format == "list" {
-			for _, d := range data.Projects {
+			for _, d := range *data {
 				fmt.Printf("%s\n", d.Name)
 			}
 		} else if *format == "csv" {
 			if *header {
 				fmt.Printf("%s%s%s%s%s\n", "NAME", *sep, "DESCRIPTION", *sep, "URL")
 			}
-			for _, d := range data.Projects {
+			for _, d := range *data {
 				fmt.Printf("%s%s%s%s%s\n", d.Name, *sep, d.Description, *sep, d.URL)
 			}
 		} else {

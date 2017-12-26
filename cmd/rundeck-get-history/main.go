@@ -1,47 +1,62 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"os"
 
-	"github.com/olekukonko/tablewriter"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
-
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
+	"github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
 var (
-	projectid = kingpin.Arg("projectid", "").Required().String()
+	projectid string
 )
 
-func main() {
-	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
-	top, err := client.GetHistory(*projectid)
-	if err != nil {
-		fmt.Printf("%s\n", err)
-	} else {
-		table := tablewriter.NewWriter(os.Stdout)
-		for _, data := range top.Events {
-			var job string
-			if data.Job != nil {
-				job = data.Job.ID
-			} else {
-				job = "<adhoc>"
-			}
-			table.SetHeader([]string{"Status", "Summary", "Start Time", "End Time", "S/F/T", "Job", "Execution", "User", "Project"})
-			table.Append([]string{
-				data.Status,
-				data.Summary,
-				data.StartTime,
-				data.EndTime,
-				fmt.Sprintf("%d/%d/%d", data.NodeSummary.Succeeded, data.NodeSummary.Failed, data.NodeSummary.Total),
-				job,
-				fmt.Sprintf("%d", data.Execution.ID),
-				data.User,
-				data.Project,
-			})
-		}
-		table.Render()
+func runFunc(cmd *cobra.Command, args []string) error {
+	if projectid == "" {
+		return errors.New("project id is required")
 	}
+	data, err := cli.Client.GetHistory(projectid)
+	if err != nil {
+		return err
+	}
+	cli.OutputFormatter.SetHeaders([]string{
+		"Title",
+		"Status",
+		"Summary",
+		"Start Time",
+		"End Time",
+		"S/F/T",
+		"Execution",
+		"User",
+		"Project",
+	})
+	for _, d := range data.Events {
+		if rowErr := cli.OutputFormatter.AddRow([]string{
+			d.Title,
+			d.Status,
+			d.Summary,
+			d.DateStarted.String(),
+			d.DateEnded.String(),
+			fmt.Sprintf("%d/%d/%d", d.NodeSummary.Succeeded, d.NodeSummary.Failed, d.NodeSummary.Total),
+			d.Execution.ID,
+			d.User,
+			d.Project,
+		}); rowErr != nil {
+			return rowErr
+		}
+	}
+
+	cli.OutputFormatter.Draw()
+	return nil
+}
+func main() {
+	cmd := &cobra.Command{
+		Use:   "rundeck-get-history -p [project-id]",
+		Short: "gets project history from the rundeck server",
+		RunE:  runFunc,
+	}
+	cmd.Flags().StringVarP(&projectid, "project-id", "p", "", "project id")
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }

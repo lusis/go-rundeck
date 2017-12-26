@@ -1,25 +1,28 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"errors"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	cli "github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
-var (
-	id = kingpin.Arg("id", "id to delete").Required().String()
-)
+var id string
+
+func runFunc(cmd *cobra.Command, args []string) error {
+	if id == "" {
+		return errors.New("an id is required")
+	}
+	return cli.Client.DeleteExecution(id)
+}
 
 func main() {
-	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
-	err := client.DeleteExecution(*id)
-	if err != nil {
-		fmt.Printf("%s\n", err)
-		os.Exit(1)
-	} else {
-		os.Exit(0)
+	cmd := &cobra.Command{
+		Use:   "rundeck-delete-execution -e id",
+		Short: "deletes an execution on the rundeck server",
+		RunE:  runFunc,
 	}
+	cmd.Flags().StringVarP(&id, "execution-id", "e", "", "execution id")
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }

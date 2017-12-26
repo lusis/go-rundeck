@@ -1,0 +1,16 @@
+[
+    {
+      "id": "[UUID]",
+      "name": "[name]",
+      "group": "[group]",
+      "project": "[project]",
+      "description": "...",
+      "href": "[API url]",
+      "permalink": "[GUI url]",
+      "scheduled": true,
+      "scheduleEnabled": false,
+      "enabled": true,
+      "serverNodeUUID": "[UUID]",
+      "serverOwned": true
+    }
+  ]

@@ -1,0 +1,12 @@
+{
+    "node-0-fake":{
+        "nodename":"node-0-fake",
+        "hostname":"nodehost-fake",
+        "foo":"bar",
+        "baz":"qux",
+        "node-executor":"stub",
+        "file-copier":"stub",
+        "username":"nodeuser-fake",
+        "tags":"stub"
+    }
+}

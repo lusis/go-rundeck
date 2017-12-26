@@ -2,15 +2,19 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
+	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
 	"github.com/olekukonko/tablewriter"
 )
 
 func main() {
-	client := rundeck.NewClientFromEnv()
-	data, err := client.GetLogstorage()
+	client, clientErr := rundeck.NewClientFromEnv()
+	if clientErr != nil {
+		log.Fatal(clientErr.Error())
+	}
+	data, err := client.GetLogStorage()
 	if err != nil {
 		fmt.Printf("%s\n", err)
 	} else {

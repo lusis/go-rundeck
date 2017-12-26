@@ -223,9 +223,13 @@ func (cr *Request) httpRequest() (*http.Request, error) {
 	if uErr != nil {
 		return nil, uErr
 	}
+	qs := u.Query()
+	for q, p := range cr.queryParams {
+		qs.Set(q, p)
+	}
+	u.RawQuery = qs.Encode()
 
 	req, reqErr := http.NewRequest(cr.method, u.String(), cr.body)
-
 	if reqErr != nil {
 		return nil, reqErr
 	}
@@ -233,24 +237,22 @@ func (cr *Request) httpRequest() (*http.Request, error) {
 	for k, v := range cr.headers {
 		req.Header.Add(k, v)
 	}
-	qs := url.Values{}
-	for q, p := range cr.queryParams {
-		qs.Add(q, p)
-	}
-	req.URL.RawQuery = qs.Encode()
+
 	if cr.contentType != "" {
 		req.Header.Add("Content-Type", cr.contentType)
 	}
 	req.Header.Add("Accept", cr.accept)
-
 	return req, nil
 }
 
 // Get performs an http GET
 func Get(url string, opts ...RequestOption) (*Response, error) {
-	opts = append(opts, get())
-	opts = append(opts, setURL(url))
-	return doRequest(opts...)
+	doOpts := []RequestOption{
+		get(),
+		setURL(url),
+	}
+	doOpts = append(doOpts, opts...)
+	return doRequest(doOpts...)
 }
 
 // Delete performs an http DELETE

@@ -60,13 +60,19 @@ func redirPolicy(req *http.Request, via []*http.Request) error {
 	return nil
 }
 
+// Get performs an http get
+func (rc *Client) Get(path string, opts ...httpclient.RequestOption) ([]byte, error) {
+	return rc.httpGet(path, opts...)
+}
+
 func (rc *Client) httpGet(path string, opts ...httpclient.RequestOption) ([]byte, error) {
 	authOpt, authErr := rc.authWrap()
 	if authErr != nil {
 		return nil, authErr
 	}
-	opts = append(opts, authOpt...)
-	resp, err := httpclient.Get(rc.makeAPIPath(path), opts...)
+	authOpt = append(authOpt, opts...)
+
+	resp, err := httpclient.Get(rc.makeAPIPath(path), authOpt...)
 	return resp.Body, err
 }
 
@@ -104,7 +110,11 @@ func (rc *Client) httpDelete(path string, opts ...httpclient.RequestOption) erro
 func (rc *Client) authWrap() ([]httpclient.RequestOption, error) {
 	if rc.Config.AuthMethod == basicAuthType {
 		authErr := rc.basicAuth()
-		return []httpclient.RequestOption{httpclient.SetCookieJar(rc.HTTPClient.Jar.(*cookiejar.Jar))}, authErr
+		return []httpclient.RequestOption{
+			httpclient.AddHeaders(map[string]string{
+				"User-Agent": "rundeck-go.v" + rc.Config.APIVersion,
+			}),
+			httpclient.SetCookieJar(rc.HTTPClient.Jar.(*cookiejar.Jar))}, authErr
 	}
 	headers := make(map[string]string, 2)
 	headers["X-Rundeck-Auth-Token"] = rc.Config.Token

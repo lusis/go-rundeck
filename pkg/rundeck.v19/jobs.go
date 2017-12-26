@@ -106,7 +106,7 @@ type RunOptions struct {
 	LogLevel  string            `json:"loglevel,omitempty"`
 	AsUser    string            `json:"asUser,omitempty"`
 	Filter    string            `json:"filter,omitempty"`
-	runAtTime string            `json:"runAtTime,omitempty"`
+	runAtTime string            `json:"runAtTime,omitempty"` // nolint: vet
 	RunAtTime time.Time         `json:"-"`
 	Options   map[string]string `json:"options,omitempty"`
 	// backwards compatibility for now

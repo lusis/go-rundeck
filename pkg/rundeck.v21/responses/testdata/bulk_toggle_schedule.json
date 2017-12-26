@@ -1,0 +1,19 @@
+{
+    "requestCount": 2,
+    "enabled": true,
+    "allsuccessful": false,
+    "succeeded": [
+        {
+            "id": "[UUID]",
+            "message": "(success or failure message)"
+          }
+    ],
+    "failed":[
+        {
+            "id": "[UUID]",
+            "errorCode": "(error code, see above)",
+            "message": "(success or failure message)"
+          }
+
+    ]
+  }

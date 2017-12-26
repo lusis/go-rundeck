@@ -1,0 +1,112 @@
+{
+  "localhost": {
+    "nodename": "localhost",
+    "hostname": "localhost",
+    "osVersion": "4.4.0-53-generic",
+    "osFamily": "unix",
+    "osArch": "amd64",
+    "description": "Rundeck server node",
+    "osName": "Linux",
+    "username": "rundeck"
+  },
+  "node-6-fake": {
+    "nodename": "node-6-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  },
+  "node-9-fake": {
+    "nodename": "node-9-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  },
+  "node-1-fake": {
+    "nodename": "node-1-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  },
+  "node-3-fake": {
+    "nodename": "node-3-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  },
+  "node-0-fake": {
+    "nodename": "node-0-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  },
+  "node-4-fake": {
+    "nodename": "node-4-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  },
+  "node-8-fake": {
+    "nodename": "node-8-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  },
+  "node-2-fake": {
+    "nodename": "node-2-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  },
+  "node-5-fake": {
+    "nodename": "node-5-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  },
+  "node-7-fake": {
+    "nodename": "node-7-fake",
+    "hostname": "nodehost-fake",
+    "foo": "bar",
+    "baz": "qux",
+    "node-executor": "stub",
+    "file-copier": "stub",
+    "username": "nodeuser-fake",
+    "tags": "stub"
+  }
+}

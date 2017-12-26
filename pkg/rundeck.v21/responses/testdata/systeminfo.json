@@ -1,0 +1,71 @@
+{
+  "system": {
+    "timestamp": {
+      "epoch": 1431975278220,
+      "unit": "ms",
+      "datetime": "2015-05-18T18:54:38Z"
+    },
+    "rundeck": {
+      "version": "2.5.2-SNAPSHOT",
+      "build": "2.5.2-0-SNAPSHOT",
+      "node": "madmartigan.local",
+      "base": "/Users/greg/rundeck25",
+      "apiversion": 14,
+      "serverUUID": null
+    },
+    "executions":{
+      "active":true,
+      "executionMode":"active"
+    },
+    "os": {
+      "arch": "x86_64",
+      "name": "Mac OS X",
+      "version": "10.10.3"
+    },
+    "jvm": {
+      "name": "Java HotSpot(TM) 64-Bit Server VM",
+      "vendor": "Oracle Corporation",
+      "version": "1.7.0_71",
+      "implementationVersion": "24.71-b01"
+    },
+    "stats": {
+      "uptime": {
+        "duration": 546776,
+        "unit": "ms",
+        "since": {
+          "epoch": 1431974731444,
+          "unit": "ms",
+          "datetime": "2015-05-18T18:45:31Z"
+        }
+      },
+      "cpu": {
+        "loadAverage": {
+          "unit": "percent",
+          "average": 2.689453125
+        },
+        "processors": 8
+      },
+      "memory": {
+        "unit": "byte",
+        "max": 716177408,
+        "free": 138606040,
+        "total": 527958016
+      },
+      "scheduler": {
+        "running": 0,
+        "threadPoolSize": 10
+      },
+      "threads": {
+        "active": 35
+      }
+    },
+    "metrics": {
+      "href": "http://madmartigan.local:4440/metrics/metrics?pretty=true",
+      "contentType": "text/json"
+    },
+    "threadDump": {
+      "href": "http://madmartigan.local:4440/metrics/threads",
+      "contentType": "text/plain"
+    }
+  }
+}

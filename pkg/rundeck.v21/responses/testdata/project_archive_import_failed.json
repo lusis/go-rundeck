@@ -1,0 +1,15 @@
+{
+    "import_status":"failed",
+    "errors": [
+        "Job ABC could not be validated: ...",
+        "Job XYZ could not be validated: ..."
+    ],
+    "execution_errors": [
+        "Execution 123 could not be imported: ...",
+        "Execution 456 could not be imported: ..."
+    ],
+    "acl_errors": [
+        "file.aclpolicy could not be validated: ...",
+        "file2.aclpolicy could not be validated: ..."
+    ]
+}

@@ -1,0 +1,46 @@
+{
+    "resources": [
+      {
+        "meta": {
+          "Rundeck-key-type": "private",
+          "Rundeck-content-mask": "content",
+          "Rundeck-content-size": "1679",
+          "Rundeck-content-type": "application/octet-stream"
+        },
+        "url": "http://dignan.local:4440/api/11/storage/keys/test1.pem",
+        "name": "test1.pem",
+        "type": "file",
+        "path": "keys/test1.pem"
+      },
+      {
+        "url": "http://dignan.local:4440/api/11/storage/keys/subdir",
+        "type": "directory",
+        "path": "keys/subdir"
+      },
+      {
+        "meta": {
+          "Rundeck-key-type": "public",
+          "Rundeck-content-size": "640198",
+          "Rundeck-content-type": "application/pgp-keys"
+        },
+        "url": "http://dignan.local:4440/api/11/storage/keys/monkey1.pub",
+        "name": "monkey1.pub",
+        "type": "file",
+        "path": "keys/monkey1.pub"
+      },
+      {
+        "meta": {
+          "Rundeck-key-type": "public",
+          "Rundeck-content-size": "393",
+          "Rundeck-content-type": "application/pgp-keys"
+        },
+        "url": "http://dignan.local:4440/api/11/storage/keys/test1.pub",
+        "name": "test1.pub",
+        "type": "file",
+        "path": "keys/test1.pub"
+      }
+    ],
+    "url": "http://dignan.local:4440/api/11/storage/keys",
+    "type": "directory",
+    "path": "keys"
+  }

@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"strconv"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
+	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
 	"github.com/olekukonko/tablewriter"
 	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
@@ -19,7 +21,10 @@ var (
 
 func main() {
 	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
+	client, clientErr := rundeck.NewClientFromEnv()
+	if clientErr != nil {
+		log.Fatal(clientErr.Error())
+	}
 	res, err := client.ListRunningExecutions(*project)
 	if err != nil {
 		fmt.Printf("%s\n", err)
@@ -34,7 +39,7 @@ func main() {
 			})
 			for _, d := range res.Executions {
 				table.Append([]string{
-					d.ID,
+					strconv.Itoa(d.ID),
 					d.Status,
 					d.User,
 				})
@@ -45,11 +50,11 @@ func main() {
 				fmt.Printf("ID%sStatus%sUser", *sep, *sep)
 			}
 			for _, d := range res.Executions {
-				fmt.Printf("%s%s%s%s%s\n", d.ID, *sep, d.Status, *sep, d.User)
+				fmt.Printf("%d%s%s%s%s\n", d.ID, *sep, d.Status, *sep, d.User)
 			}
 		} else if *format == "list" {
 			for _, d := range res.Executions {
-				fmt.Printf("%s\n", d.ID)
+				fmt.Printf("%d\n", d.ID)
 			}
 		} else {
 			fmt.Printf("Unknown output format: %s\n", *format)

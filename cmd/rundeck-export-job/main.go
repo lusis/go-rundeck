@@ -1,27 +1,38 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"os"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	"github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
 var (
-	jobid  = kingpin.Arg("jobid", "The id of the job to export").Required().String()
-	format = kingpin.Flag("format", "Format to export").Default("xml").Enum("xml", "yaml")
+	jobid     string
+	jobformat string
 )
 
-func main() {
-	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
-	res, err := client.ExportJob(*jobid, *format)
-	if err != nil {
-		fmt.Printf(err.Error())
-		os.Exit(1)
-	} else {
-		fmt.Printf("%s\n", res)
-		os.Exit(0)
+func runFunc(cmd *cobra.Command, args []string) error {
+	if jobid == "" {
+		return errors.New("you must specify a jobid")
 	}
+
+	res, err := cli.Client.ExportJob(jobid, jobformat)
+	if err != nil {
+		return err
+	}
+	fmt.Printf("%s\n", string(res))
+	return nil
+}
+func main() {
+	cmd := &cobra.Command{
+		Use:   "rundeck-export-job -j jobid [-f format]",
+		Short: "exports a job in the specified format",
+		RunE:  runFunc,
+	}
+	cmd.Flags().StringVarP(&jobid, "job-id", "j", "", "jobid to export")
+	cmd.Flags().StringVarP(&jobformat, "job-format", "f", "yaml", "format to export job")
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }

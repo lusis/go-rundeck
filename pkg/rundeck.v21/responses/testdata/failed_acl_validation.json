@@ -1,0 +1,20 @@
+{
+    "valid": false,
+    "policies": [
+      {
+        "policy": "file1.aclpolicy[1]",
+        "errors": [
+          "reason...",
+          "reason2..."
+        ]
+      },
+  
+      {
+        "policy": "file1.aclpolicy[2]",
+        "errors": [
+          "reason...",
+          "reason2..."
+        ]
+      }
+    ]
+  }

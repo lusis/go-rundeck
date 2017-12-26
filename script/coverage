@@ -1,4 +1,4 @@
 #!/bin/bash
 go get github.com/axw/gocov/gocov
 
-gocov test ./pkg/rundeck.v19 ./src/rundeck.v12 ./src/rundeck.v13 ./src/rundeck.v17 ./src/rundeck.v18 | gocov report
+gocov test ./pkg/rundeck.v21 ./pkg/rundeck.v21/responses ./pkg/httpclient ./pkg/cli | gocov report

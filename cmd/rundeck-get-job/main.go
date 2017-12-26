@@ -1,46 +1,57 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"os"
-	"strings"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
-	"github.com/olekukonko/tablewriter"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	"github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
 var (
-	jobid = kingpin.Arg("jobid", "").Required().String()
+	jobid string
 )
 
-func main() {
-	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
-	data, err := client.GetJob(*jobid)
-	if err != nil {
-		fmt.Printf("%s\n", err)
-	} else {
-		scope := data.Job
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"ID", "Name", "Description", "Group", "Steps", "Node Filters"})
-		var steps []string
-		var nodefilters []string
-		for _, d := range scope.Sequence.Steps {
-			var stepDescription string
-			if d.Description == "" {
-				if d.JobRef != nil {
-					stepDescription = d.JobRef.Name
-				} else if d.Exec != nil {
-					stepDescription = *d.Exec
-				}
-			} else {
-				stepDescription = d.Description
-			}
-			steps = append(steps, stepDescription)
-		}
-		nodefilters = append(nodefilters, scope.NodeFilters.Filter...)
-		table.Append([]string{scope.ID, scope.Name, scope.Description, scope.Group, strings.Join(steps, "\n"), strings.Join(nodefilters, "\n")})
-		table.Render()
+func runFunc(cmd *cobra.Command, args []string) error {
+	if jobid == "" {
+		return errors.New("job id is required")
 	}
+	data, err := cli.Client.GetJobMetaData(jobid)
+	if err != nil {
+		return err
+	}
+	cli.OutputFormatter.SetHeaders([]string{
+		"ID",
+		"Name",
+		"Description",
+		"Group",
+		"Scheduled?",
+		"Schedule Enabled?",
+		"Enabled?",
+		"Average Duration",
+	})
+	if rowErr := cli.OutputFormatter.AddRow([]string{
+		data.ID,
+		data.Description,
+		data.Group,
+		fmt.Sprintf("%t", data.Scheduled),
+		fmt.Sprintf("%t", data.ScheduleEnabled),
+		fmt.Sprintf("%t", data.Enabled),
+		fmt.Sprintf("%d", data.AverageDuration),
+	}); rowErr != nil {
+		return rowErr
+	}
+	cli.OutputFormatter.Draw()
+	return nil
+}
+
+func main() {
+	cmd := &cobra.Command{
+		Use:   "rundeck-get-job -j [job-id]",
+		Short: "gets job metadata from a rundeck server",
+		RunE:  runFunc,
+	}
+	cmd.Flags().StringVarP(&jobid, "job-id", "j", "", "job id")
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }

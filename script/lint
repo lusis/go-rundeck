@@ -18,4 +18,5 @@ gometalinter \
     --tests \
     --deadline=30s \
     --exclude=/usr/local/go/src/ \
+    --skip=pkg/rundeck.v21/responses/testdata \
     ./pkg/... ./cmd/...

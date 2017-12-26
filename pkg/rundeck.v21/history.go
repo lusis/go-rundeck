@@ -1,55 +1,35 @@
 package rundeck
 
-import "encoding/xml"
+import (
+	"encoding/json"
 
-// Events represents a collection of `Event`
-type Events struct {
-	XMLName xml.Name `xml:"events"`
-	Count   int64    `xml:"count,attr"`
-	Total   int64    `xml:"total,attr"`
-	Max     int64    `xml:"max,attr"`
-	Offset  int64    `xml:"offset,attr"`
-	Events  []Event  `xml:"event"`
-}
+	httpclient "github.com/lusis/go-rundeck/pkg/httpclient"
+	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
+)
 
-// Event represents an Event
-type Event struct {
-	XMLName     xml.Name `xml:"event"`
-	StartTime   string   `xml:"starttime,attr"`
-	EndTime     string   `xml:"endtime,attr"`
-	Title       string   `xml:"title"`
-	Status      string   `xml:"status"`
-	Summary     string   `xml:"summary"`
-	NodeSummary struct {
-		XMLName   xml.Name
-		Succeeded int `xml:"succeeded,attr"`
-		Failed    int `xml:"failed,attr"`
-		Total     int `xml:"total,attr"`
-	} `xml:"node-summary"`
-	User        string `xml:"user"`
-	Project     string `xml:"project"`
-	DateStarted string `xml:"date-started"`
-	DateEnded   string `xml:"date-ended"`
-	AbortedBy   string `xml:"abortedby,omitempty"`
-	Job         *struct {
-		XMLName xml.Name
-		ID      string `xml:"id,attr"`
-	} `xml:"job,omitempty"`
-	Execution struct {
-		XMLName xml.Name
-		ID      int64 `xml:"id,attr"`
-	} `xml:"execution,omitempty"`
-}
+// History represents a project history
+type History responses.HistoryResponse
 
 // GetHistory returns the history for a project
-func (c *Client) GetHistory(project string) (*Events, error) {
+func (c *Client) GetHistory(project string, opts ...map[string]string) (*History, error) {
 	u := make(map[string]string)
-	u["project"] = project
-	data := &Events{}
-	res, err := c.httpGet("history", queryParams(u), requestXML())
+	for _, opt := range opts {
+		for k, v := range opt {
+			u[k] = v
+		}
+	}
+	data := &History{}
+	options := []httpclient.RequestOption{
+		accept("application/json"),
+		contentType("application/x-www-form-urlencoded"),
+		queryParams(u),
+	}
+	res, err := c.httpGet("project/"+project+"/history", options...)
 	if err != nil {
 		return nil, err
 	}
-	xmlErr := xml.Unmarshal(res, &data)
-	return data, xmlErr
+	if err := json.Unmarshal(res, data); err != nil {
+		return nil, err
+	}
+	return data, nil
 }

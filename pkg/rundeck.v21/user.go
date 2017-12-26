@@ -4,15 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+
+	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
 
 // User represents a user in rundeck
-type User struct {
-	Login     string `json:"login,omitempty"`
-	FirstName string `json:"firstName,omitempty"`
-	LastName  string `json:"lastName,omitempty"`
-	Email     string `json:"email,omitempty"`
-}
+type User responses.UserInfoResponse
 
 // GetUsers returns all rundeck users
 func (c *Client) GetUsers() ([]*User, error) {

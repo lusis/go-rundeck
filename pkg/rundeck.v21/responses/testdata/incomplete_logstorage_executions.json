@@ -1,0 +1,21 @@
+{
+    "total": 1,
+    "max": 20,
+    "offset": 0,
+    "executions": [
+      {
+        "id": 1,
+        "project": "myProject",
+        "href": "[API Href]",
+        "permalink": "[GUI Href]",
+        "storage": {
+          "localFilesPresent": true,
+          "incompleteFiletypes": "rdlog,state.json",
+          "queued": true,
+          "failed": true,
+          "date": "2017-03-25T21:17:12Z"
+        },
+        "errors": ["message","message..."]
+      }
+      ]
+  }

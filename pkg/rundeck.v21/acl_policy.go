@@ -5,23 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
+	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
 
-// ACLPolicyContent is a content element for SystemACLPolicy
-type ACLPolicyContent struct {
-	Path string `json:"path"`
-	Type string `json:"type"`
-	Href string `json:"href"`
-	Name string `json:"name,omitempty"`
-}
-
-// ACLPolicies represents acl policy
-type ACLPolicies struct {
-	Path      string             `json:"path"`
-	Type      string             `json:"type"`
-	Href      string             `json:"href"`
-	Resources []ACLPolicyContent `json:"resources,omitempty"`
-}
+// ACLPolicies represents ACL Policies
+type ACLPolicies responses.ACLResponse
 
 // GetACLPolicies gets the system ACL Policies
 func (c *Client) GetACLPolicies() (*ACLPolicies, error) {
@@ -49,8 +38,8 @@ func (c *Client) CreateACLPolicy(name string, contents []byte) error {
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
 	res, err := c.httpPost(url, withBody(bytes.NewReader(contents)), accept("application/json"), contentType("application/yaml"), requestExpects(201))
 	if err != nil {
-		jsonError := &JSONError{}
-		jsonErr := json.Unmarshal(res, &jsonError)
+		jsonError := &responses.ErrorResponse{}
+		jsonErr := json.Unmarshal(res, jsonError)
 		if jsonErr != nil {
 			return jsonErr
 		}
@@ -64,8 +53,8 @@ func (c *Client) UpdateACLPolicy(name string, contents []byte) error {
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
 	res, err := c.httpPut(url, withBody(bytes.NewReader(contents)), accept("application/json"), contentType("application/yaml"), requestExpects(200))
 	if err != nil {
-		jsonError := &JSONError{}
-		jsonErr := json.Unmarshal(res, &jsonError)
+		jsonError := &responses.ErrorResponse{}
+		jsonErr := json.Unmarshal(res, jsonError)
 		if jsonErr != nil {
 			return jsonErr
 		}

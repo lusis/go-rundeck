@@ -2,23 +2,23 @@ package rundeck
 
 import (
 	"bytes"
+	"encoding/json"
 	"encoding/xml"
 	"fmt"
+
+	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
 
-// Project represents a project
+// Project is a rundeck project
 type Project struct {
-	XMLName     xml.Name `xml:"project"`
-	Name        string   `xml:"name"`
-	Description string   `xml:"description,omitempty"`
-	URL         string   `xml:"url,attr"`
+	URL         string
+	Name        string
+	Description string
+	Properties  map[string]string
 }
 
 // Projects is a collection of `Project`
-type Projects struct {
-	Count    int64     `xml:"count,attr"`
-	Projects []Project `xml:"project"`
-}
+type Projects []*Project
 
 // NewProject represents a new project
 type NewProject struct {
@@ -37,24 +37,43 @@ type ConfigProperty struct {
 
 // GetProject gets a project by name
 func (c *Client) GetProject(name string) (*Project, error) {
-	p := &Project{}
-	res, err := c.httpGet("project/"+name, requestXML())
+	p := &responses.ProjectInfoResponse{}
+	res, err := c.httpGet("project/"+name, requestJSON())
 	if err != nil {
-		return p, err
+		return nil, err
 	}
-	xmlErr := xml.Unmarshal(res, &p)
-	return p, xmlErr
+	if jsonErr := json.Unmarshal(res, &p); jsonErr != nil {
+		return nil, err
+	}
+
+	project := &Project{
+		URL:         p.URL,
+		Name:        p.Name,
+		Description: p.Description,
+		Properties:  *p.Config,
+	}
+	return project, nil
 }
 
 // ListProjects lists all projects
 func (c *Client) ListProjects() (*Projects, error) {
-	data := &Projects{}
-	res, err := c.httpGet("projects", requestXML())
+	data := &responses.ListProjectsResponse{}
+	res, err := c.httpGet("projects", requestJSON())
 	if err != nil {
 		return nil, err
 	}
-	xmlErr := xml.Unmarshal(res, &data)
-	return data, xmlErr
+	if jsonErr := json.Unmarshal(res, &data); jsonErr != nil {
+		return nil, jsonErr
+	}
+	projects := &Projects{}
+	for _, p := range *data {
+		*projects = append(*projects, &Project{
+			URL:         p.URL,
+			Name:        p.Name,
+			Description: p.Description,
+		})
+	}
+	return projects, nil
 }
 
 // MakeProject makes a project
