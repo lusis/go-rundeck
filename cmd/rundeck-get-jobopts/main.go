@@ -1,47 +1,53 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"log"
-	"os"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
-	"github.com/olekukonko/tablewriter"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	cli "github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
 var (
-	jobid = kingpin.Arg("jobid", "").Required().String()
+	jobid string
 )
 
-func main() {
-	kingpin.Parse()
-	client, clientErr := rundeck.NewClientFromEnv()
-	if clientErr != nil {
-		log.Fatal(clientErr.Error())
+func runFunc(cmd *cobra.Command, args []string) error {
+	if jobid == "" {
+		return errors.New("you must specify a job id")
 	}
-	data, err := client.GetJobOpts(*jobid)
+	data, err := cli.Client.GetJobOpts(jobid)
 	if err != nil {
-		fmt.Printf("%s\n", err)
-		os.Exit(1)
-	} else {
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{
-			"Name",
-			"Description",
-			"Value",
-			"Required?",
-			"Regex",
-		})
-		table.SetAutoWrapText(false)
-		for _, d := range data {
-			table.Append([]string{
-				d.Name,
-				d.Description,
-				d.Value,
-				fmt.Sprintf("%t", d.Required),
-				d.Regex})
-		}
-		table.Render()
+		return err
 	}
+	cli.OutputFormatter.SetHeaders([]string{
+		"Name",
+		"Description",
+		"Value",
+		"Required?",
+		"Regex",
+	})
+	for _, d := range data {
+		if err := cli.OutputFormatter.AddRow([]string{
+			d.Name,
+			d.Description,
+			d.Value,
+			fmt.Sprintf("%t", d.Required),
+			d.Regex}); err != nil {
+			return err
+		}
+	}
+	cli.OutputFormatter.Draw()
+	return nil
+}
+func main() {
+	cmd := &cobra.Command{
+		Use:   "rundeck-get-jobopts -j [job-id]",
+		Short: "gets an execution from the rundeck server",
+		RunE:  runFunc,
+	}
+	cmd.Flags().StringVarP(&jobid, "job-id", "j", "", "job id")
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
+
 }

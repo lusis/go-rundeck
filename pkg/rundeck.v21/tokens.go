@@ -32,7 +32,7 @@ func TokenRoles(roles ...string) TokenOption {
 	}
 }
 
-// GetTokens gets all tokens
+// GetTokens gets all tokens for the current user
 func (c *Client) GetTokens() ([]*Token, error) {
 	tokens := make([]*Token, 0)
 	data, err := c.httpGet("tokens", requestJSON())
