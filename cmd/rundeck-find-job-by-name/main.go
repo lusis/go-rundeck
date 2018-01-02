@@ -1,47 +1,58 @@
 package main
 
 import (
+	"errors"
 	"fmt"
-	"os"
-	"strings"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
-	"github.com/olekukonko/tablewriter"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	cli "github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
 var (
-	projectid = kingpin.Arg("projectname", "").Required().String()
-	jobid     = kingpin.Arg("jobname", "").Required().Strings()
+	projectid string
+	jobname   string
 )
 
-func main() {
-	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
-	data, err := client.FindJobByName(strings.Join(*jobid, " "), *projectid)
+func runFunc(cmd *cobra.Command, args []string) error {
+	if projectid == "" || jobname == "" {
+		return errors.New("You must specify a project name and job name")
+	}
+	data, err := cli.Client.FindJobByName(jobname, projectid)
 	if err != nil {
 		fmt.Printf("%s\n", err)
-	} else {
-		scope := *data
-		table := tablewriter.NewWriter(os.Stdout)
-		table.SetHeader([]string{"ID", "Name", "Description", "Group", "Steps", "Node Filters"})
-		var steps []string
-		var nodefilters []string
-		for _, d := range scope.Sequence.Steps {
-			var stepDescription string
-			if d.Description == "" {
-				if d.JobRef != nil {
-					stepDescription = d.JobRef.Name
-				} else if d.Exec != nil {
-					stepDescription = *d.Exec
-				}
-			} else {
-				stepDescription = d.Description
-			}
-			steps = append(steps, stepDescription)
-		}
-		nodefilters = append(nodefilters, scope.NodeFilters.Filter...)
-		table.Append([]string{scope.ID, scope.Name, scope.Description, scope.Group, strings.Join(steps, "\n"), strings.Join(nodefilters, "\n")})
-		table.Render()
 	}
+	cli.OutputFormatter.SetHeaders([]string{
+		"ID",
+		"Name",
+		"Description",
+		"Group",
+		"Scheduled?",
+		"Schedule Enabled?",
+		"Enabled?",
+		"Average Duration",
+	})
+	if rowErr := cli.OutputFormatter.AddRow([]string{
+		data.ID,
+		data.Description,
+		data.Group,
+		fmt.Sprintf("%t", data.Scheduled),
+		fmt.Sprintf("%t", data.ScheduleEnabled),
+		fmt.Sprintf("%t", data.Enabled),
+		fmt.Sprintf("%d", data.AverageDuration),
+	}); rowErr != nil {
+		return rowErr
+	}
+	cli.OutputFormatter.Draw()
+	return nil
+}
+func main() {
+	cmd := &cobra.Command{
+		Use:   "rundeck-find-job-by-name -p [project-name] -j [job-name]",
+		Short: "finds a project's job by name",
+		RunE:  runFunc,
+	}
+	cmd.Flags().StringVarP(&projectid, "project-id", "p", "", "project id")
+	cmd.Flags().StringVarP(&jobname, "job-name", "j", "", "job name")
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }

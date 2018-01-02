@@ -206,30 +206,24 @@ func (c *Client) RunJob(id string, options RunOptions) (*Executions, error) {
 */
 
 // FindJobByName runs a job by name
-/*
-func (c *Client) FindJobByName(name string, project string) (*Job, error) {
-	job := &Job{}
+func (c *Client) FindJobByName(name string, project string) (*JobMetaData, error) {
 	jobs, err := c.ListJobs(project)
 	if err != nil {
 		return nil, err
 	}
-	if len(jobs.Jobs) > 0 {
-		for _, d := range jobs.Jobs {
+	if len(*jobs) > 0 {
+		for _, d := range *jobs {
 			if d.Name == name {
-				joblist, joblistErr := c.GetJobInfo(d.ID, project)
+				job, joblistErr := c.GetJobInfo(d.ID)
 				if err != nil {
 					return nil, joblistErr
 				}
-				job = joblist
+				return job, nil
 			}
 		}
-	} else {
-		err := errors.New("No matches found")
-		return nil, err
 	}
-	return job, nil
+	return nil, errors.New("No matches found")
 }
-*/
 
 // ListJobs lists the jobs for a project
 func (c *Client) ListJobs(projectID string) (*JobList, error) {
