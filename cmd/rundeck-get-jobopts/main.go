@@ -1,21 +1,14 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 
 	cli "github.com/lusis/go-rundeck/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
-var (
-	jobid string
-)
-
 func runFunc(cmd *cobra.Command, args []string) error {
-	if jobid == "" {
-		return errors.New("you must specify a job id")
-	}
+	jobid := args[0]
 	data, err := cli.Client.GetJobOpts(jobid)
 	if err != nil {
 		return err
@@ -42,11 +35,11 @@ func runFunc(cmd *cobra.Command, args []string) error {
 }
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-get-jobopts -j [job-id]",
+		Use:   "rundeck-get-jobopts job-id",
 		Short: "gets an execution from the rundeck server",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&jobid, "job-id", "j", "", "job id")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()
 

@@ -1,21 +1,14 @@
 package main
 
 import (
-	"errors"
 	"strconv"
 
 	cli "github.com/lusis/go-rundeck/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
-var (
-	projectid string
-)
-
 func runFunc(cmd *cobra.Command, args []string) error {
-	if projectid == "" {
-		return errors.New("you must specify a project id")
-	}
+	projectid := args[0]
 	data, err := cli.Client.ListRunningExecutions(projectid)
 	if err != nil {
 		return err
@@ -59,11 +52,11 @@ func runFunc(cmd *cobra.Command, args []string) error {
 
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-list-running-executions -p project-id",
+		Use:   "rundeck-list-running-executions project-id",
 		Short: "gets a list of running executions for a project from the rundeck server",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&projectid, "project-id", "p", "", "project id")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()
 }

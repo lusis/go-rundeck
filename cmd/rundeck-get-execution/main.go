@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 
 	cli "github.com/lusis/go-rundeck/pkg/cli"
@@ -13,9 +12,7 @@ var (
 )
 
 func runFunc(cmd *cobra.Command, args []string) error {
-	if id == "" {
-		return errors.New("you must specify an execution id")
-	}
+	id := args[0]
 	data, err := cli.Client.GetExecution(id)
 	if err != nil {
 		return err
@@ -48,11 +45,11 @@ func runFunc(cmd *cobra.Command, args []string) error {
 }
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-get-execution -e [execution-id]",
+		Use:   "rundeck-get-execution execution-id",
 		Short: "gets an execution from the rundeck server",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&id, "id", "i", "", "execution id")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()
 }

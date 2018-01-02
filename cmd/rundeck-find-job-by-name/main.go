@@ -10,12 +10,12 @@ import (
 
 var (
 	projectid string
-	jobname   string
 )
 
 func runFunc(cmd *cobra.Command, args []string) error {
-	if projectid == "" || jobname == "" {
-		return errors.New("You must specify a project name and job name")
+	jobname := args[0]
+	if projectid == "" {
+		return errors.New("You must specify a project name")
 	}
 	data, err := cli.Client.FindJobByName(jobname, projectid)
 	if err != nil {
@@ -47,12 +47,12 @@ func runFunc(cmd *cobra.Command, args []string) error {
 }
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-find-job-by-name -p [project-name] -j [job-name]",
+		Use:   "rundeck-find-job-by-name job-name -p project-name",
 		Short: "finds a project's job by name",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
 	cmd.Flags().StringVarP(&projectid, "project-id", "p", "", "project id")
-	cmd.Flags().StringVarP(&jobname, "job-name", "j", "", "job name")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()
 }

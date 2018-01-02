@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"strconv"
 
 	cli "github.com/lusis/go-rundeck/pkg/cli"
@@ -9,14 +8,11 @@ import (
 )
 
 var (
-	projectid string
-	max       string
+	max string
 )
 
 func runFunc(cmd *cobra.Command, args []string) error {
-	if projectid == "" {
-		return errors.New("you must specify a project id")
-	}
+	projectid := args[0]
 	options := make(map[string]string)
 	options["max"] = max
 	data, err := cli.Client.ListProjectExecutions(projectid, options)
@@ -68,11 +64,11 @@ func runFunc(cmd *cobra.Command, args []string) error {
 
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-list-project-executions -p project-id [-m max]",
+		Use:   "rundeck-list-project-executions project-name [-m max]",
 		Short: "gets a list of executions for a project from the rundeck server",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&projectid, "project-id", "p", "", "project id")
 	cmd.Flags().StringVarP(&max, "max", "m", "", "max results")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()

@@ -11,11 +11,11 @@ import (
 )
 
 var (
-	policyName string
-	filename   string
+	filename string
 )
 
 func runFunc(cmd *cobra.Command, args []string) error {
+	policyName := args[0]
 	if policyName == "" || filename == "" {
 		return errors.New("you must specify both a policy name and a filename")
 	}
@@ -29,12 +29,14 @@ func runFunc(cmd *cobra.Command, args []string) error {
 
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-create-acl-policy -f policy-file -n policy-name",
+		Use:   "rundeck-create-acl-policy policy-name -f policy-file",
 		Short: "creates an acl policy on the rundeck server. must be a valid yaml ACL policy",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&policyName, "policy-name", "n", "", "policy name")
 	cmd.Flags().StringVarP(&filename, "file", "f", "", "full path to policy file")
+	_ = cmd.MarkFlagRequired("file")
+	cli.UseFormatter = false
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()
 }

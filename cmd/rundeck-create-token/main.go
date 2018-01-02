@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -9,14 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	user string
-)
-
 func runFunc(cmd *cobra.Command, args []string) error {
-	if user == "" {
-		return errors.New("username is required")
-	}
+	user := args[0]
 	token, err := cli.Client.CreateToken(user)
 	if err != nil {
 		return err
@@ -49,11 +42,11 @@ func runFunc(cmd *cobra.Command, args []string) error {
 
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-create-token -u username",
+		Use:   "rundeck-create-token username",
 		Short: "creates an api token in rundeck for the named user",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&user, "user", "u", "", "username")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()
 }

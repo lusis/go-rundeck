@@ -1,21 +1,14 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/lusis/go-rundeck/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
-var (
-	projectid string
-)
-
 func runFunc(cmd *cobra.Command, args []string) error {
-	if projectid == "" {
-		return errors.New("project id is required")
-	}
+	projectid := args[0]
 	data, err := cli.Client.GetHistory(projectid)
 	if err != nil {
 		return err
@@ -52,11 +45,11 @@ func runFunc(cmd *cobra.Command, args []string) error {
 }
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-get-history -p [project-id]",
+		Use:   "rundeck-get-history project-name",
 		Short: "gets project history from the rundeck server",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&projectid, "project-id", "p", "", "project id")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()
 }

@@ -8,12 +8,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	userid string
-)
-
 func runFunc(cmd *cobra.Command, args []string) error {
-
+	userid := args[0]
 	cli.OutputFormatter.SetHeaders([]string{
 		"ID",
 		"User",
@@ -65,11 +61,10 @@ func runFunc(cmd *cobra.Command, args []string) error {
 }
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-get-tokens [-u user-id]",
+		Use:   "rundeck-get-tokens [user-id]",
 		Short: "gets tokens from the rundeck server for the current user or the optionally specified user",
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&userid, "user-id", "u", "", "optional user id")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()
 }

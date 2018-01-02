@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -11,14 +10,11 @@ import (
 )
 
 var (
-	projectName string
-	maxDelete   int
+	maxDelete int
 )
 
 func runFunc(cmd *cobra.Command, args []string) error {
-	if projectName == "" {
-		return errors.New("project name is required")
-	}
+	projectName := args[0]
 	res, err := cli.Client.DeleteAllExecutionsForProject(projectName, maxDelete)
 	if err != nil {
 		return err
@@ -48,11 +44,11 @@ func runFunc(cmd *cobra.Command, args []string) error {
 
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-delete-executions-for-project -p [project-name]",
+		Use:   "rundeck-delete-executions-for-project project-name [-m X]",
 		Short: "Bulk deletes all executions from a rundeck server for the given project",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&projectName, "project-name", "p", "", "project name")
 	cmd.Flags().IntVarP(&maxDelete, "max", "m", 0, "max number of executions to delete")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()

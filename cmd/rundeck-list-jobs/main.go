@@ -1,20 +1,12 @@
 package main
 
 import (
-	"errors"
-
 	cli "github.com/lusis/go-rundeck/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
-var (
-	projectid string
-)
-
 func runFunc(cmd *cobra.Command, args []string) error {
-	if projectid == "" {
-		return errors.New("you must specify a project id")
-	}
+	projectid := args[0]
 	data, err := cli.Client.ListJobs(projectid)
 	if err != nil {
 		return err
@@ -31,11 +23,11 @@ func runFunc(cmd *cobra.Command, args []string) error {
 }
 func main() {
 	cmd := &cobra.Command{
-		Use:   "rundeck-list-jobs -p project-id",
+		Use:   "rundeck-list-jobs project-name",
 		Short: "gets a list of jobs for a project from the rundeck server",
+		Args:  cobra.MinimumNArgs(1),
 		RunE:  runFunc,
 	}
-	cmd.Flags().StringVarP(&projectid, "project-id", "p", "", "project id")
 	rootCmd := cli.New(cmd)
 	_ = rootCmd.Execute()
 }
