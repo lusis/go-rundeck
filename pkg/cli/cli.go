@@ -17,8 +17,10 @@ var OutputFormat string
 // OutputFormatter is the configured OutputFormatter
 var OutputFormatter outputter.Outputter
 
-func preRunFunc(cmd *cobra.Command, args []string) error {
+// UseFormatter is a flag to specify if we should add the formatting options to the command
+var UseFormatter = true
 
+func preRunFunc(cmd *cobra.Command, args []string) error {
 	client, err := rundeck.NewClientFromEnv()
 	Client = client
 	return err
@@ -27,15 +29,17 @@ func preRunFunc(cmd *cobra.Command, args []string) error {
 // New returns a New rundeck cli object
 func New(command *cobra.Command) *cobra.Command {
 	command.PreRunE = preRunFunc
-	outputs := outputter.GetOutputters()
-	command.PersistentFlags().StringVar(&OutputFormat, "format", "table", "Specify the output format: "+strings.Join(outputs, ","))
-	command.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
-		outputFormatter, err := outputter.NewOutputter(OutputFormat)
-		if err != nil {
-			return err
+	if UseFormatter {
+		outputs := outputter.GetOutputters()
+		command.PersistentFlags().StringVar(&OutputFormat, "format", "table", "Specify the output format: "+strings.Join(outputs, ","))
+		command.PersistentPreRunE = func(cmd *cobra.Command, args []string) error {
+			outputFormatter, err := outputter.NewOutputter(OutputFormat)
+			if err != nil {
+				return err
+			}
+			OutputFormatter = outputFormatter
+			return nil
 		}
-		OutputFormatter = outputFormatter
-		return nil
 	}
 	return command
 }

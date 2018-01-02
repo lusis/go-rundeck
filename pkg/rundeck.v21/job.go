@@ -114,7 +114,8 @@ func (c *Client) GetJobInfo(id string) (*JobMetaData, error) {
 
 // DeleteJob deletes a job
 func (c *Client) DeleteJob(id string) error {
-	return c.httpDelete("job/" + id)
+	return c.httpDelete("job/"+id, httpclient.ExpectStatus(404))
+
 }
 
 // ExportJob exports a job

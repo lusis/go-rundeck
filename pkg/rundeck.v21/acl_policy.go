@@ -1,10 +1,10 @@
 package rundeck
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
@@ -34,9 +34,9 @@ func (c *Client) GetACLPolicy(policy string) (string, error) {
 }
 
 // CreateACLPolicy creates a system acl policy
-func (c *Client) CreateACLPolicy(name string, contents []byte) error {
+func (c *Client) CreateACLPolicy(name string, contents io.Reader) error {
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
-	res, err := c.httpPost(url, withBody(bytes.NewReader(contents)), accept("application/json"), contentType("application/yaml"), requestExpects(201))
+	res, err := c.httpPost(url, withBody(contents), accept("application/json"), contentType("application/yaml"), requestExpects(201))
 	if err != nil {
 		jsonError := &responses.ErrorResponse{}
 		jsonErr := json.Unmarshal(res, jsonError)
@@ -49,9 +49,9 @@ func (c *Client) CreateACLPolicy(name string, contents []byte) error {
 }
 
 // UpdateACLPolicy creates a system acl policy
-func (c *Client) UpdateACLPolicy(name string, contents []byte) error {
+func (c *Client) UpdateACLPolicy(name string, contents io.Reader) error {
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
-	res, err := c.httpPut(url, withBody(bytes.NewReader(contents)), accept("application/json"), contentType("application/yaml"), requestExpects(200))
+	res, err := c.httpPut(url, withBody(contents), accept("application/json"), contentType("application/yaml"), requestExpects(200))
 	if err != nil {
 		jsonError := &responses.ErrorResponse{}
 		jsonErr := json.Unmarshal(res, jsonError)

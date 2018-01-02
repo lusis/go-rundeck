@@ -1,33 +1,40 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
+	"errors"
 	"io/ioutil"
 	"os"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v19"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	cli "github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
 var (
-	policyName = kingpin.Arg("policy_name", "name for the new policy. file extension of '.aclpolicy' will be appended").Required().String()
-	filename   = kingpin.Flag("policy_file", "Full /path/to/policy/file to import. Must be yaml").Required().ExistingFile()
+	policyName string
+	filename   string
 )
 
-func main() {
-	kingpin.Parse()
-	client := rundeck.NewClientFromEnv()
-	policyFile, err := os.Open(*filename)
+func runFunc(cmd *cobra.Command, args []string) error {
+	if policyName == "" || filename == "" {
+		return errors.New("you must specify both a policy name and a filename")
+	}
+	policyFile, err := os.Open(filename)
 	if err != nil {
-		fmt.Printf("Unable to read policy file: %s\n", err.Error())
+		return err
 	}
 	contents, _ := ioutil.ReadAll(policyFile)
-	err = client.CreateSystemACLPolicy(*policyName, contents)
-	if err != nil {
-		fmt.Printf("%s\n", err)
-		os.Exit(1)
-	} else {
-		fmt.Printf("Policy created\n")
-		os.Exit(0)
+	return cli.Client.CreateACLPolicy(policyName, bytes.NewReader(contents))
+}
+
+func main() {
+	cmd := &cobra.Command{
+		Use:   "rundeck-create-acl-policy -f policy-file -n policy-name",
+		Short: "creates an acl policy on the rundeck server. must be a valid yaml ACL policy",
+		RunE:  runFunc,
 	}
+	cmd.Flags().StringVarP(&policyName, "policy-name", "n", "", "policy name")
+	cmd.Flags().StringVarP(&filename, "file", "f", "", "full path to policy file")
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }

@@ -1,30 +1,29 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
+	"errors"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
+	cli "github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
+var id string
+
+func runFunc(cmd *cobra.Command, args []string) error {
+	if id == "" {
+		return errors.New("an id is required")
+	}
+	return cli.Client.DeleteJob(id)
+}
+
 func main() {
-	var jobid string
-	if len(os.Args) <= 1 {
-		fmt.Printf("Usage: rundeck-delete-job <job uuid>\n")
-		os.Exit(1)
+	cmd := &cobra.Command{
+		Use:   "rundeck-delete-job -j id",
+		Short: "deletes a job on the rundeck server",
+		RunE:  runFunc,
 	}
-	jobid = os.Args[1]
-	client, clientErr := rundeck.NewClientFromEnv()
-	if clientErr != nil {
-		log.Fatal(clientErr.Error())
-	}
-	err := client.DeleteJob(jobid)
-	if err != nil {
-		fmt.Printf("%s\n", err)
-		os.Exit(1)
-	} else {
-		fmt.Printf("Job %s deleted\n", jobid)
-		os.Exit(0)
-	}
+	cmd.Flags().StringVarP(&id, "job-id", "j", "", "job id")
+	cli.UseFormatter = false
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }

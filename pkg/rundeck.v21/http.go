@@ -103,8 +103,14 @@ func (rc *Client) httpDelete(path string, opts ...httpclient.RequestOption) erro
 	}
 	opts = append(opts, authOpt...)
 	opts = append(opts, httpclient.ExpectStatus(204))
-	_, err := httpclient.Delete(rc.makeAPIPath(path), opts...)
-	return err
+	resp, err := httpclient.Delete(rc.makeAPIPath(path), opts...)
+	if err != nil {
+		return err
+	}
+	if resp.Status == 404 {
+		return ErrMissingResource
+	}
+	return nil
 }
 
 func (rc *Client) authWrap() ([]httpclient.RequestOption, error) {
