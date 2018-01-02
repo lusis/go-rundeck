@@ -1,64 +1,39 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
-
-	"github.com/olekukonko/tablewriter"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
-
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
+	cli "github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
-var (
-	formatUsage = fmt.Sprintf("Format to show results [table, csv, list (ids only - useful for piping)]")
-	format      = kingpin.Flag("format", formatUsage).Short('F').Default("table").Enum("table", "list", "csv")
-	sep         = kingpin.Flag("separator", "separator for csv output").Default(",").String()
-	header      = kingpin.Flag("headers", "add headers for csv output").Default("false").Bool()
-)
-
-func main() {
-	kingpin.Parse()
-	client, clientErr := rundeck.NewClientFromEnv()
-	if clientErr != nil {
-		log.Fatal(clientErr.Error())
-	}
-	data, err := client.ListProjects()
+func runFunc(cmd *cobra.Command, args []string) error {
+	data, err := cli.Client.ListProjects()
 	if err != nil {
-		fmt.Printf("%s\n", err)
-		os.Exit(1)
-	} else {
-		if *format == "table" {
-			table := tablewriter.NewWriter(os.Stdout)
-			table.SetHeader([]string{
-				"Name",
-				"Description",
-				"URL",
-			})
-			for _, d := range *data {
-				table.Append([]string{
-					d.Name,
-					d.Description,
-					d.URL,
-				})
-			}
-			table.Render()
-		} else if *format == "list" {
-			for _, d := range *data {
-				fmt.Printf("%s\n", d.Name)
-			}
-		} else if *format == "csv" {
-			if *header {
-				fmt.Printf("%s%s%s%s%s\n", "NAME", *sep, "DESCRIPTION", *sep, "URL")
-			}
-			for _, d := range *data {
-				fmt.Printf("%s%s%s%s%s\n", d.Name, *sep, d.Description, *sep, d.URL)
-			}
-		} else {
-			fmt.Printf("Unknown output format: %s\n", *format)
-			os.Exit(1)
-		}
-		os.Exit(0)
+		return err
 	}
+
+	cli.OutputFormatter.SetHeaders([]string{
+		"Name",
+		"Description",
+		"URL",
+	})
+	for _, d := range *data {
+		if rowErr := cli.OutputFormatter.AddRow([]string{
+			d.Name,
+			d.Description,
+			d.URL,
+		}); rowErr != nil {
+			return rowErr
+		}
+	}
+	cli.OutputFormatter.Draw()
+	return nil
+}
+func main() {
+	cmd := &cobra.Command{
+		Use:   "rundeck-list-projects",
+		Short: "gets a list of projects from the rundeck server",
+		RunE:  runFunc,
+	}
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }

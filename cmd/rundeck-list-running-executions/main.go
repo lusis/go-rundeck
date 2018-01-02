@@ -1,65 +1,69 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"os"
+	"errors"
 	"strconv"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
-	"github.com/olekukonko/tablewriter"
-	kingpin "gopkg.in/alecthomas/kingpin.v2"
+	cli "github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
 var (
-	project     = kingpin.Arg("project", "").Required().String()
-	formatUsage = fmt.Sprintf("Format to show results [table, csv, list (ids only - useful for piping)]")
-	format      = kingpin.Flag("format", formatUsage).Short('F').Default("table").Enum("table", "list", "csv")
-	sep         = kingpin.Flag("separator", "separator for csv output").Default(",").String()
-	header      = kingpin.Flag("headers", "add headers for csv output").Default("false").Bool()
+	projectid string
 )
 
-func main() {
-	kingpin.Parse()
-	client, clientErr := rundeck.NewClientFromEnv()
-	if clientErr != nil {
-		log.Fatal(clientErr.Error())
+func runFunc(cmd *cobra.Command, args []string) error {
+	if projectid == "" {
+		return errors.New("you must specify a project id")
 	}
-	res, err := client.ListRunningExecutions(*project)
+	data, err := cli.Client.ListRunningExecutions(projectid)
 	if err != nil {
-		fmt.Printf("%s\n", err)
-		os.Exit(1)
-	} else {
-		if *format == "table" {
-			table := tablewriter.NewWriter(os.Stdout)
-			table.SetHeader([]string{
-				"ID",
-				"Status",
-				"User",
-			})
-			for _, d := range res.Executions {
-				table.Append([]string{
-					strconv.Itoa(d.ID),
-					d.Status,
-					d.User,
-				})
-			}
-			table.Render()
-		} else if *format == "csv" {
-			if *header {
-				fmt.Printf("ID%sStatus%sUser", *sep, *sep)
-			}
-			for _, d := range res.Executions {
-				fmt.Printf("%d%s%s%s%s\n", d.ID, *sep, d.Status, *sep, d.User)
-			}
-		} else if *format == "list" {
-			for _, d := range res.Executions {
-				fmt.Printf("%d\n", d.ID)
-			}
-		} else {
-			fmt.Printf("Unknown output format: %s\n", *format)
-			os.Exit(1)
-		}
-		os.Exit(0)
+		return err
 	}
+	cli.OutputFormatter.SetHeaders([]string{
+		"ID",
+		"Job Name",
+		"Job Description",
+		"Arguments",
+		"Node Success/Failure Count",
+		"User",
+		"Start",
+		"Project",
+	})
+	for _, d := range data.Executions {
+		var description string
+		var name string
+		if &d.Job != nil {
+			name = d.Job.Name
+			description = d.Job.Description
+		} else {
+			name = "<adhoc>"
+			description = d.Description
+		}
+		if rowErr := cli.OutputFormatter.AddRow([]string{
+			strconv.Itoa(d.ID),
+			name,
+			description,
+			d.ArgString,
+			strconv.Itoa(len(d.SuccessfulNodes)) + "/" + strconv.Itoa(len(d.FailedNodes)),
+			d.User,
+			d.DateStarted.Date.String(),
+			d.Project,
+		}); rowErr != nil {
+			return rowErr
+		}
+	}
+	cli.OutputFormatter.Draw()
+	return nil
+}
+
+func main() {
+	cmd := &cobra.Command{
+		Use:   "rundeck-list-running-executions -p project-id",
+		Short: "gets a list of running executions for a project from the rundeck server",
+		RunE:  runFunc,
+	}
+	cmd.Flags().StringVarP(&projectid, "project-id", "p", "", "project id")
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }
