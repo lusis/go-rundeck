@@ -13,7 +13,7 @@ type testTS struct {
 	DateTime JSONTime `json:"datetime"`
 }
 
-func TestMarshal(t *testing.T) {
+func TestMarshalJSONTime(t *testing.T) {
 	tstamp := time.Date(2016, time.November, 23, 12, 20, 55, 0, time.Local)
 	s := &testTS{
 		DateTime: JSONTime{tstamp},

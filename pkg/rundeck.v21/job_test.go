@@ -2,7 +2,9 @@ package rundeck
 
 import (
 	"testing"
+	"time"
 
+	requests "github.com/lusis/go-rundeck/pkg/rundeck.v21/requests"
 	"github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 	"github.com/lusis/go-rundeck/pkg/rundeck.v21/responses/testdata"
 	yaml "gopkg.in/yaml.v2"
@@ -76,4 +78,48 @@ func TestListJobs(t *testing.T) {
 	obj, cErr := client.ListJobs("testproject")
 	assert.NoError(t, cErr)
 	assert.NotNil(t, obj)
+}
+
+func TestRunJobOption(t *testing.T) {
+	curTime := time.Now().UTC()
+	jobOpts := &requests.RunJobRequest{}
+	opts := []RunJobOption{
+		RunJobArgs("-foo bar"),
+		RunJobAs("auser"),
+		RunJobOpts(map[string]string{"foo": "bar"}),
+		RunJobFilter(".*"),
+		RunJobLogLevel("DEBUG"),
+		RunJobRunAt(curTime),
+	}
+	for _, opt := range opts {
+		if err := opt(jobOpts); err != nil {
+			assert.NoError(t, err)
+		}
+	}
+	assert.Equal(t, "-foo bar", jobOpts.ArgString)
+	assert.Equal(t, "auser", jobOpts.AsUser)
+	assert.Equal(t, "bar", jobOpts.Options["foo"])
+	assert.Equal(t, "DEBUG", jobOpts.LogLevel)
+	assert.NotNil(t, jobOpts.RunAtTime)
+	assert.Equal(t, ".*", jobOpts.Filter)
+}
+
+func TestDeleteJobFound(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 201)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	err := client.DeleteJob("testproject")
+	assert.NoError(t, err)
+}
+
+func TestDeleteJobNotFound(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 404)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	err := client.DeleteJob("testproject")
+	assert.EqualError(t, ErrMissingResource, err.Error())
 }

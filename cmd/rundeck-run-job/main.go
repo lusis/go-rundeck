@@ -76,7 +76,7 @@ func runFunc(cmd *cobra.Command, args []string) error {
 		if rtErr != nil {
 			return rtErr
 		}
-		runOpts = append(runOpts, rundeck.RunJobAt(rt))
+		runOpts = append(runOpts, rundeck.RunJobRunAt(rt))
 	}
 	data, err := cli.Client.RunJob(jobid, runOpts...)
 	if err != nil {

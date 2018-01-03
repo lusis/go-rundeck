@@ -42,14 +42,6 @@ func RunJobAs(u string) RunJobOption {
 	}
 }
 
-// RunJobAt runs the job at the specified time
-func RunJobAt(t time.Time) RunJobOption {
-	return func(r *requests.RunJobRequest) error {
-		r.RunAtTime = &requests.JSONTime{t} // nolint: vet
-		return nil
-	}
-}
-
 // RunJobArgs runs the job with the specified arg string
 func RunJobArgs(a string) RunJobOption {
 	return func(r *requests.RunJobRequest) error {
@@ -85,7 +77,7 @@ func RunJobLogLevel(l string) RunJobOption {
 // RunJobRunAt runs the specified job at the specified time
 func RunJobRunAt(t time.Time) RunJobOption {
 	return func(r *requests.RunJobRequest) error {
-		r.RunAtTime = &requests.JSONTime{t}
+		r.RunAtTime = &requests.JSONTime{t} // nolint: vet
 		return nil
 	}
 }
@@ -121,7 +113,7 @@ func (c *Client) GetJobInfo(id string) (*JobMetaData, error) {
 
 // DeleteJob deletes a job
 func (c *Client) DeleteJob(id string) error {
-	return c.httpDelete("job/"+id, httpclient.ExpectStatus(404))
+	return c.httpDelete("job/"+id, httpclient.ExpectStatus(404), httpclient.ExpectStatus(201))
 
 }
 
@@ -172,6 +164,7 @@ func (c *Client) GetRequiredOpts(j string) (map[string]string, error) {
 	u := make(map[string]string)
 	data := &responses.JobYAMLResponse{}
 	res, err := c.httpGet("job/"+j, accept("application/yaml"))
+
 	if err != nil {
 		return u, err
 	}

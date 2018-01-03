@@ -1,3 +1,5 @@
 .env.local
 xmlfiles/
 bin/
+debug.test
+.vscode
