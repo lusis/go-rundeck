@@ -1,12 +1,14 @@
 package rundeck
 
 import (
+	"bytes"
 	"encoding/json"
-	"encoding/xml"
 	"errors"
 	"fmt"
+	"time"
 
 	httpclient "github.com/lusis/go-rundeck/pkg/httpclient"
+	requests "github.com/lusis/go-rundeck/pkg/rundeck.v21/requests"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 	yaml "gopkg.in/yaml.v2"
 )
@@ -29,58 +31,63 @@ type JobOption struct {
 	Value       string
 }
 
-// JobSequence represents a job sequence
-type JobSequence struct {
-	XMLName   xml.Name
-	KeepGoing bool           `xml:"keepgoing,attr"`
-	Strategy  string         `xml:"strategy,attr"`
-	Steps     []SequenceStep `xml:"command"`
+// RunJobOption is a type for functional options
+type RunJobOption func(*requests.RunJobRequest) error
+
+// RunJobAs runs a job as a specific user
+func RunJobAs(u string) RunJobOption {
+	return func(r *requests.RunJobRequest) error {
+		r.AsUser = u
+		return nil
+	}
 }
 
-// SequenceStep represents a sequence step
-type SequenceStep struct {
-	XMLName        xml.Name
-	Description    string      `xml:"description,omitempty"`
-	JobRef         *JobRefStep `xml:"jobref,omitempty"`
-	NodeStepPlugin *PluginStep `xml:"node-step-plugin,omitempty"`
-	StepPlugin     *PluginStep `xml:"step-plugin,omitempty"`
-	Exec           *string     `xml:"exec,omitempty"`
-	*ScriptStep    `xml:",omitempty"`
+// RunJobAt runs the job at the specified time
+func RunJobAt(t time.Time) RunJobOption {
+	return func(r *requests.RunJobRequest) error {
+		r.RunAtTime = &requests.JSONTime{t} // nolint: vet
+		return nil
+	}
 }
 
-// ExecStep represents an exec step
-type ExecStep struct {
-	XMLName xml.Name
-	string  `xml:"exec,omitempty"`
+// RunJobArgs runs the job with the specified arg string
+func RunJobArgs(a string) RunJobOption {
+	return func(r *requests.RunJobRequest) error {
+		r.ArgString = a
+		return nil
+	}
 }
 
-// ScriptStep represents a script step
-type ScriptStep struct {
-	XMLName           xml.Name
-	Script            *string `xml:"script,omitempty"`
-	ScriptArgs        *string `xml:"scriptargs,omitempty"`
-	ScriptFile        *string `xml:"scriptfile,omitempty"`
-	ScriptURL         *string `xml:"scripturl,omitempty"`
-	ScriptInterpreter *string `xml:"scriptinterpreter,omitempty"`
+// RunJobFilter runs the job with the specified filter
+func RunJobFilter(a string) RunJobOption {
+	return func(r *requests.RunJobRequest) error {
+		r.Filter = a
+		return nil
+	}
 }
 
-// PluginStep represents a plugin step
-type PluginStep struct {
-	XMLName       xml.Name
-	Type          string `xml:"type,attr"`
-	Configuration []struct {
-		XMLName xml.Name `xml:"entry"`
-		Key     string   `xml:"key,attr"`
-		Value   string   `xml:"value,attr"`
-	} `xml:"configuration>entry,omitempty"`
+// RunJobOpts runs the job with the specified filter
+func RunJobOpts(a map[string]string) RunJobOption {
+	return func(r *requests.RunJobRequest) error {
+		r.Options = a
+		return nil
+	}
 }
 
-// JobRefStep represents a job reference step
-type JobRefStep struct {
-	XMLName  xml.Name
-	Name     string `xml:"name,attr,omitempty"`
-	Group    string `xml:"group,attr,omitempty"`
-	NodeStep bool   `xml:"nodeStep,attr,omitempty"`
+// RunJobLogLevel runs the job with the specified log level
+func RunJobLogLevel(l string) RunJobOption {
+	return func(r *requests.RunJobRequest) error {
+		r.LogLevel = l
+		return nil
+	}
+}
+
+// RunJobRunAt runs the specified job at the specified time
+func RunJobRunAt(t time.Time) RunJobOption {
+	return func(r *requests.RunJobRequest) error {
+		r.RunAtTime = &requests.JSONTime{t}
+		return nil
+	}
 }
 
 // GetJobMetaData gets a job's metadata
@@ -188,23 +195,29 @@ func (c *Client) GetRequiredOpts(j string) (map[string]string, error) {
 }
 
 // RunJob runs a job
-/*
-func (c *Client) RunJob(id string, options RunOptions) (*Executions, error) {
-	var res []byte
-	data := &Executions{}
-	options.runAtTime = strings.Replace(options.RunAtTime.Format(time.RFC3339), "Z", "-", -1)
-	opts, err := json.Marshal(options)
-	if err != nil {
-		return data, err
+func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
+	jobOpts := &requests.RunJobRequest{}
+	data := &Execution{}
+	for _, opt := range opts {
+		if err := opt(jobOpts); err != nil {
+			return nil, err
+		}
 	}
-	res, pErr := c.httpPost("job/"+id+"/run", withBody(bytes.NewReader(opts)), requestJSON())
+	body := bytes.NewReader([]byte("{}"))
+	if jobOpts != nil {
+		req, err := json.Marshal(jobOpts)
+		if err != nil {
+			return nil, err
+		}
+		body = bytes.NewReader(req)
+	}
+	res, pErr := c.httpPost("job/"+id+"/run", withBody(body), requestJSON())
 	if pErr != nil {
-		return data, pErr
+		return nil, pErr
 	}
-	xmlErr := xml.Unmarshal(res, &data)
-	return data, xmlErr
+	jsonErr := json.Unmarshal(res, data)
+	return data, jsonErr
 }
-*/
 
 // FindJobByName runs a job by name
 func (c *Client) FindJobByName(name string, project string) (*JobMetaData, error) {

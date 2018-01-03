@@ -48,9 +48,6 @@ func buildParams(values []string) (map[string]string, error) {
 }
 
 func runFunc(cmd *cobra.Command, args []string) error {
-	if len(args) < 1 {
-		return errors.New("you must specify a rundeck api path to call")
-	}
 	path := args[0]
 	params, paramErr := buildParams(queryParameters)
 	if paramErr != nil {
