@@ -29,3 +29,13 @@ type OptionError struct {
 func (e *OptionError) Error() string {
 	return e.msg
 }
+
+// PolicyValidationError is a custom error type for policy validation errors
+type PolicyValidationError struct {
+	msg string
+}
+
+// Error returns the error message
+func (e *PolicyValidationError) Error() string {
+	return e.msg
+}

@@ -18,7 +18,7 @@ type DeletedExecutions responses.BulkDeleteExecutionsResponse
 // ListProjectExecutions lists a projects executions
 func (c *Client) ListProjectExecutions(projectID string, options map[string]string) (*Executions, error) {
 	data := &Executions{}
-	res, err := c.httpGet("project/"+projectID+"/executions", requestJSON(), queryParams(options))
+	res, err := c.httpGet("project/"+projectID+"/executions", requestJSON(), queryParams(options), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
@@ -32,7 +32,7 @@ func (c *Client) ListProjectExecutions(projectID string, options map[string]stri
 func (c *Client) ListRunningExecutions(projectID string) (*Executions, error) {
 	options := make(map[string]string)
 	data := &Executions{}
-	res, err := c.httpGet("project/"+projectID+"/executions/running", requestJSON(), queryParams(options))
+	res, err := c.httpGet("project/"+projectID+"/executions/running", requestJSON(), queryParams(options), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}

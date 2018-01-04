@@ -38,7 +38,7 @@ type ConfigProperty struct {
 // GetProject gets a project by name
 func (c *Client) GetProject(name string) (*Project, error) {
 	p := &responses.ProjectInfoResponse{}
-	res, err := c.httpGet("project/"+name, requestJSON())
+	res, err := c.httpGet("project/"+name, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (c *Client) GetProject(name string) (*Project, error) {
 // ListProjects lists all projects
 func (c *Client) ListProjects() (*Projects, error) {
 	data := &responses.ListProjectsResponse{}
-	res, err := c.httpGet("projects", requestJSON())
+	res, err := c.httpGet("projects", requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
@@ -89,5 +89,5 @@ func (c *Client) MakeProject(p NewProject) error {
 // DeleteProject deletes a project
 func (c *Client) DeleteProject(p string) error {
 	url := fmt.Sprintf("project/%s", p)
-	return c.httpDelete(url, requestJSON(), requestExpects(204), requestExpects(404))
+	return c.httpDelete(url, requestJSON(), requestExpects(204))
 }

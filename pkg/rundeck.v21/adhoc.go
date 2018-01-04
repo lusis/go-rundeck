@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 
+	multierror "github.com/hashicorp/go-multierror"
 	requests "github.com/lusis/go-rundeck/pkg/rundeck.v21/requests"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
@@ -52,7 +53,7 @@ func (c *Client) RunAdhoc(projectID string, exec string, opts ...AdHocRunOption)
 	req := &requests.AdHocCommandRequest{}
 	for _, opt := range opts {
 		if err := opt(req); err != nil {
-			return nil, err
+			return nil, &OptionError{msg: multierror.Append(errOption, err).Error()}
 		}
 	}
 	req.Project = projectID
@@ -62,14 +63,14 @@ func (c *Client) RunAdhoc(projectID string, exec string, opts ...AdHocRunOption)
 	}
 	body, bErr := json.Marshal(req)
 	if bErr != nil {
-		return nil, bErr
+		return nil, &MarshalError{msg: multierror.Append(errEncoding, bErr).Error()}
 	}
-	res, err := c.httpGet("project/"+projectID+"/run/command", requestJSON(), withBody(bytes.NewReader(body)))
+	res, err := c.httpGet("project/"+projectID+"/run/command", requestExpects(200), requestJSON(), withBody(bytes.NewReader(body)))
 	if err != nil {
 		return nil, err
 	}
 	if err := json.Unmarshal(res, data); err != nil {
-		return nil, err
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, err).Error()}
 	}
 	return data, nil
 }

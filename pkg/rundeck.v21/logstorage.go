@@ -12,7 +12,7 @@ type LogStorage responses.LogStorageResponse
 // GetLogStorage gets the logstorage
 func (c *Client) GetLogStorage() (*LogStorage, error) {
 	ls := &LogStorage{}
-	data, err := c.httpGet("system/logstorage", requestJSON())
+	data, err := c.httpGet("system/logstorage", requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}

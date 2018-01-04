@@ -36,7 +36,7 @@ func TokenRoles(roles ...string) TokenOption {
 // GetTokens gets all tokens for the current user
 func (c *Client) GetTokens() ([]*Token, error) {
 	tokens := make([]*Token, 0)
-	data, err := c.httpGet("tokens", requestJSON())
+	data, err := c.httpGet("tokens", requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +49,7 @@ func (c *Client) GetTokens() ([]*Token, error) {
 
 // GetUserTokens gets the api tokens for a user
 func (c *Client) GetUserTokens(user string) ([]*Token, error) {
-	data, err := c.httpGet("tokens/"+user, requestJSON())
+	data, err := c.httpGet("tokens/"+user, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (c *Client) GetUserTokens(user string) ([]*Token, error) {
 
 // GetToken gets a token
 func (c *Client) GetToken(tokenID string) (*Token, error) {
-	data, err := c.httpGet("token/"+tokenID, requestJSON())
+	data, err := c.httpGet("token/"+tokenID, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
@@ -106,5 +106,5 @@ func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
 // DeleteToken deletes a token
 func (c *Client) DeleteToken(token string) error {
 	url := fmt.Sprintf("token/%s", token)
-	return c.httpDelete(url, requestJSON(), requestExpects(404), requestExpects(204))
+	return c.httpDelete(url, requestJSON(), requestExpects(204))
 }

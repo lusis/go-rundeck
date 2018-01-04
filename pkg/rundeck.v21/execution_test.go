@@ -21,8 +21,8 @@ func TestGetExecution(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, cErr := client.GetExecution("1")
-	assert.NoError(t, cErr)
+	obj, oerr := client.GetExecution("1")
+	assert.NoError(t, oerr)
 	assert.Equal(t, 1, obj.ID)
 	assert.Equal(t, "[url]", obj.HRef)
 	assert.Equal(t, "[url]", obj.Permalink)
@@ -62,8 +62,8 @@ func TestGetExecutionInvalidStatusCode(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, cErr := client.GetExecution("1")
-	assert.Error(t, cErr)
+	obj, oerr := client.GetExecution("1")
+	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }
 
@@ -74,8 +74,8 @@ func TestGetExecutionJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, cErr := client.GetExecution("1")
-	assert.Error(t, cErr)
+	obj, oerr := client.GetExecution("1")
+	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }
 
@@ -91,8 +91,8 @@ func TestGetExecutionState(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, cErr := client.GetExecutionState("1")
-	assert.NoError(t, cErr)
+	obj, oerr := client.GetExecutionState("1")
+	assert.NoError(t, oerr)
 	assert.NotNil(t, obj)
 }
 
@@ -103,8 +103,8 @@ func TestGetExecutionStateJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, cErr := client.GetExecutionState("1")
-	assert.Error(t, cErr)
+	obj, oerr := client.GetExecutionState("1")
+	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }
 
@@ -115,8 +115,8 @@ func TestGetExecutionInvalidStatus(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, cErr := client.GetExecutionState("1")
-	assert.Error(t, cErr)
+	obj, oerr := client.GetExecutionState("1")
+	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }
 func TestGetExecutionOutput(t *testing.T) {
@@ -131,7 +131,90 @@ func TestGetExecutionOutput(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, cErr := client.GetExecutionOutput("1")
-	assert.NoError(t, cErr)
+	obj, oerr := client.GetExecutionOutput("1")
+	assert.NoError(t, oerr)
 	assert.NotEqual(t, "", string(obj))
+}
+
+func TestDeleteExecution(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 204)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	err := client.DeleteExecution("1")
+	assert.NoError(t, err)
+}
+
+func TestDisableExecutionSuccess(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(`{"success":true}`), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	res, err := client.DisableExecution("1")
+	assert.NoError(t, err)
+	assert.True(t, res)
+}
+
+func TestDisableExecutionJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(``), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	res, err := client.DisableExecution("1")
+	assert.Error(t, err)
+	assert.False(t, res)
+}
+
+func TestDisableExecutionHTTPError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(``), "application/json", 500)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	res, err := client.DisableExecution("1")
+	assert.Error(t, err)
+	assert.False(t, res)
+}
+
+func TestEnableExecutionSuccess(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(`{"success":true}`), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	res, err := client.EnableExecution("1")
+	assert.NoError(t, err)
+	assert.True(t, res)
+}
+
+func TestEnableExecutionJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(``), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	res, err := client.EnableExecution("1")
+	assert.Error(t, err)
+	assert.False(t, res)
+}
+
+func TestEnableExecutionHTTPError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(``), "application/json", 500)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	res, err := client.EnableExecution("1")
+	assert.Error(t, err)
+	assert.False(t, res)
 }

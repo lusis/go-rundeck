@@ -61,7 +61,7 @@ func TestNewClientCustomHTTPClient(t *testing.T) {
 	client, err := NewClient(&conf)
 	assert.NoError(t, err)
 	assert.ObjectsAreEqual(httpClient, client.HTTPClient)
-	res, resErr := client.Get("/foo")
+	res, resErr := client.Get("/foo", requestExpects(200))
 	assert.NoError(t, resErr)
 	assert.Equal(t, "Custom transport used", string(res))
 }

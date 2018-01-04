@@ -55,7 +55,7 @@ func (rc *Client) makeAPIPath(path string) string {
 func redirPolicy(req *http.Request, via []*http.Request) error {
 	redir := req.URL.Path
 	if strings.HasPrefix(redir, "/user/error") || strings.HasPrefix(redir, "/user/login") {
-		return ErrInvalidUsernamePassword
+		return errInvalidUsernamePassword
 	}
 	return nil
 }
@@ -71,7 +71,7 @@ func (rc *Client) httpGet(path string, opts ...httpclient.RequestOption) ([]byte
 		return nil, authErr
 	}
 	authOpt = append(authOpt, opts...)
-
+	authOpt = append(authOpt, httpclient.ExpectStatus(404))
 	resp, err := httpclient.Get(rc.makeAPIPath(path), authOpt...)
 	if err != nil {
 		return nil, err
@@ -88,8 +88,19 @@ func (rc *Client) httpPost(path string, opts ...httpclient.RequestOption) ([]byt
 		return nil, authErr
 	}
 	opts = append(opts, authOpt...)
+	opts = append(opts, httpclient.ExpectStatus(409)) // 409 is a valid response
+	opts = append(opts, httpclient.ExpectStatus(404))
 	resp, err := httpclient.Post(rc.makeAPIPath(path), opts...)
-	return resp.Body, err
+	if err != nil {
+		return resp.Body, err
+	}
+	if resp.Status == 409 {
+		return nil, errResourceConflict
+	}
+	if resp.Status == 404 {
+		return nil, ErrMissingResource
+	}
+	return resp.Body, nil
 }
 
 func (rc *Client) httpPut(path string, opts ...httpclient.RequestOption) ([]byte, error) {
@@ -98,8 +109,19 @@ func (rc *Client) httpPut(path string, opts ...httpclient.RequestOption) ([]byte
 		return nil, authErr
 	}
 	opts = append(opts, authOpt...)
+	opts = append(opts, httpclient.ExpectStatus(409)) // 409 is a valid response
+	opts = append(opts, httpclient.ExpectStatus(404))
 	resp, err := httpclient.Put(rc.makeAPIPath(path), opts...)
-	return resp.Body, err
+	if err != nil {
+		return resp.Body, err
+	}
+	if resp.Status == 409 {
+		return nil, errResourceConflict
+	}
+	if resp.Status == 404 {
+		return nil, ErrMissingResource
+	}
+	return resp.Body, nil
 }
 
 func (rc *Client) httpDelete(path string, opts ...httpclient.RequestOption) error {
@@ -109,6 +131,7 @@ func (rc *Client) httpDelete(path string, opts ...httpclient.RequestOption) erro
 	}
 	opts = append(opts, authOpt...)
 	opts = append(opts, httpclient.ExpectStatus(204))
+	opts = append(opts, httpclient.ExpectStatus(404))
 	resp, err := httpclient.Delete(rc.makeAPIPath(path), opts...)
 	if err != nil {
 		return err

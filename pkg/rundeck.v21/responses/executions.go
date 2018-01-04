@@ -14,6 +14,17 @@ type JobExecutionsResponse ListRunningExecutionsResponse
 // ListRunningExecutionsResponseTestFile is the test data for JobExecutionResponse
 const ListRunningExecutionsResponseTestFile = "executions.json"
 
+// SuccessToggleResponseTestFile is the test data for a successful toggle
+const SuccessToggleResponseTestFile = "success.json"
+
+// FailToggleResponseTestFile is the test data for a successful toggle
+const FailToggleResponseTestFile = "failed.json"
+
+// ToggleResponse is the response for a toggled job, exeuction or schedule
+type ToggleResponse struct {
+	Success bool `json:"success"`
+}
+
 // ListRunningExecutionsResponse is the response for listing the running executions for a project
 type ListRunningExecutionsResponse struct {
 	Paging     PagingResponse      `json:"paging"`
