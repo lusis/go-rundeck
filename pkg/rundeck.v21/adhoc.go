@@ -61,10 +61,7 @@ func (c *Client) RunAdhoc(projectID string, exec string, opts ...AdHocRunOption)
 	if req.Filter == "" {
 		req.Filter = "name: .*"
 	}
-	body, bErr := json.Marshal(req)
-	if bErr != nil {
-		return nil, &MarshalError{msg: multierror.Append(errEncoding, bErr).Error()}
-	}
+	body, _ := json.Marshal(req)
 	res, err := c.httpGet("project/"+projectID+"/run/command", requestExpects(200), requestJSON(), withBody(bytes.NewReader(body)))
 	if err != nil {
 		return nil, err

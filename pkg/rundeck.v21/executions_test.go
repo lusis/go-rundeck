@@ -25,6 +25,27 @@ func TestListRunningExecutions(t *testing.T) {
 	assert.NotNil(t, obj)
 }
 
+func TestListRunningExecutionsHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ListRunningExecutionsResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 404)
+	defer server.Close()
+	obj, cErr := client.ListRunningExecutions("testproject")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestListRunningExecutionsJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.ListRunningExecutions("testproject")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
 func TestListProjectExecutions(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.ListRunningExecutionsResponseTestFile)
 	if err != nil {
@@ -40,3 +61,60 @@ func TestListProjectExecutions(t *testing.T) {
 	assert.NoError(t, cErr)
 	assert.NotNil(t, obj)
 }
+
+func TestListProjectExecutionsHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ListRunningExecutionsResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 404)
+	defer server.Close()
+	obj, cErr := client.ListProjectExecutions("testproject", nil)
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestListProjectExecutionsJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.ListProjectExecutions("testproject", nil)
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestDeleteExecutions(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.BulkDeleteExecutionsResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.DeleteExecutions(1, 2, 3)
+	assert.NoError(t, cErr)
+	assert.NotNil(t, obj)
+}
+
+func TestDeleteExecutionsHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.BulkDeleteExecutionsResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	obj, cErr := client.DeleteExecutions(1, 2, 3)
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestDeleteExecutionsJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.DeleteExecutions(1, 2, 3)
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestDeleteAllExecutionsForProject(t *testing.T) {}

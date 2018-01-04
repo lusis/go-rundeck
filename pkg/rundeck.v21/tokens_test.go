@@ -236,6 +236,7 @@ func TestCreateTokenWithOpts(t *testing.T) {
 	assert.Len(t, s.Roles, 1)
 	assert.Equal(t, "user3", s.User)
 	assert.Equal(t, "VjkbX2zUAwnXjDIbRYFp824tF5X2N7W1", s.Token)
+
 	assert.Equal(t, "user3", s.Creator)
 	assert.NotEmpty(t, s.Expiration)
 	assert.True(t, s.Expired)

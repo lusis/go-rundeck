@@ -86,10 +86,7 @@ func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
 	if len(tokenRequest.Roles) == 0 {
 		tokenRequest.Roles = []string{"*"}
 	}
-	newToken, newErr := json.Marshal(tokenRequest)
-	if newErr != nil {
-		return nil, &MarshalError{msg: multierror.Append(errDecoding, newErr).Error()}
-	}
+	newToken, _ := json.Marshal(tokenRequest)
 	url := fmt.Sprintf("tokens/%s", u)
 	data, err := c.httpPost(url, requestJSON(), withBody(bytes.NewReader(newToken)), requestExpects(201))
 	if err != nil {

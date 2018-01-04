@@ -39,25 +39,28 @@ func (c *Client) GetACLPolicy(policy string) ([]byte, error) {
 // CreateACLPolicy creates a system acl policy
 func (c *Client) CreateACLPolicy(name string, contents io.Reader) error {
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
-	res, err := c.httpPost(url, withBody(contents), accept("application/json"), contentType("application/yaml"), requestExpects(201), requestExpects(400))
+	res, err := c.httpPost(url, withBody(contents),
+		accept("application/json"),
+		contentType("application/yaml"),
+		requestExpects(201),
+		requestExpects(400))
 	if err != nil {
 		return err
 	}
-	if res != nil {
-		jsonError := &responses.FailedACLValidationResponse{}
-		jsonErr := json.Unmarshal(res, jsonError)
-		if jsonErr != nil {
-			// just return the original error
-			return err
-		}
-		var finalErr error
-		for _, v := range jsonError.Policies {
-			line := fmt.Sprintf("%s: %s", v.Policy, strings.Join(v.Errors, ","))
-			finalErr = multierror.Append(finalErr, fmt.Errorf("%s", line))
-		}
-		return &PolicyValidationError{msg: finalErr.Error()}
+	// okay we have a body in the response
+	// we should see if it's a validation error response
+	jsonError := &responses.FailedACLValidationResponse{}
+	jsonErr := json.Unmarshal(res, jsonError)
+	if jsonErr != nil {
+		// It's not a validation response
+		return nil
 	}
-	return nil
+	var finalErr error
+	for _, v := range jsonError.Policies {
+		line := fmt.Sprintf("%s: %s", v.Policy, strings.Join(v.Errors, ","))
+		finalErr = multierror.Append(finalErr, fmt.Errorf("%s", line))
+	}
+	return &PolicyValidationError{msg: finalErr.Error()}
 }
 
 // UpdateACLPolicy creates a system acl policy
@@ -67,19 +70,16 @@ func (c *Client) UpdateACLPolicy(name string, contents io.Reader) error {
 	if err != nil {
 		return err
 	}
-	if res != nil {
-		jsonError := &responses.FailedACLValidationResponse{}
-		jsonErr := json.Unmarshal(res, jsonError)
-		if jsonErr != nil {
-			// just return the original error
-			return err
-		}
-		var finalErr error
-		for _, v := range jsonError.Policies {
-			line := fmt.Sprintf("%s: %s", v.Policy, strings.Join(v.Errors, ","))
-			finalErr = multierror.Append(finalErr, fmt.Errorf("%s", line))
-		}
-		return &PolicyValidationError{msg: finalErr.Error()}
+	jsonError := &responses.FailedACLValidationResponse{}
+	jsonErr := json.Unmarshal(res, jsonError)
+	if jsonErr != nil {
+		// just return the original error
+		return nil
 	}
-	return nil
+	var finalErr error
+	for _, v := range jsonError.Policies {
+		line := fmt.Sprintf("%s: %s", v.Policy, strings.Join(v.Errors, ","))
+		finalErr = multierror.Append(finalErr, fmt.Errorf("%s", line))
+	}
+	return &PolicyValidationError{msg: finalErr.Error()}
 }
