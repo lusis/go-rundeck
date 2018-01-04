@@ -6,6 +6,7 @@
 // bulk_toggle_execution.json
 // bulk_toggle_schedule.json
 // config_item.json
+// error.json
 // execution_adhoc.json
 // execution_input_files.json
 // execution.json
@@ -224,6 +225,26 @@ func config_itemJson() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "config_item.json", size: 64, mode: os.FileMode(420), modTime: time.Unix(1513971893, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _errorJson = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x3c\xcb\x41\x0a\x02\x31\x0c\x46\xe1\x7d\x4f\x11\xb2\x1e\x0b\x82\xab\x6e\x3d\x49\x65\x7e\xc6\x82\xd3\x84\xa4\xd5\x85\x78\x77\x31\xc8\x6c\x1f\xdf\x7b\x27\x22\x86\x99\x18\x17\x1a\x36\xb1\xfc\x42\xd5\xf6\x84\x79\x93\xce\x85\xce\x97\xe5\x40\x57\x59\xc1\x25\x40\x8e\x90\xab\xb6\xd3\xdf\xe6\xd9\x7d\xaa\x8a\x0d\xac\x1c\xcf\x0e\xf7\xba\xc5\xe1\xb2\x63\xdc\x5b\xdf\xe8\xf6\xc0\x8b\xa6\x72\xfa\xa4\x6f\x00\x00\x00\xff\xff\x0e\x41\x31\x01\x7e\x00\x00\x00")
+
+func errorJsonBytes() ([]byte, error) {
+	return bindataRead(
+		_errorJson,
+		"error.json",
+	)
+}
+
+func errorJson() (*asset, error) {
+	bytes, err := errorJsonBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "error.json", size: 126, mode: os.FileMode(420), modTime: time.Unix(1515101683, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -986,6 +1007,7 @@ var _bindata = map[string]func() (*asset, error){
 	"bulk_toggle_execution.json": bulk_toggle_executionJson,
 	"bulk_toggle_schedule.json": bulk_toggle_scheduleJson,
 	"config_item.json": config_itemJson,
+	"error.json": errorJson,
 	"execution_adhoc.json": execution_adhocJson,
 	"execution_input_files.json": execution_input_filesJson,
 	"execution.json": executionJson,
@@ -1069,6 +1091,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 	"bulk_toggle_execution.json": &bintree{bulk_toggle_executionJson, map[string]*bintree{}},
 	"bulk_toggle_schedule.json": &bintree{bulk_toggle_scheduleJson, map[string]*bintree{}},
 	"config_item.json": &bintree{config_itemJson, map[string]*bintree{}},
+	"error.json": &bintree{errorJson, map[string]*bintree{}},
 	"execution.json": &bintree{executionJson, map[string]*bintree{}},
 	"execution_adhoc.json": &bintree{execution_adhocJson, map[string]*bintree{}},
 	"execution_input_files.json": &bintree{execution_input_filesJson, map[string]*bintree{}},

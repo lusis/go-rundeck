@@ -22,9 +22,12 @@ var (
 	ErrAuthFailed = errors.New("API call failed due to authentication failure")
 
 	// ErrMissingResource is the error type for 404 not found
-	ErrMissingResource  = errors.New("Rundeck could not find the resource you requested")
-	errResourceConflict = errors.New("resource already exists on the rundeck server")
-	errDecoding         = errors.New("Could not parse response from the Rundeck server")
-	errEncoding         = errors.New("could not encode payload for rundeck server")
-	errOption           = errors.New("Passed option returned an error")
+	ErrMissingResource = errors.New("Rundeck could not find the resource you requested")
+
+	// ErrResourceConflict is the error type for 409 responses
+	ErrResourceConflict = errors.New("resource already exists on the rundeck server")
+
+	errDecoding = errors.New("Could not parse response from the Rundeck server")
+	errEncoding = errors.New("could not encode payload for rundeck server")
+	errOption   = errors.New("Passed option returned an error")
 )

@@ -52,7 +52,7 @@ func (c *Client) DeleteExecution(id string) error {
 // DisableExecution disables an execution
 func (c *Client) DisableExecution(id string) (bool, error) {
 	t := &responses.ToggleResponse{}
-	res, err := c.httpPost("job/"+id+"/execution/disable", requestExpects(200))
+	res, err := c.httpPost("job/"+id+"/execution/disable", requestJSON(), requestExpects(200))
 	if err != nil {
 		return false, err
 	}
@@ -65,7 +65,7 @@ func (c *Client) DisableExecution(id string) (bool, error) {
 // EnableExecution enables an execution
 func (c *Client) EnableExecution(id string) (bool, error) {
 	t := &responses.ToggleResponse{}
-	res, err := c.httpPost("job/"+id+"/execution/enable", requestExpects(200))
+	res, err := c.httpPost("job/"+id+"/execution/enable", requestExpects(200), requestJSON())
 	if err != nil {
 		return false, err
 	}

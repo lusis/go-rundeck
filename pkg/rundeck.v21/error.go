@@ -39,3 +39,13 @@ type PolicyValidationError struct {
 func (e *PolicyValidationError) Error() string {
 	return e.msg
 }
+
+// AuthError is a custom error type for decoding errors
+type AuthError struct {
+	msg string
+}
+
+// Error returns the error message
+func (e *AuthError) Error() string {
+	return e.msg
+}

@@ -2,29 +2,30 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
+	cli "github.com/lusis/go-rundeck/pkg/cli"
+	"github.com/spf13/cobra"
 )
 
-func main() {
-	var jobid string
-	if len(os.Args) <= 1 {
-		fmt.Printf("Usage: rundeck-enable-execution <job uuid>\n")
-		os.Exit(1)
-	}
-	jobid = os.Args[1]
-	client, clientErr := rundeck.NewClientFromEnv()
-	if clientErr != nil {
-		log.Fatal(clientErr.Error())
-	}
-	err := client.EnableExecution(jobid)
+func runFunc(cmd *cobra.Command, args []string) error {
+	id := args[0]
+	res, err := cli.Client.EnableExecution(id)
 	if err != nil {
-		fmt.Printf("%s\n", err)
-		os.Exit(1)
-	} else {
-		fmt.Printf("Execution enabled\n")
-		os.Exit(0)
+		return err
 	}
+	fmt.Printf("%t\n", res)
+	return nil
+
+}
+
+func main() {
+	cmd := &cobra.Command{
+		Use:   "rundeck-enable-execution job-id",
+		Short: "enables a job's execution on the rundeck server",
+		Args:  cobra.MinimumNArgs(1),
+		RunE:  runFunc,
+	}
+	cli.UseFormatter = false
+	rootCmd := cli.New(cmd)
+	_ = rootCmd.Execute()
 }

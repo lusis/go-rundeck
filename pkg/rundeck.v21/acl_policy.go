@@ -39,8 +39,11 @@ func (c *Client) GetACLPolicy(policy string) ([]byte, error) {
 // CreateACLPolicy creates a system acl policy
 func (c *Client) CreateACLPolicy(name string, contents io.Reader) error {
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
-	res, err := c.httpPost(url, withBody(contents), accept("application/json"), contentType("application/yaml"), requestExpects(201))
+	res, err := c.httpPost(url, withBody(contents), accept("application/json"), contentType("application/yaml"), requestExpects(201), requestExpects(400))
 	if err != nil {
+		return err
+	}
+	if res != nil {
 		jsonError := &responses.FailedACLValidationResponse{}
 		jsonErr := json.Unmarshal(res, jsonError)
 		if jsonErr != nil {
@@ -60,8 +63,11 @@ func (c *Client) CreateACLPolicy(name string, contents io.Reader) error {
 // UpdateACLPolicy creates a system acl policy
 func (c *Client) UpdateACLPolicy(name string, contents io.Reader) error {
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
-	res, err := c.httpPut(url, withBody(contents), accept("application/json"), contentType("application/yaml"), requestExpects(201))
+	res, err := c.httpPut(url, withBody(contents), accept("application/json"), contentType("application/yaml"), requestExpects(201), requestExpects(400))
 	if err != nil {
+		return err
+	}
+	if res != nil {
 		jsonError := &responses.FailedACLValidationResponse{}
 		jsonErr := json.Unmarshal(res, jsonError)
 		if jsonErr != nil {

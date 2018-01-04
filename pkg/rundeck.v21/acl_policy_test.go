@@ -122,7 +122,7 @@ func TestCreateACLPolicyConflict(t *testing.T) {
 
 	pErr := client.CreateACLPolicy("foo", bytes.NewReader(jsonfile))
 	assert.Error(t, pErr)
-	assert.EqualError(t, pErr, errResourceConflict.Error())
+	assert.EqualError(t, pErr, ErrResourceConflict.Error())
 }
 
 func TestCreateACLPolicyValidationErrors(t *testing.T) {
@@ -172,7 +172,7 @@ func TestUpdateACLPolicyConflict(t *testing.T) {
 
 	pErr := client.UpdateACLPolicy("foo", bytes.NewReader(jsonfile))
 	assert.Error(t, pErr)
-	assert.EqualError(t, pErr, errResourceConflict.Error())
+	assert.EqualError(t, pErr, ErrResourceConflict.Error())
 }
 
 func TestUpdateACLPolicyValidationErrors(t *testing.T) {
