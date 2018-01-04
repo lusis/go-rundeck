@@ -15,7 +15,19 @@ var (
 
 func runFunc(cmd *cobra.Command, args []string) error {
 	projectName := args[0]
-	res, err := cli.Client.DeleteAllExecutionsForProject(projectName, maxDelete)
+
+	eopts := make(map[string]string)
+	eopts["max"] = strconv.Itoa(maxDelete)
+	e, listErr := cli.Client.ListProjectExecutions(projectName, eopts)
+	if listErr != nil {
+		return listErr
+	}
+
+	var toDelete []int
+	for _, execution := range e.Executions {
+		toDelete = append(toDelete, execution.ID)
+	}
+	res, err := cli.Client.DeleteExecutions(toDelete...)
 	if err != nil {
 		return err
 	}

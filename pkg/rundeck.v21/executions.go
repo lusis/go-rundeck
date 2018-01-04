@@ -2,7 +2,6 @@ package rundeck
 
 import (
 	"encoding/json"
-	"errors"
 	"strconv"
 	"strings"
 
@@ -71,25 +70,4 @@ func (c *Client) DeleteExecutions(ids ...int) (*DeletedExecutions, error) {
 		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, err).Error()}
 	}
 	return data, nil
-}
-
-// DeleteAllExecutionsForProject deletes all executions for a project up to the max (default: 10)
-func (c *Client) DeleteAllExecutionsForProject(project string, max int) (*DeletedExecutions, error) {
-	data := &DeletedExecutions{}
-
-	eopts := make(map[string]string)
-	eopts["max"] = strconv.Itoa(max)
-	e, err := c.ListProjectExecutions(project, eopts)
-	if err != nil {
-		return nil, err
-	}
-
-	var toDelete []int
-	for _, execution := range e.Executions {
-		toDelete = append(toDelete, execution.ID)
-	}
-	if len(toDelete) == 0 {
-		return data, errors.New("No executions found for project: " + project)
-	}
-	return c.DeleteExecutions(toDelete...)
 }
