@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 
+	multierror "github.com/hashicorp/go-multierror"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
 
@@ -14,34 +15,40 @@ type User responses.UserInfoResponse
 // GetUsers returns all rundeck users
 func (c *Client) GetUsers() ([]*User, error) {
 	var users []*User
-	res, err := c.httpGet("user/list", requestJSON())
+	res, err := c.httpGet("user/list", requestJSON(), requestExpects(200))
 	if err != nil {
 		return users, err
 	}
-	jsonErr := json.Unmarshal(res, &users)
-	return users, jsonErr
+	if jsonErr := json.Unmarshal(res, &users); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return users, nil
 }
 
 // GetCurrentUserInfo returns information about the current user
 func (c *Client) GetCurrentUserInfo() (*User, error) {
 	user := &User{}
-	res, err := c.httpGet("user/info", requestJSON())
+	res, err := c.httpGet("user/info", requestJSON(), requestExpects(200))
 	if err != nil {
-		return user, err
+		return nil, err
 	}
-	jsonErr := json.Unmarshal(res, &user)
-	return user, jsonErr
+	if jsonErr := json.Unmarshal(res, &user); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return user, nil
 }
 
 // GetUserInfo returns information about the named user - requires admin privileges
 func (c *Client) GetUserInfo(login string) (*User, error) {
 	user := &User{}
-	res, err := c.httpGet("user/info/"+login, requestJSON())
+	res, err := c.httpGet("user/info/"+login, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
-	jsonErr := json.Unmarshal(res, &user)
-	return user, jsonErr
+	if jsonErr := json.Unmarshal(res, &user); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return user, nil
 }
 
 // UpdateUserInfo updates a user
@@ -72,6 +79,8 @@ func (c *Client) UpdateUserInfo(u *User) (*User, error) {
 		return nil, resErr
 	}
 	resUser := &User{}
-	jsonErr := json.Unmarshal(res, &resUser)
-	return resUser, jsonErr
+	if jsonErr := json.Unmarshal(res, &resUser); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return resUser, nil
 }

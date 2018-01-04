@@ -23,3 +23,10 @@ func TestMarshalJSONTime(t *testing.T) {
 	assert.NoError(t, resErr)
 	assert.Equal(t, str, string(res))
 }
+
+func TestMarshalJSONTimeNil(t *testing.T) {
+	s := &testTS{}
+	res, resErr := json.Marshal(s)
+	assert.NoError(t, resErr)
+	assert.NotEmpty(t, string(res))
+}

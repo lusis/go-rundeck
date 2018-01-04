@@ -3,6 +3,7 @@ package rundeck
 import (
 	"encoding/json"
 
+	multierror "github.com/hashicorp/go-multierror"
 	httpclient "github.com/lusis/go-rundeck/pkg/httpclient"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
@@ -23,13 +24,14 @@ func (c *Client) GetHistory(project string, opts ...map[string]string) (*History
 		accept("application/json"),
 		contentType("application/x-www-form-urlencoded"),
 		queryParams(u),
+		requestExpects(200),
 	}
 	res, err := c.httpGet("project/"+project+"/history", options...)
 	if err != nil {
 		return nil, err
 	}
-	if err := json.Unmarshal(res, data); err != nil {
-		return nil, err
+	if jsonErr := json.Unmarshal(res, data); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
 	}
 	return data, nil
 }

@@ -43,7 +43,7 @@ func (c *Client) GetProject(name string) (*Project, error) {
 		return nil, err
 	}
 	if jsonErr := json.Unmarshal(res, &p); jsonErr != nil {
-		return nil, err
+		return nil, errDecoding
 	}
 
 	project := &Project{
@@ -63,7 +63,7 @@ func (c *Client) ListProjects() (*Projects, error) {
 		return nil, err
 	}
 	if jsonErr := json.Unmarshal(res, &data); jsonErr != nil {
-		return nil, jsonErr
+		return nil, errDecoding
 	}
 	projects := &Projects{}
 	for _, p := range *data {
@@ -89,6 +89,5 @@ func (c *Client) MakeProject(p NewProject) error {
 // DeleteProject deletes a project
 func (c *Client) DeleteProject(p string) error {
 	url := fmt.Sprintf("project/%s", p)
-	err := c.httpDelete(url, requestJSON())
-	return err
+	return c.httpDelete(url, requestJSON(), requestExpects(204), requestExpects(404))
 }

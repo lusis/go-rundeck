@@ -24,4 +24,8 @@ var (
 
 	// ErrMissingResource is the error type for 404 not found
 	ErrMissingResource = errors.New("Rundeck could not find the resource you requested")
+
+	errDecoding = errors.New("Could not parse response from the Rundeck server")
+	errEncoding = errors.New("could not encode payload for rundeck server")
+	errOption   = errors.New("Passed option returned an error")
 )

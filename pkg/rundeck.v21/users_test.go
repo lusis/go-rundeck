@@ -25,6 +25,28 @@ func TestGetUsers(t *testing.T) {
 	assert.Len(t, s, 2)
 }
 
+func TestGetUsersJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	s, err := client.GetUsers()
+	assert.Error(t, err)
+	assert.Nil(t, s)
+}
+
+func TestGetUsersInvalidStatus(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 500)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	s, err := client.GetUsers()
+	assert.Error(t, err)
+	assert.Nil(t, s)
+}
+
 func TestGetUserInfo(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.UserInfoResponseTestFile)
 	if err != nil {
@@ -44,6 +66,28 @@ func TestGetUserInfo(t *testing.T) {
 	assert.Equal(t, "admin@server.com", s.Email)
 }
 
+func TestGetUserInfoJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	s, err := client.GetUserInfo("admin")
+	assert.Error(t, err)
+	assert.Nil(t, s)
+}
+
+func TestGetUserInfoInvalidStatus(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 500)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	s, err := client.GetUserInfo("admin")
+	assert.Error(t, err)
+	assert.Nil(t, s)
+}
+
 func TestGetCurrentUserInfo(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.UserInfoResponseTestFile)
 	if err != nil {
@@ -61,4 +105,28 @@ func TestGetCurrentUserInfo(t *testing.T) {
 	assert.Equal(t, "Admin", s.FirstName)
 	assert.Equal(t, "McAdmin", s.LastName)
 	assert.Equal(t, "admin@server.com", s.Email)
+}
+
+func TestGetCurrentUserInfoInvalidStatus(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 500)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	s, err := client.GetCurrentUserInfo()
+	assert.Error(t, err)
+	assert.Nil(t, s)
+}
+
+func TestGetCurrentUserInfoJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	s, err := client.GetCurrentUserInfo()
+	assert.Error(t, err)
+	assert.Nil(t, s)
 }

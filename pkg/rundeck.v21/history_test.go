@@ -25,6 +25,33 @@ func TestGetHistory(t *testing.T) {
 	assert.NotNil(t, obj)
 }
 
+func TestGetHistoryNotFound(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.HistoryResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 404)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	obj, oErr := client.GetHistory("testproject", nil)
+	assert.Error(t, oErr)
+	assert.Nil(t, obj)
+}
+
+func TestGetHistoryDecodeError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	obj, oErr := client.GetHistory("testproject", nil)
+	assert.Error(t, oErr)
+	assert.Nil(t, obj)
+}
+
 func TestGetHistoryOptions(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.HistoryResponseTestFile)
 	if err != nil {

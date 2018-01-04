@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"time"
 
+	multierror "github.com/hashicorp/go-multierror"
 	httpclient "github.com/lusis/go-rundeck/pkg/httpclient"
 	requests "github.com/lusis/go-rundeck/pkg/rundeck.v21/requests"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
@@ -85,12 +86,12 @@ func RunJobRunAt(t time.Time) RunJobOption {
 // GetJobMetaData gets a job's metadata
 func (c *Client) GetJobMetaData(id string) (*JobMetaData, error) {
 	data := &JobMetaData{}
-	res, err := c.httpGet("job/"+id+"/info", requestJSON())
+	res, err := c.httpGet("job/"+id+"/info", requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
 	if err := json.Unmarshal(res, data); err != nil {
-		return nil, err
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
 	}
 	return data, nil
 }
@@ -101,8 +102,13 @@ func (c *Client) GetJobDefinition(id string, format string) ([]byte, error) {
 		accept("application/" + format),
 		contentType("application/x-www-form-urlencoded"),
 		queryParams(map[string]string{"format": format}),
+		requestExpects(200),
 	}
-	return c.httpGet("job/"+id, options...)
+	res, err := c.httpGet("job/"+id, options...)
+	if err != nil {
+		return nil, err
+	}
+	return res, nil
 
 }
 
@@ -113,35 +119,35 @@ func (c *Client) GetJobInfo(id string) (*JobMetaData, error) {
 
 // DeleteJob deletes a job
 func (c *Client) DeleteJob(id string) error {
-	return c.httpDelete("job/"+id, httpclient.ExpectStatus(404), httpclient.ExpectStatus(201))
+	return c.httpDelete("job/"+id, httpclient.ExpectStatus(404), httpclient.ExpectStatus(204))
 
 }
 
 // ExportJob exports a job
-func (c *Client) ExportJob(id string, format string) (string, error) {
+func (c *Client) ExportJob(id string, format string) ([]byte, error) {
 	if format != "xml" && format != "yaml" {
 		errString := fmt.Sprintf("Unknown/unsupported format \"%s\"", format)
-		return "", errors.New(errString)
+		return nil, errors.New(errString)
 	}
 	opts := make(map[string]string)
 	opts["format"] = format
-	res, err := c.httpGet("job/"+id, queryParams(opts))
+	res, err := c.httpGet("job/"+id, queryParams(opts), requestExpects(200))
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return string(res), nil
+	return res, nil
 }
 
 // GetJobOpts returns the required options for a job
 func (c *Client) GetJobOpts(j string) ([]*JobOption, error) {
 	options := make([]*JobOption, 0)
 	data := &responses.JobYAMLResponse{}
-	res, err := c.httpGet("job/"+j, accept("application/yaml"))
+	res, err := c.httpGet("job/"+j, accept("application/yaml"), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
 	if err := yaml.Unmarshal(res, &data); err != nil {
-		return nil, err
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
 	}
 	if data != nil {
 		for _, d := range *data {
@@ -163,13 +169,13 @@ func (c *Client) GetJobOpts(j string) ([]*JobOption, error) {
 func (c *Client) GetRequiredOpts(j string) (map[string]string, error) {
 	u := make(map[string]string)
 	data := &responses.JobYAMLResponse{}
-	res, err := c.httpGet("job/"+j, accept("application/yaml"))
+	res, err := c.httpGet("job/"+j, accept("application/yaml"), requestExpects(200))
 
 	if err != nil {
-		return u, err
+		return nil, err
 	}
 	if err := yaml.Unmarshal(res, &data); err != nil {
-		return nil, err
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
 	}
 	if data != nil {
 		for _, d := range *data {
@@ -193,23 +199,25 @@ func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
 	data := &Execution{}
 	for _, opt := range opts {
 		if err := opt(jobOpts); err != nil {
-			return nil, err
+			return nil, &OptionError{msg: multierror.Append(errOption, err).Error()}
 		}
 	}
 	body := bytes.NewReader([]byte("{}"))
 	if jobOpts != nil {
 		req, err := json.Marshal(jobOpts)
 		if err != nil {
-			return nil, err
+			return nil, &MarshalError{msg: multierror.Append(errEncoding, err).Error()}
 		}
 		body = bytes.NewReader(req)
 	}
-	res, pErr := c.httpPost("job/"+id+"/run", withBody(body), requestJSON())
+	res, pErr := c.httpPost("job/"+id+"/run", withBody(body), requestJSON(), requestExpects(200))
 	if pErr != nil {
 		return nil, pErr
 	}
-	jsonErr := json.Unmarshal(res, data)
-	return data, jsonErr
+	if jsonErr := json.Unmarshal(res, data); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return data, nil
 }
 
 // FindJobByName runs a job by name
@@ -236,12 +244,12 @@ func (c *Client) FindJobByName(name string, project string) (*JobMetaData, error
 func (c *Client) ListJobs(projectID string) (*JobList, error) {
 	data := &JobList{}
 	url := fmt.Sprintf("project/%s/jobs", projectID)
-	res, err := c.httpGet(url, requestJSON())
+	res, err := c.httpGet(url, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
 	if err := json.Unmarshal(res, &data); err != nil {
-		return nil, err
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
 	}
 	return data, nil
 }

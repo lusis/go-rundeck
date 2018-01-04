@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGetExecutions(t *testing.T) {
+func TestGetExecution(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.ExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
@@ -50,6 +50,35 @@ func TestGetExecutions(t *testing.T) {
 	assert.Equal(t, 2016, dateEnded.Year())
 }
 
+func TestGetExecutionInvalidStatusCode(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ExecutionResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	obj, cErr := client.GetExecution("1")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestGetExecutionJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	obj, cErr := client.GetExecution("1")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
 func TestGetExecutionState(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.ExecutionStateResponseTestFile)
 	if err != nil {
@@ -67,6 +96,29 @@ func TestGetExecutionState(t *testing.T) {
 	assert.NotNil(t, obj)
 }
 
+func TestGetExecutionStateJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	obj, cErr := client.GetExecutionState("1")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestGetExecutionInvalidStatus(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 500)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+
+	obj, cErr := client.GetExecutionState("1")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
 func TestGetExecutionOutput(t *testing.T) {
 	jsonfile, err := testdata.GetBytes("execution_output.txt")
 	if err != nil {

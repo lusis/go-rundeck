@@ -3,6 +3,7 @@ package rundeck
 import (
 	"encoding/json"
 
+	multierror "github.com/hashicorp/go-multierror"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
 
@@ -15,12 +16,12 @@ type ExecutionState responses.ExecutionStateResponse
 // GetExecution returns the details of a job execution
 func (c *Client) GetExecution(executionID string) (*Execution, error) {
 	exec := &Execution{}
-	res, err := c.httpGet("execution/"+executionID, requestJSON())
+	res, err := c.httpGet("execution/"+executionID, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
 	if jsonErr := json.Unmarshal(res, exec); jsonErr != nil {
-		return nil, jsonErr
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
 	}
 	return exec, nil
 }
@@ -28,12 +29,12 @@ func (c *Client) GetExecution(executionID string) (*Execution, error) {
 // GetExecutionState returns the state of an execution
 func (c *Client) GetExecutionState(executionID string) (*ExecutionState, error) {
 	data := &ExecutionState{}
-	res, err := c.httpGet("execution/"+executionID+"/state", requestJSON())
+	res, err := c.httpGet("execution/"+executionID+"/state", requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
-	if err := json.Unmarshal(res, data); err != nil {
-		return nil, err
+	if jsonErr := json.Unmarshal(res, data); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
 	}
 	return data, nil
 }

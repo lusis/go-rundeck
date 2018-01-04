@@ -36,3 +36,15 @@
 [[constraint]]
   name = "gopkg.in/jmcvetta/napping.v2"
   version = "2.1.1"
+
+[[constraint]]
+  name = "github.com/pkg/errors"
+  version = "0.8.0"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/hashicorp/errwrap"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/hashicorp/go-multierror"

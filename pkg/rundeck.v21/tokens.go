@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
+	multierror "github.com/hashicorp/go-multierror"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
 
@@ -40,7 +41,10 @@ func (c *Client) GetTokens() ([]*Token, error) {
 		return nil, err
 	}
 	jsonErr := json.Unmarshal(data, &tokens)
-	return tokens, jsonErr
+	if jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return tokens, nil
 }
 
 // GetUserTokens gets the api tokens for a user
@@ -51,7 +55,10 @@ func (c *Client) GetUserTokens(user string) ([]*Token, error) {
 	}
 	tokens := make([]*Token, 0)
 	jsonErr := json.Unmarshal(data, &tokens)
-	return tokens, jsonErr
+	if jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return tokens, nil
 }
 
 // GetToken gets a token
@@ -62,7 +69,10 @@ func (c *Client) GetToken(tokenID string) (*Token, error) {
 	}
 	token := &Token{}
 	jsonErr := json.Unmarshal(data, &token)
-	return token, jsonErr
+	if jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return token, nil
 }
 
 // CreateToken creates a token
@@ -70,7 +80,7 @@ func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
 	tokenRequest := &Token{}
 	for _, opt := range opts {
 		if err := opt(tokenRequest); err != nil {
-			return nil, err
+			return nil, &OptionError{msg: multierror.Append(errOption, err).Error()}
 		}
 	}
 	if len(tokenRequest.Roles) == 0 {
@@ -78,20 +88,23 @@ func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
 	}
 	newToken, newErr := json.Marshal(tokenRequest)
 	if newErr != nil {
-		return nil, newErr
+		return nil, &MarshalError{msg: multierror.Append(errDecoding, newErr).Error()}
 	}
 	url := fmt.Sprintf("tokens/%s", u)
-	data, err := c.httpPost(url, requestJSON(), withBody(bytes.NewReader(newToken)))
+	data, err := c.httpPost(url, requestJSON(), withBody(bytes.NewReader(newToken)), requestExpects(201))
 	if err != nil {
 		return nil, err
 	}
 	token := &Token{}
 	jsonErr := json.Unmarshal(data, &token)
-	return token, jsonErr
+	if jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return token, nil
 }
 
 // DeleteToken deletes a token
 func (c *Client) DeleteToken(token string) error {
 	url := fmt.Sprintf("token/%s", token)
-	return c.httpDelete(url, requestJSON())
+	return c.httpDelete(url, requestJSON(), requestExpects(404), requestExpects(204))
 }

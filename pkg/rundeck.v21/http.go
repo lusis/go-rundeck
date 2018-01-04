@@ -73,7 +73,13 @@ func (rc *Client) httpGet(path string, opts ...httpclient.RequestOption) ([]byte
 	authOpt = append(authOpt, opts...)
 
 	resp, err := httpclient.Get(rc.makeAPIPath(path), authOpt...)
-	return resp.Body, err
+	if err != nil {
+		return nil, err
+	}
+	if resp.Status == 404 {
+		return nil, ErrMissingResource
+	}
+	return resp.Body, nil
 }
 
 func (rc *Client) httpPost(path string, opts ...httpclient.RequestOption) ([]byte, error) {
