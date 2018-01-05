@@ -88,34 +88,6 @@ func TestBulkDeleteJobResponse(t *testing.T) {
 	}
 }
 
-func TestBulkToggleJobExecutionResponse(t *testing.T) {
-	obj := &BulkToggleJobExecutionResponse{}
-	data, dataErr := testdata.GetBytes(BulkToggleJobExecutionResponseTestFile)
-	if dataErr != nil {
-		t.Error(dataErr.Error())
-		t.FailNow()
-	}
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
-}
-
-func TestBulkToggleJobScheduleResponse(t *testing.T) {
-	obj := &BulkToggleJobScheduleResponse{}
-	data, dataErr := testdata.GetBytes(BulkToggleJobScheduleResponseTestFile)
-	if dataErr != nil {
-		t.Error(dataErr.Error())
-		t.FailNow()
-	}
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
-}
-
 func TestJobOptionFileUploadResponse(t *testing.T) {
 	obj := &JobOptionFileUploadResponse{}
 	data, dataErr := testdata.GetBytes(JobOptionFileUploadResponseTestFile)

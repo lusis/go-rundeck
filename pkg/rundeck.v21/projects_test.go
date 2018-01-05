@@ -123,3 +123,21 @@ func TestDeleteProjectNotFound(t *testing.T) {
 	err := client.DeleteProject("abc123")
 	assert.EqualError(t, ErrMissingResource, err.Error())
 }
+
+func TestCreateProject(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectInfoResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 201)
+	defer server.Close()
+	obj, getErr := client.CreateProject("testproject", nil)
+	assert.NoError(t, getErr)
+	assert.NotNil(t, obj)
+	assert.NotEmpty(t, obj.Properties)
+	assert.Len(t, obj.Properties, 32)
+	assert.Equal(t, "[API Href]", obj.URL)
+	assert.Equal(t, "testproject", obj.Name)
+	assert.Equal(t, "test project", obj.Description)
+}

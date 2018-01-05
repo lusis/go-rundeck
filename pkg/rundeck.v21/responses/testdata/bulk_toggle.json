@@ -1,0 +1,23 @@
+{
+    "requestCount": 3,
+    "enabled": false,
+    "allsuccessful": false,
+    "succeeded": [
+      {
+        "id": "d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323",
+        "message": "Job Execution was disabled for: {{Job d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323}}"
+      }
+    ],
+    "failed": [
+      {
+        "id": "abcdef",
+        "errorCode": null,
+        "message": null
+      },
+      {
+        "id": "abcdef",
+        "errorCode": "failed",
+        "message": "some message"
+      }
+    ]
+  }

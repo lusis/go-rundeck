@@ -2,11 +2,11 @@
     "failures": [
       {
         "id": "82",
-        "message": "Not found: 82"
+        "message": "Failed: 82"
       },
       {
         "id": "83",
-        "message": "Not found: 83"
+        "message": "Unauthorized: 83"
       },
       {
         "id": "84",

@@ -6,6 +6,7 @@ import (
 	"encoding/xml"
 	"fmt"
 
+	requests "github.com/lusis/go-rundeck/pkg/rundeck.v21/requests"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
 
@@ -76,14 +77,28 @@ func (c *Client) ListProjects() (*Projects, error) {
 	return projects, nil
 }
 
-// MakeProject makes a project
-func (c *Client) MakeProject(p NewProject) error {
-	data, err := xml.Marshal(p)
-	if err != nil {
-		return err
+// CreateProject makes a project
+func (c *Client) CreateProject(name string, properties map[string]string) (*Project, error) {
+	req := &requests.ProjectCreationRequest{
+		Name:   name,
+		Config: &properties,
 	}
-	_, postErr := c.httpPost("projects", requestXML(), withBody(bytes.NewReader(data)))
-	return postErr
+	data, _ := json.Marshal(req)
+	info := &responses.ProjectInfoResponse{}
+	res, postErr := c.httpPost("projects", requestJSON(), withBody(bytes.NewReader(data)), requestExpects(201))
+	if postErr != nil {
+		return nil, postErr
+	}
+	if jsonErr := json.Unmarshal(res, &info); jsonErr != nil {
+		return nil, errDecoding
+	}
+	project := &Project{
+		URL:         info.URL,
+		Name:        info.Name,
+		Description: info.Description,
+		Properties:  *info.Config,
+	}
+	return project, nil
 }
 
 // DeleteProject deletes a project
@@ -91,3 +106,6 @@ func (c *Client) DeleteProject(p string) error {
 	url := fmt.Sprintf("project/%s", p)
 	return c.httpDelete(url, requestJSON(), requestExpects(204))
 }
+
+// TODO: ProjectConfiguration
+// http://rundeck.org/docs/api/index.html#project-configuration

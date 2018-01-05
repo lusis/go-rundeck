@@ -1,11 +1,13 @@
 package rundeck
 
 import (
+	"bytes"
 	"encoding/json"
 	"strconv"
 	"strings"
 
 	multierror "github.com/hashicorp/go-multierror"
+	requests "github.com/lusis/go-rundeck/pkg/rundeck.v21/requests"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
 )
 
@@ -70,4 +72,46 @@ func (c *Client) DeleteExecutions(ids ...int) (*DeletedExecutions, error) {
 		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, err).Error()}
 	}
 	return data, nil
+}
+
+// BulkEnableExecution enables job execution in bulk
+func (c *Client) BulkEnableExecution(ids ...string) (*responses.BulkToggleResponse, error) {
+
+	req := &requests.BulkToggleRequest{
+		IDs: ids,
+	}
+	results := &responses.BulkToggleResponse{}
+	data, _ := json.Marshal(req)
+	res, err := c.httpPost("jobs/execution/enable",
+		withBody(bytes.NewReader(data)),
+		requestJSON(),
+		requestExpects(200))
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(res, results); err != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, err).Error()}
+	}
+	return results, nil
+}
+
+// BulkDisableExecution disables job execution in bulk
+func (c *Client) BulkDisableExecution(ids ...string) (*responses.BulkToggleResponse, error) {
+
+	req := &requests.BulkToggleRequest{
+		IDs: ids,
+	}
+	results := &responses.BulkToggleResponse{}
+	data, _ := json.Marshal(req)
+	res, err := c.httpPost("jobs/execution/disable",
+		withBody(bytes.NewReader(data)),
+		requestJSON(),
+		requestExpects(200))
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(res, results); err != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, err).Error()}
+	}
+	return results, nil
 }

@@ -118,3 +118,29 @@ func TestDeleteExecutionsJSONError(t *testing.T) {
 }
 
 func TestDeleteAllExecutionsForProject(t *testing.T) {}
+
+func TestBulkEnableExecution(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.BulkToggleResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.BulkEnableExecution("a", "b", "c")
+	assert.NoError(t, cErr)
+	assert.NotNil(t, obj)
+}
+
+func TestBulkDisableExecution(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.BulkToggleResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.BulkDisableExecution("a", "b", "c")
+	assert.NoError(t, cErr)
+	assert.NotNil(t, obj)
+}

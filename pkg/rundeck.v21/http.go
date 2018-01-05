@@ -39,11 +39,6 @@ func accept(ct string) httpclient.RequestOption {
 	return httpclient.Accept(ct)
 }
 
-// requestXml sets a request to accept and respond with xml
-func requestXML() httpclient.RequestOption {
-	return httpclient.RequestXML()
-}
-
 // requestExpects sets the expected status codes for a request
 func requestExpects(code int) httpclient.RequestOption {
 	return httpclient.ExpectStatus(code)
