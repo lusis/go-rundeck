@@ -2,18 +2,6 @@
 
 
 [[projects]]
-  branch = "master"
-  name = "github.com/alecthomas/template"
-  packages = [".","parse"]
-  revision = "a0175ee3bccc567396460bf5acd36800cb10c49c"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/alecthomas/units"
-  packages = ["."]
-  revision = "2efee857e7cfd4f3d0138cc3cbb1b4966962b93a"
-
-[[projects]]
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
@@ -92,12 +80,6 @@
   revision = "eb22672bea55af56d225d4e35405f4d2e9f062a0"
 
 [[projects]]
-  name = "gopkg.in/alecthomas/kingpin.v2"
-  packages = ["."]
-  revision = "1087e65c9441605df944fb12c33f0fe7072d18ca"
-  version = "v2.2.5"
-
-[[projects]]
   name = "gopkg.in/jmcvetta/napping.v2"
   packages = ["."]
   revision = "88d59de58478a2a0be4bf05884abcd56b8c63ad4"
@@ -112,6 +94,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "197d7239001aca974bed922506e3db20e9b71b8a40267c41a025e6cdeb88a0a3"
+  inputs-digest = "ff059e581440b366b800ea4e258e33490d2971bd2a93c4ca3ac60253eb648507"
   solver-name = "gps-cdcl"
   solver-version = 1
