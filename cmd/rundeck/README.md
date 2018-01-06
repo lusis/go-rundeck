@@ -17,6 +17,14 @@ The command really does walk you through all the options but in general the flow
 - minimum required options are usually the bare arguments (i.e. `rundeck job get <jobid>`) vs flags
 - universal output formatting via [outputter](https://github.com/lusis/outputter) (under the `--output-format` flag) except where explicitly disabled (i.e. exporting a job definition or anywhere the raw body of the response is what we want)
 
+## TODO
+
+While all the previous commands exist in the unified binary now, one feature in I've not yet ported is the ability to just dump ids from commands that can be used to pipe between themselves. This may not be as critical with the various json outputs and jq but it's a thing I'd like to have
+
+I also have quite a bit more API functionlity that we now have exposed in the library and bring it into the cli.
+
+I also need to finish the other `http` subcommands.
+
 ## Sample help output
 
 ```text
