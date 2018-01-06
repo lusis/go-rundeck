@@ -13,8 +13,12 @@ import (
 // ACLPolicies represents ACL Policies
 type ACLPolicies responses.ACLResponse
 
-// GetACLPolicies gets the system ACL Policies
-func (c *Client) GetACLPolicies() (*ACLPolicies, error) {
+// ListSystemACLPolicies gets the system ACL Policies
+// http://rundeck.org/docs/api/index.html#list-system-acl-policies
+func (c *Client) ListSystemACLPolicies() (*ACLPolicies, error) {
+	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	data := &ACLPolicies{}
 	res, err := c.httpGet("system/acl/", requestJSON(), requestExpects(200))
 	if err != nil {
@@ -27,7 +31,11 @@ func (c *Client) GetACLPolicies() (*ACLPolicies, error) {
 }
 
 // GetACLPolicy returns the named acl policy
+// http://rundeck.org/docs/api/index.html#get-an-acl-policy
 func (c *Client) GetACLPolicy(policy string) ([]byte, error) {
+	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", policy)
 	res, err := c.httpGet(url, accept("application/yaml"), requestExpects(200))
 	if err != nil {
@@ -37,7 +45,11 @@ func (c *Client) GetACLPolicy(policy string) ([]byte, error) {
 }
 
 // CreateACLPolicy creates a system acl policy
+// http://rundeck.org/docs/api/index.html#create-an-acl-policy
 func (c *Client) CreateACLPolicy(name string, contents io.Reader) error {
+	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+		return err
+	}
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
 	res, err := c.httpPost(url, withBody(contents),
 		accept("application/json"),
@@ -67,7 +79,11 @@ func (c *Client) CreateACLPolicy(name string, contents io.Reader) error {
 }
 
 // UpdateACLPolicy creates a system acl policy
+// http://rundeck.org/docs/api/index.html#update-an-acl-policy
 func (c *Client) UpdateACLPolicy(name string, contents io.Reader) error {
+	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+		return err
+	}
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
 	res, err := c.httpPut(url, withBody(contents), accept("application/json"), contentType("application/yaml"), requestExpects(201), requestExpects(400))
 	if err != nil {
@@ -85,4 +101,13 @@ func (c *Client) UpdateACLPolicy(name string, contents io.Reader) error {
 		finalErr = multierror.Append(finalErr, fmt.Errorf("%s", line))
 	}
 	return &PolicyValidationError{msg: finalErr.Error()}
+}
+
+// DeleteACLPolicy deletes a system ACL Policy
+// http://rundeck.org/docs/api/index.html#delete-an-acl-policy
+func (c *Client) DeleteACLPolicy(name string) error {
+	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+		return err
+	}
+	return fmt.Errorf("not yet implemented")
 }

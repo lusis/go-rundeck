@@ -34,7 +34,11 @@ func (c *Client) ListProjectExecutions(projectID string, options map[string]stri
 }
 
 // ListRunningExecutions lists running executions
+// http://rundeck.org/docs/api/index.html#listing-running-executions
 func (c *Client) ListRunningExecutions(projectID string) (*Executions, error) {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	options := make(map[string]string)
 	data := &Executions{}
 	res, err := c.httpGet("project/"+projectID+"/executions/running",
@@ -75,8 +79,11 @@ func (c *Client) DeleteExecutions(ids ...int) (*DeletedExecutions, error) {
 }
 
 // BulkEnableExecution enables job execution in bulk
+// http://rundeck.org/docs/api/index.html#bulk-toggle-job-execution
 func (c *Client) BulkEnableExecution(ids ...string) (*responses.BulkToggleResponse, error) {
-
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	req := &requests.BulkToggleRequest{
 		IDs: ids,
 	}
@@ -96,8 +103,11 @@ func (c *Client) BulkEnableExecution(ids ...string) (*responses.BulkToggleRespon
 }
 
 // BulkDisableExecution disables job execution in bulk
+// http://rundeck.org/docs/api/index.html#bulk-toggle-job-execution
 func (c *Client) BulkDisableExecution(ids ...string) (*responses.BulkToggleResponse, error) {
-
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	req := &requests.BulkToggleRequest{
 		IDs: ids,
 	}

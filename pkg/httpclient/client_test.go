@@ -128,7 +128,6 @@ func TestRequestXML(t *testing.T) {
 func TestGetAllowedStatusCodesInvalid(t *testing.T) {
 	response, err := Get("https://httpbin.org/anything", ExpectStatus(302))
 	assert.Error(t, err)
-	assert.EqualError(t, err, ErrInvalidStatusCode.Error())
 	assert.Equal(t, 200, response.Status)
 }
 

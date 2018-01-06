@@ -21,7 +21,7 @@ func TestGetExecution(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecution("1")
+	obj, oerr := client.GetExecutionInfo("1")
 	assert.NoError(t, oerr)
 	assert.Equal(t, 1, obj.ID)
 	assert.Equal(t, "[url]", obj.HRef)
@@ -62,7 +62,7 @@ func TestGetExecutionInvalidStatusCode(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecution("1")
+	obj, oerr := client.GetExecutionInfo("1")
 	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }
@@ -74,7 +74,7 @@ func TestGetExecutionJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecution("1")
+	obj, oerr := client.GetExecutionInfo("1")
 	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }

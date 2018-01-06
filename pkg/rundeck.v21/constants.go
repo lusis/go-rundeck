@@ -7,6 +7,12 @@ import "errors"
 // TODO: make this a min/max option and validate
 const MaxRundeckVersion = "21"
 
+// minimum version of rundeck api version that supports json
+const minJSONSupportedAPIVersion = 14
+
+// int version of MaxRundeckVersion because I'm lazy
+const maxRundeckVersionInt = 21
+
 const (
 	basicAuthType = "basic"
 )

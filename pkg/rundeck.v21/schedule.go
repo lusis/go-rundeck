@@ -10,7 +10,11 @@ import (
 )
 
 // DisableSchedule disables a scheduled job
+// http://rundeck.org/docs/api/index.html#disable-scheduling-for-a-job
 func (c *Client) DisableSchedule(id string) (bool, error) {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return false, err
+	}
 	t := &responses.ToggleResponse{}
 	res, err := c.httpPost("job/"+id+"/schedule/disable", requestJSON(), requestExpects(200))
 	if err != nil {
@@ -23,7 +27,11 @@ func (c *Client) DisableSchedule(id string) (bool, error) {
 }
 
 // EnableSchedule enables a scheduled job
+// http://rundeck.org/docs/api/index.html#enable-scheduling-for-a-job
 func (c *Client) EnableSchedule(id string) (bool, error) {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return false, err
+	}
 	t := &responses.ToggleResponse{}
 	res, err := c.httpPost("job/"+id+"/schedule/enable", requestExpects(200), requestJSON())
 	if err != nil {
@@ -36,7 +44,11 @@ func (c *Client) EnableSchedule(id string) (bool, error) {
 }
 
 // BulkEnableSchedule enables scheduled jobs in bulk
+// http://rundeck.org/docs/api/index.html#bulk-toggle-job-schedules
 func (c *Client) BulkEnableSchedule(ids ...string) (*responses.BulkToggleResponse, error) {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	req := &requests.BulkToggleRequest{
 		IDs: ids,
 	}
@@ -56,8 +68,11 @@ func (c *Client) BulkEnableSchedule(ids ...string) (*responses.BulkToggleRespons
 }
 
 // BulkDisableSchedule enables scheduled jobs in bulk
+// http://rundeck.org/docs/api/index.html#bulk-toggle-job-schedules
 func (c *Client) BulkDisableSchedule(ids ...string) (*responses.BulkToggleResponse, error) {
-
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	req := &requests.BulkToggleRequest{
 		IDs: ids,
 	}

@@ -11,7 +11,6 @@ import (
 	httpclient "github.com/lusis/go-rundeck/pkg/httpclient"
 	requests "github.com/lusis/go-rundeck/pkg/rundeck.v21/requests"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
-	yaml "gopkg.in/yaml.v2"
 )
 
 // Job represents a rundeck job
@@ -84,7 +83,11 @@ func RunJobRunAt(t time.Time) RunJobOption {
 }
 
 // GetJobMetaData gets a job's metadata
+// http://rundeck.org/docs/api/index.html#get-job-metadata
 func (c *Client) GetJobMetaData(id string) (*JobMetaData, error) {
+	if _, err := c.hasRequiredAPIVersion(18, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	data := &JobMetaData{}
 	res, err := c.httpGet("job/"+id+"/info", requestJSON(), requestExpects(200))
 	if err != nil {
@@ -97,7 +100,11 @@ func (c *Client) GetJobMetaData(id string) (*JobMetaData, error) {
 }
 
 // GetJobDefinition gets a job definition
+// http://rundeck.org/docs/api/index.html#getting-a-job-definition
 func (c *Client) GetJobDefinition(id string, format string) ([]byte, error) {
+	if _, err := c.hasRequiredAPIVersion(1, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	options := []httpclient.RequestOption{
 		accept("application/" + format),
 		contentType("application/x-www-form-urlencoded"),
@@ -118,13 +125,21 @@ func (c *Client) GetJobInfo(id string) (*JobMetaData, error) {
 }
 
 // DeleteJob deletes a job
+// http://rundeck.org/docs/api/index.html#deleting-a-job-definition
 func (c *Client) DeleteJob(id string) error {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return err
+	}
 	return c.httpDelete("job/"+id, httpclient.ExpectStatus(204))
 
 }
 
 // ExportJob exports a job
+// http://rundeck.org/docs/api/index.html#exporting-jobs
 func (c *Client) ExportJob(id string, format string) ([]byte, error) {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	if format != "xml" && format != "yaml" {
 		errString := fmt.Sprintf("Unknown/unsupported format \"%s\"", format)
 		return nil, errors.New(errString)
@@ -138,63 +153,12 @@ func (c *Client) ExportJob(id string, format string) ([]byte, error) {
 	return res, nil
 }
 
-// GetJobOpts returns the required options for a job
-func (c *Client) GetJobOpts(j string) ([]*JobOption, error) {
-	options := make([]*JobOption, 0)
-	data := &responses.JobYAMLResponse{}
-	res, err := c.httpGet("job/"+j, accept("application/yaml"), requestExpects(200))
-	if err != nil {
-		return nil, err
-	}
-	if err := yaml.Unmarshal(res, &data); err != nil {
-		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
-	}
-	if data != nil {
-		for _, d := range *data {
-			for _, o := range d.Options {
-				options = append(options, &JobOption{
-					Description: o.Description,
-					Required:    o.Required,
-					Regex:       o.Regex,
-					Name:        o.Name,
-					Value:       o.Value,
-				})
-			}
-		}
-	}
-	return options, nil
-}
-
-// GetRequiredOpts returns the required options for a job
-func (c *Client) GetRequiredOpts(j string) (map[string]string, error) {
-	u := make(map[string]string)
-	data := &responses.JobYAMLResponse{}
-	res, err := c.httpGet("job/"+j, accept("application/yaml"), requestExpects(200))
-
-	if err != nil {
-		return nil, err
-	}
-	if err := yaml.Unmarshal(res, &data); err != nil {
-		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
-	}
-	if data != nil {
-		for _, d := range *data {
-			for _, o := range d.Options {
-				if o.Required {
-					if o.Value == "" {
-						u[o.Name] = "<no default>"
-					} else {
-						u[o.Name] = o.Value
-					}
-				}
-			}
-		}
-	}
-	return u, nil
-}
-
 // RunJob runs a job
+// http://rundeck.org/docs/api/index.html#running-a-job
 func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
+	if _, err := c.hasRequiredAPIVersion(18, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	jobOpts := &requests.RunJobRequest{}
 	data := &Execution{}
 	for _, opt := range opts {
@@ -218,7 +182,11 @@ func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
 }
 
 // ListJobs lists the jobs for a project
+// http://rundeck.org/docs/api/index.html#listing-jobs
 func (c *Client) ListJobs(projectID string) (*JobList, error) {
+	if _, err := c.hasRequiredAPIVersion(17, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	data := &JobList{}
 	url := fmt.Sprintf("project/%s/jobs", projectID)
 	res, err := c.httpGet(url, requestJSON(), requestExpects(200))
@@ -229,4 +197,31 @@ func (c *Client) ListJobs(projectID string) (*JobList, error) {
 		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
 	}
 	return data, nil
+}
+
+// BulkJobDelete deletes jobs in bulk
+// http://rundeck.org/docs/api/index.html#bulk-job-delete
+func (c *Client) BulkJobDelete(ids ...string) error {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return err
+	}
+	return fmt.Errorf("not yet implemented")
+}
+
+// GetExecutionsForJob gets executions for a job
+// http://rundeck.org/docs/api/index.html#getting-executions-for-a-job
+func (c *Client) GetExecutionsForJob(jobid string) error {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return err
+	}
+	return fmt.Errorf("not yet implemented")
+}
+
+// DeleteAllExecutionsForJob deletes all executions for a job
+// http://rundeck.org/docs/api/index.html#delete-all-executions-for-a-job
+func (c *Client) DeleteAllExecutionsForJob(jobid string) error {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return err
+	}
+	return fmt.Errorf("not yet implemented")
 }

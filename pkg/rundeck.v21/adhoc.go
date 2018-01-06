@@ -3,6 +3,7 @@ package rundeck
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 
 	multierror "github.com/hashicorp/go-multierror"
 	requests "github.com/lusis/go-rundeck/pkg/rundeck.v21/requests"
@@ -47,8 +48,12 @@ func CmdKeepGoing() AdHocRunOption {
 	}
 }
 
-// RunAdhoc runs an adhoc job - all nodes by default
-func (c *Client) RunAdhoc(projectID string, exec string, opts ...AdHocRunOption) (*AdHocExecution, error) {
+// RunAdHocCommand runs an adhoc job - all nodes by default
+// http://rundeck.org/docs/api/index.html#running-adhoc-commands
+func (c *Client) RunAdHocCommand(projectID string, exec string, opts ...AdHocRunOption) (*AdHocExecution, error) {
+	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	data := &AdHocExecution{}
 	req := &requests.AdHocCommandRequest{}
 	for _, opt := range opts {
@@ -70,4 +75,22 @@ func (c *Client) RunAdhoc(projectID string, exec string, opts ...AdHocRunOption)
 		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, err).Error()}
 	}
 	return data, nil
+}
+
+// RunAdHocScript runs a script ad-hoc
+// http://rundeck.org/docs/api/index.html#running-adhoc-scripts
+func (c *Client) RunAdHocScript() error {
+	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+		return err
+	}
+	return fmt.Errorf("not yet implemented")
+}
+
+// RunAdHocScriptFromURL runs a script ad-hoc from a url
+// http://rundeck.org/docs/api/index.html#running-adhoc-script-urls
+func (c *Client) RunAdHocScriptFromURL() error {
+	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+		return err
+	}
+	return fmt.Errorf("not yet implemented")
 }

@@ -8,5 +8,6 @@ func logStorageCommand() *cobra.Command {
 		Short: "operate on rundeck logstorage",
 	}
 	cmd.AddCommand(getLogStorageCommand())
+	cmd.AddCommand(resumeIncompleteLogStorageCommand())
 	return cmd
 }

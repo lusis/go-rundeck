@@ -42,6 +42,7 @@ func (a *SystemInfoResponse) FromBytes(f []byte) error {
 }
 
 // SystemsResponse represents a systems response
+// http://rundeck.org/docs/api/index.html#system-info
 type SystemsResponse struct {
 	Timestamp  *SysInfoTimestampResponse  `json:"timestamp"`
 	Rundeck    *SysInfoRundeckResponse    `json:"rundeck"`

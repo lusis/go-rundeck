@@ -9,7 +9,7 @@ import (
 
 func getExecutionFunc(cmd *cobra.Command, args []string) error {
 	id := args[0]
-	data, err := cli.Client.GetExecution(id)
+	data, err := cli.Client.GetExecutionInfo(id)
 	if err != nil {
 		return err
 	}

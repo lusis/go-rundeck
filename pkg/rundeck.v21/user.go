@@ -12,8 +12,12 @@ import (
 // User represents a user in rundeck
 type User responses.UserInfoResponse
 
-// GetUsers returns all rundeck users
-func (c *Client) GetUsers() ([]*User, error) {
+// ListUsers returns all rundeck users
+// http://rundeck.org/docs/api/index.html#list-users
+func (c *Client) ListUsers() ([]*User, error) {
+	if _, err := c.hasRequiredAPIVersion(21, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	var users []*User
 	res, err := c.httpGet("user/list", requestJSON(), requestExpects(200))
 	if err != nil {
@@ -25,8 +29,12 @@ func (c *Client) GetUsers() ([]*User, error) {
 	return users, nil
 }
 
-// GetCurrentUserInfo returns information about the current user
-func (c *Client) GetCurrentUserInfo() (*User, error) {
+// GetCurrentUserProfile returns information about the current user
+// http://rundeck.org/docs/api/index.html#get-user-profile
+func (c *Client) GetCurrentUserProfile() (*User, error) {
+	if _, err := c.hasRequiredAPIVersion(21, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	user := &User{}
 	res, err := c.httpGet("user/info", requestJSON(), requestExpects(200))
 	if err != nil {
@@ -38,8 +46,12 @@ func (c *Client) GetCurrentUserInfo() (*User, error) {
 	return user, nil
 }
 
-// GetUserInfo returns information about the named user - requires admin privileges
-func (c *Client) GetUserInfo(login string) (*User, error) {
+// GetUserProfile returns information about the named user - requires admin privileges
+// http://rundeck.org/docs/api/index.html#get-another-user-profile
+func (c *Client) GetUserProfile(login string) (*User, error) {
+	if _, err := c.hasRequiredAPIVersion(21, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
 	user := &User{}
 	res, err := c.httpGet("user/info/"+login, requestJSON(), requestExpects(200))
 	if err != nil {
@@ -51,9 +63,13 @@ func (c *Client) GetUserInfo(login string) (*User, error) {
 	return user, nil
 }
 
-// UpdateUserInfo updates a user
-func (c *Client) UpdateUserInfo(u *User) (*User, error) {
-	currentUser, currentUserErr := c.GetCurrentUserInfo()
+// ModifyUserProfile updates a user
+// http://rundeck.org/docs/api/index.html#modify-user-profile
+func (c *Client) ModifyUserProfile(u *User) (*User, error) {
+	if _, err := c.hasRequiredAPIVersion(21, maxRundeckVersionInt); err != nil {
+		return nil, err
+	}
+	currentUser, currentUserErr := c.GetCurrentUserProfile()
 	if currentUserErr != nil {
 		return nil, currentUserErr
 	}

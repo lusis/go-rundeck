@@ -28,6 +28,7 @@ func newTestRundeckClient(content []byte, contentType string, statusCode int) (*
 		Token:      "XXXXXXXXXXXXX",
 		VerifySSL:  false,
 		AuthMethod: "token",
+		APIVersion: MaxRundeckVersion,
 		HTTPClient: &httpClient,
 	}
 	client, err := NewClient(conf)

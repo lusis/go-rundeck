@@ -28,7 +28,7 @@ func TestRunAdHoc(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	res, resErr := client.RunAdhoc("testproject", "ps -ef")
+	res, resErr := client.RunAdHocCommand("testproject", "ps -ef")
 	assert.NoError(t, resErr)
 	assert.NotNil(t, res)
 	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
@@ -54,7 +54,7 @@ func TestRunAdHocWithOptions(t *testing.T) {
 		CmdThreadCount(2),
 		CmdKeepGoing(),
 	}
-	res, resErr := client.RunAdhoc("testproject", "ps -ef", options...)
+	res, resErr := client.RunAdHocCommand("testproject", "ps -ef", options...)
 	assert.NoError(t, resErr)
 	assert.NotNil(t, res)
 	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
@@ -74,7 +74,7 @@ func TestRunAdHocWithFailingOption(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	res, resErr := client.RunAdhoc("testproject", "ps -ef", testFailedAdHocOption())
+	res, resErr := client.RunAdHocCommand("testproject", "ps -ef", testFailedAdHocOption())
 	assert.Error(t, resErr)
 	assert.Nil(t, res)
 	assert.IsType(t, &OptionError{}, resErr)
@@ -86,7 +86,7 @@ func TestRunAdHocJSONError(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	res, resErr := client.RunAdhoc("testproject", "ps -ef")
+	res, resErr := client.RunAdHocCommand("testproject", "ps -ef")
 	assert.Error(t, resErr)
 	assert.Nil(t, res)
 	assert.IsType(t, &UnmarshalError{}, resErr)
@@ -98,7 +98,7 @@ func TestRunAdHocHTTPError(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	res, resErr := client.RunAdhoc("testproject", "ps -ef")
+	res, resErr := client.RunAdHocCommand("testproject", "ps -ef")
 	assert.Error(t, resErr)
 	assert.Nil(t, res)
 }

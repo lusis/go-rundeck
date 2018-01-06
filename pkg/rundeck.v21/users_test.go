@@ -19,7 +19,7 @@ func TestGetUsers(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	s, err := client.GetUsers()
+	s, err := client.ListUsers()
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
 	assert.Len(t, s, 2)
@@ -31,7 +31,7 @@ func TestGetUsersJSONError(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	s, err := client.GetUsers()
+	s, err := client.ListUsers()
 	assert.Error(t, err)
 	assert.Nil(t, s)
 }
@@ -42,7 +42,7 @@ func TestGetUsersInvalidStatus(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	s, err := client.GetUsers()
+	s, err := client.ListUsers()
 	assert.Error(t, err)
 	assert.Nil(t, s)
 }
@@ -57,7 +57,7 @@ func TestGetUserInfo(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	s, err := client.GetUserInfo("admin")
+	s, err := client.GetUserProfile("admin")
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
 	assert.Equal(t, "admin", s.Login)
@@ -72,7 +72,7 @@ func TestGetUserInfoJSONError(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	s, err := client.GetUserInfo("admin")
+	s, err := client.GetUserProfile("admin")
 	assert.Error(t, err)
 	assert.Nil(t, s)
 }
@@ -83,7 +83,7 @@ func TestGetUserInfoInvalidStatus(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	s, err := client.GetUserInfo("admin")
+	s, err := client.GetUserProfile("admin")
 	assert.Error(t, err)
 	assert.Nil(t, s)
 }
@@ -98,7 +98,7 @@ func TestGetCurrentUserInfo(t *testing.T) {
 	if cErr != nil {
 		t.Fatalf(cErr.Error())
 	}
-	s, err := client.GetCurrentUserInfo()
+	s, err := client.GetCurrentUserProfile()
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
 	assert.Equal(t, "admin", s.Login)
@@ -114,7 +114,7 @@ func TestGetCurrentUserInfoInvalidStatus(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	s, err := client.GetCurrentUserInfo()
+	s, err := client.GetCurrentUserProfile()
 	assert.Error(t, err)
 	assert.Nil(t, s)
 }
@@ -126,7 +126,7 @@ func TestGetCurrentUserInfoJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	s, err := client.GetCurrentUserInfo()
+	s, err := client.GetCurrentUserProfile()
 	assert.Error(t, err)
 	assert.Nil(t, s)
 }

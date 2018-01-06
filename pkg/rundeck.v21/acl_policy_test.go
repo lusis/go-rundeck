@@ -22,7 +22,7 @@ func TestListSystemAclPolicies(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	s, err := client.GetACLPolicies()
+	s, err := client.ListSystemACLPolicies()
 	assert.Equal(t, "", s.Path)
 	assert.Equal(t, "directory", s.Type)
 	assert.NotEmpty(t, s.Href)
@@ -41,7 +41,7 @@ func TestListSystemAclPoliciesHTTPError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	s, err := client.GetACLPolicies()
+	s, err := client.ListSystemACLPolicies()
 	assert.Error(t, err)
 	assert.Nil(t, s)
 }
@@ -53,7 +53,7 @@ func TestListSystemAclPoliciesJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	s, err := client.GetACLPolicies()
+	s, err := client.ListSystemACLPolicies()
 	assert.Error(t, err)
 	assert.Nil(t, s)
 }
