@@ -1,4 +1,4 @@
-BINARIES := $(shell find cmd/ -maxdepth 1 -type d -name 'rundeck-*' -exec sh -c 'echo $(basename {})' \;)
+BINARIES := $(shell find cmd/ -maxdepth 1 -type d -name 'rundeck*' -exec sh -c 'echo $(basename {})' \;)
 BINLIST := $(subst src/,,$(BINARIES))
 
 ifeq ($(TRAVIS_BUILD_DIR),)

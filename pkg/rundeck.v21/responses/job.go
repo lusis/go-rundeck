@@ -109,6 +109,7 @@ type ImportedJobEntryResponse struct {
 	Project   string `json:"project"`
 	HRef      string `json:"href"`
 	Permalink string `json:"permalink"`
+	Messages  string `json:"error,omitempty"`
 }
 
 // ImportedJobResponseTestFile is the test data for an ImportedJobResponse

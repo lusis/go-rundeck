@@ -1,6 +1,7 @@
 package httpclient
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -8,6 +9,7 @@ import (
 	"net/url"
 	"sync"
 
+	multierror "github.com/hashicorp/go-multierror"
 	"golang.org/x/net/publicsuffix"
 )
 
@@ -311,7 +313,7 @@ func doRequest(opts ...RequestOption) (*Response, error) {
 			}
 		}
 		if !passed {
-			return response, ErrInvalidStatusCode
+			return response, multierror.Append(ErrInvalidStatusCode, fmt.Errorf("status code %d", response.Status))
 		}
 
 	}

@@ -217,26 +217,6 @@ func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
 	return data, nil
 }
 
-// FindJobByName runs a job by name
-func (c *Client) FindJobByName(name string, project string) (*JobMetaData, error) {
-	jobs, err := c.ListJobs(project)
-	if err != nil {
-		return nil, err
-	}
-	if len(*jobs) > 0 {
-		for _, d := range *jobs {
-			if d.Name == name {
-				job, joblistErr := c.GetJobInfo(d.ID)
-				if err != nil {
-					return nil, joblistErr
-				}
-				return job, nil
-			}
-		}
-	}
-	return nil, errors.New("No matches found")
-}
-
 // ListJobs lists the jobs for a project
 func (c *Client) ListJobs(projectID string) (*JobList, error) {
 	data := &JobList{}

@@ -60,7 +60,10 @@ func (c *Client) CreateACLPolicy(name string, contents io.Reader) error {
 		line := fmt.Sprintf("%s: %s", v.Policy, strings.Join(v.Errors, ","))
 		finalErr = multierror.Append(finalErr, fmt.Errorf("%s", line))
 	}
-	return &PolicyValidationError{msg: finalErr.Error()}
+	if finalErr != nil {
+		return &PolicyValidationError{msg: finalErr.Error()}
+	}
+	return nil
 }
 
 // UpdateACLPolicy creates a system acl policy

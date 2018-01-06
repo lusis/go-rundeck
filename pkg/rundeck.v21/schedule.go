@@ -37,7 +37,6 @@ func (c *Client) EnableSchedule(id string) (bool, error) {
 
 // BulkEnableSchedule enables scheduled jobs in bulk
 func (c *Client) BulkEnableSchedule(ids ...string) (*responses.BulkToggleResponse, error) {
-
 	req := &requests.BulkToggleRequest{
 		IDs: ids,
 	}
