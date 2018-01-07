@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 
 	multierror "github.com/hashicorp/go-multierror"
 	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
@@ -21,6 +22,65 @@ type Project struct {
 
 // Projects is a collection of `Project`
 type Projects []*Project
+
+// ProjectExportOption is a functional option for project exports
+type ProjectExportOption func(p *map[string]string) error
+
+// ProjectExportExecutionIDs specifies the execution ids to export
+func ProjectExportExecutionIDs(ids ...string) ProjectExportOption {
+	return func(p *map[string]string) error {
+		(*p)["executionIds"] = strings.Join(ids, ",")
+		return nil
+	}
+}
+
+// ProjectExportAll toggles exporting everything
+func ProjectExportAll(b bool) ProjectExportOption {
+	return func(p *map[string]string) error {
+		(*p)["exportAll"] = fmt.Sprintf("%t", b)
+		return nil
+	}
+}
+
+// ProjectExportJobs toggles exporting jobs
+func ProjectExportJobs(b bool) ProjectExportOption {
+	return func(p *map[string]string) error {
+		(*p)["exportJobs"] = fmt.Sprintf("%t", b)
+		return nil
+	}
+}
+
+// ProjectExportExecutions toggles exporting executions
+func ProjectExportExecutions(b bool) ProjectExportOption {
+	return func(p *map[string]string) error {
+		(*p)["exportExecutions"] = fmt.Sprintf("%t", b)
+		return nil
+	}
+}
+
+// ProjectExportConfigs toggles exporting configs
+func ProjectExportConfigs(b bool) ProjectExportOption {
+	return func(p *map[string]string) error {
+		(*p)["exportConfigs"] = fmt.Sprintf("%t", b)
+		return nil
+	}
+}
+
+// ProjectExportReadmes toggles exporting readmes and motds
+func ProjectExportReadmes(b bool) ProjectExportOption {
+	return func(p *map[string]string) error {
+		(*p)["exportReadmes"] = fmt.Sprintf("%t", b)
+		return nil
+	}
+}
+
+// ProjectExportAcls toggles exporting project acls
+func ProjectExportAcls(b bool) ProjectExportOption {
+	return func(p *map[string]string) error {
+		(*p)["exportAcls"] = fmt.Sprintf("%t", b)
+		return nil
+	}
+}
 
 // GetProjectInfo gets a project by name
 // http://rundeck.org/docs/api/index.html#getting-project-info
@@ -164,11 +224,27 @@ func (c *Client) DeleteProjectConfigurationKey() error {
 
 // GetProjectArchiveExport export exports a zip file of the project
 // http://rundeck.org/docs/api/index.html#project-archive-export
-func (c *Client) GetProjectArchiveExport(p string, w io.Writer) error {
+func (c *Client) GetProjectArchiveExport(p string, w io.Writer, opts ...ProjectExportOption) error {
 	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
 		return err
 	}
-	return fmt.Errorf("not yet implemented")
+	params := &map[string]string{}
+	if len(opts) == 0 {
+		opts = append(opts, ProjectExportAll(true))
+	}
+	for _, opt := range opts {
+		if err := opt(params); err != nil {
+			return &OptionError{msg: multierror.Append(errOption, err).Error()}
+		}
+	}
+	res, resErr := c.httpGet("project/"+p+"/export", requestExpects(200), queryParams(*params))
+	if resErr != nil {
+		return resErr
+	}
+	if _, wErr := w.Write(res); wErr != nil {
+		return wErr
+	}
+	return nil
 }
 
 // GetProjectArchiveExportAsync export a zip archive of a project async

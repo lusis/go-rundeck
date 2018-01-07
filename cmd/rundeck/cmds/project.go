@@ -16,5 +16,6 @@ func projectCommands() *cobra.Command {
 	cmd.AddCommand(projectExecutionsCommand())
 	cmd.AddCommand(projectHistoryCommand())
 	cmd.AddCommand(getProjectConfigCommand())
+	cmd.AddCommand(exportProjectCommand())
 	return cmd
 }
