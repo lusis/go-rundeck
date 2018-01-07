@@ -1,0 +1,35 @@
+{
+    "succeeded": [
+        {
+            "index": 1,
+            "href": "http://madmartigan.local:4440/api/14/job/3b6c19f6-41ee-475f-8fd0-8f1a26f27a9a",
+            "id": "3b6c19f6-41ee-475f-8fd0-8f1a26f27a9a",
+            "name": "good",
+            "group": "app2/dev",
+            "project": "test",
+            "permalink": "http://madmartigan.local:4440/job/show/3b6c19f6-41ee-475f-8fd0-8f1a26f27a9a"
+          }
+    ],
+    "failed": [
+        {
+            "index": 2,
+            "href": "http://madmartigan.local:4440/api/14/job/3b6c19f6-41ee-475f-8fd0-8f1a26f27a9a",
+            "id": "3b6c19f6-41ee-475f-8fd0-8f1a26f27a9a",
+            "name": "bad",
+            "group": "app2/dev",
+            "project": "test",
+            "permalink": "http://madmartigan.local:4440/job/show/3b6c19f6-41ee-475f-8fd0-8f1a26f27a9a"
+          }
+    ],
+    "skipped": [
+        {
+            "index": 3,
+            "href": "http://madmartigan.local:4440/api/14/job/3b6c19f6-41ee-475f-8fd0-8f1a26f27a9a",
+            "id": "3b6c19f6-41ee-475f-8fd0-8f1a26f27a9a",
+            "name": "skipped",
+            "group": "app2/dev",
+            "project": "test",
+            "permalink": "http://madmartigan.local:4440/job/show/3b6c19f6-41ee-475f-8fd0-8f1a26f27a9a"
+          }
+    ]
+  }

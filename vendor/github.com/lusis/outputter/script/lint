@@ -1,0 +1,24 @@
+#!/bin/sh
+go get -u github.com/alecthomas/gometalinter > /dev/null
+gometalinter --install > /dev/null
+if [ $? -ne 0 ]; then
+	printf -- "failed to install linters\n"
+	exit 1
+fi
+
+gometalinter \
+    --vendor \
+    --disable-all \
+    --enable=vet \
+    --enable=vetshadow \
+    --enable=golint \
+    --enable=ineffassign \
+    --enable=goconst \
+    --enable=goimports \
+    --enable=deadcode \
+    --enable=gosimple \
+    --enable=errcheck \
+    --tests \
+    --deadline=30s \
+    --exclude=/usr/local/go/src/ \
+    .

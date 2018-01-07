@@ -37,7 +37,7 @@ type Client struct {
 // NewClient creates a new client from the provided `ClientConfig`
 func NewClient(config *ClientConfig) (c Client) {
 	verifySSL := func() bool {
-		if !config.VerifySSL {
+		if !config.VerifySSL { // nolint: gosimple
 			return false
 		}
 		return true

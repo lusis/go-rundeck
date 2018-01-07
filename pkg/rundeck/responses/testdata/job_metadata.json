@@ -1,0 +1,13 @@
+{
+    "id": "[UUID]",
+    "name": "[name]",
+    "group": "[group]",
+    "project": "[project]",
+    "description": "...",
+    "href": "[API url]",
+    "permalink": "[GUI url]",
+    "scheduled": false,
+    "scheduleEnabled": false,
+    "enabled": true,
+    "averageDuration": 1431975278220
+}

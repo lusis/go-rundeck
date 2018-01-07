@@ -1,0 +1,6 @@
+{
+  "error": true,
+  "apiversion": 14,
+  "errorCode": "api.error.api-version.unsupported",
+  "message": "something blew up"
+}

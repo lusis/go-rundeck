@@ -1,0 +1,52 @@
+{
+    "paging": {
+      "count": 2,
+      "total": 2,
+      "offset": 0,
+      "max": 20
+    },
+    "executions": [
+      {
+        "id": 387,
+        "href": "[API url]",
+        "permalink": "[GUI url]",
+        "status": "[status]",
+        "customStatus": "[string]",
+        "project": "test",
+        "user": "[user]",
+        "serverUUID":"[UUID]",
+        "date-started": {
+          "unixtime": 1431536339809,
+          "date": "2015-05-13T16:58:59Z"
+        },
+        "date-ended": {
+          "unixtime": 1431536346423,
+          "date": "2016-05-13T16:59:06Z"
+        },
+        "job": {
+          "id": "7400ff98-31c4-4834-ba3d-aee9646e867f",
+          "averageDuration": 6094,
+          "name": "test job",
+          "group": "api-test/job-run-steps",
+          "project": "test",
+          "description": "",
+          "href": "[API url]",
+          "permalink": "[GUI url]",
+          "options": {
+            "opt2": "a",
+            "opt1": "testvalue"
+          }
+        },
+        "description": "echo hello there [... 5 steps]",
+        "argstring": "-opt1 testvalue -opt2 a",
+        "successfulNodes": [
+          "madmartigan.local"
+        ],
+        "failedNodes": [
+            "nodec","noded"
+          ]
+      }
+    ]
+  }
+  
+  

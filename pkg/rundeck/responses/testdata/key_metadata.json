@@ -1,0 +1,11 @@
+{
+    "meta": {
+      "Rundeck-key-type": "public",
+      "Rundeck-content-size": "393",
+      "Rundeck-content-type": "application/pgp-keys"
+    },
+    "url": "http://dignan.local:4440/api/11/storage/keys/test1.pub",
+    "name": "test1.pub",
+    "type": "file",
+    "path": "keys/test1.pub"
+  }

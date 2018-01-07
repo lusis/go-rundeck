@@ -1,0 +1,8 @@
+{
+    "message": "Immediate execution scheduled (X)",
+    "execution": {
+      "id": 1,
+      "href": "[API Href]",
+      "permalink": "[GUI Href]"
+    }
+  }

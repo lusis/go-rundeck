@@ -1,0 +1,12 @@
+[{
+    "login":"user",
+    "firstName":"Name",
+    "lastName":"LastName",
+    "email":"user@server.com"
+},
+{
+    "login":"admin",
+    "firstName":"Admin",
+    "lastName":"Admin",
+    "email":"admin@server.com"
+}]

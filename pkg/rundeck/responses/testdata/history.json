@@ -1,0 +1,157 @@
+{
+    "paging": {
+      "count": 6,
+      "total": 6,
+      "max": 20,
+      "offset": 0
+    },
+    "events": [
+      {
+        "starttime": 1514004142364,
+        "endtime": 1514004142815,
+        "title": "adhoc",
+        "status": "succeeded",
+        "statusString": "succeed",
+        "summary": "ps -ef",
+        "node-summary": {
+          "succeeded": 11,
+          "failed": 0,
+          "total": 11
+        },
+        "user": "admin",
+        "project": "testproject",
+        "date-started": "2017-12-23T04:42:22Z",
+        "date-ended": "2017-12-23T04:42:22Z",
+        "execution": {
+          "id": "18",
+          "href": "http://localhost:4440/api/21/execution/18",
+          "permalink": "http://localhost:4440/project/testproject/execution/show/18"
+        }
+      },
+      {
+        "starttime": 1514004047140,
+        "endtime": 1514004047624,
+        "title": "adhoc",
+        "status": "succeeded",
+        "statusString": "succeed",
+        "summary": "ps -ef",
+        "node-summary": {
+          "succeeded": 11,
+          "failed": 0,
+          "total": 11
+        },
+        "user": "admin",
+        "project": "testproject",
+        "date-started": "2017-12-23T04:40:47Z",
+        "date-ended": "2017-12-23T04:40:47Z",
+        "execution": {
+          "id": "17",
+          "href": "http://localhost:4440/api/21/execution/17",
+          "permalink": "http://localhost:4440/project/testproject/execution/show/17"
+        }
+      },
+      {
+        "starttime": 1514003966784,
+        "endtime": 1514003967346,
+        "title": "adhoc",
+        "status": "succeeded",
+        "statusString": "succeed",
+        "summary": "ps -ef",
+        "node-summary": {
+          "succeeded": 11,
+          "failed": 0,
+          "total": 11
+        },
+        "user": "auser",
+        "project": "testproject",
+        "date-started": "2017-12-23T04:39:26Z",
+        "date-ended": "2017-12-23T04:39:27Z",
+        "execution": {
+          "id": "16",
+          "href": "http://localhost:4440/api/21/execution/16",
+          "permalink": "http://localhost:4440/project/testproject/execution/show/16"
+        }
+      },
+      {
+        "starttime": 1514002152524,
+        "endtime": 1514002272561,
+        "title": "test/sleep-job",
+        "status": "succeeded",
+        "statusString": "succeed",
+        "summary": "Plugin[localexec, nodeStep: true]",
+        "node-summary": {
+          "succeeded": 1,
+          "failed": 0,
+          "total": 1
+        },
+        "user": "admin",
+        "project": "testproject",
+        "date-started": "2017-12-23T04:09:12Z",
+        "date-ended": "2017-12-23T04:11:12Z",
+        "job": {
+          "id": "d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323",
+          "href": "http://localhost:4440/api/21/job/d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323",
+          "permalink": "http://localhost:4440/project/testproject/job/show/d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323"
+        },
+        "execution": {
+          "id": "15",
+          "href": "http://localhost:4440/api/21/execution/15",
+          "permalink": "http://localhost:4440/project/testproject/execution/show/15"
+        }
+      },
+      {
+        "starttime": 1514002150245,
+        "endtime": 1514002270285,
+        "title": "test/sleep-job",
+        "status": "succeeded",
+        "statusString": "succeed",
+        "summary": "Plugin[localexec, nodeStep: true]",
+        "node-summary": {
+          "succeeded": 1,
+          "failed": 0,
+          "total": 1
+        },
+        "user": "admin",
+        "project": "testproject",
+        "date-started": "2017-12-23T04:09:10Z",
+        "date-ended": "2017-12-23T04:11:10Z",
+        "job": {
+          "id": "d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323",
+          "href": "http://localhost:4440/api/21/job/d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323",
+          "permalink": "http://localhost:4440/project/testproject/job/show/d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323"
+        },
+        "execution": {
+          "id": "14",
+          "href": "http://localhost:4440/api/21/execution/14",
+          "permalink": "http://localhost:4440/project/testproject/execution/show/14"
+        }
+      },
+      {
+        "starttime": 1514002148207,
+        "endtime": 1514002268244,
+        "title": "test/sleep-job",
+        "status": "succeeded",
+        "statusString": "succeed",
+        "summary": "Plugin[localexec, nodeStep: true]",
+        "node-summary": {
+          "succeeded": 1,
+          "failed": 0,
+          "total": 1
+        },
+        "user": "admin",
+        "project": "testproject",
+        "date-started": "2017-12-23T04:09:08Z",
+        "date-ended": "2017-12-23T04:11:08Z",
+        "job": {
+          "id": "d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323",
+          "href": "http://localhost:4440/api/21/job/d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323",
+          "permalink": "http://localhost:4440/project/testproject/job/show/d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323"
+        },
+        "execution": {
+          "id": "13",
+          "href": "http://localhost:4440/api/21/execution/13",
+          "permalink": "http://localhost:4440/project/testproject/execution/show/13"
+        }
+      }
+    ]
+  }

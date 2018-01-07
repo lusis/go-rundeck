@@ -1,0 +1,87 @@
+{
+    "completed": true,
+    "executionState": "SUCCEEDED",
+    "endTime": "2014-01-13T20:38:36Z",
+    "serverNode": "dignan",
+    "startTime": "2014-01-13T20:38:25Z",
+    "updateTime": "2014-01-13T20:38:36Z",
+    "stepCount": 2,
+    "allNodes": [
+      "dignan"
+    ],
+    "targetNodes": [
+      "dignan"
+    ],
+    "nodes": {
+      "dignan": [
+        {
+          "executionState": "SUCCEEDED",
+          "stepctx": "1"
+        },
+        {
+          "executionState": "SUCCEEDED",
+          "stepctx": "2/1"
+        }
+      ]
+    },
+    "executionId": 134,
+    "steps": [
+      {
+        "executionState": "SUCCEEDED",
+        "endTime": "2014-01-13T20:38:31Z",
+        "nodeStates": {
+          "dignan": {
+            "executionState": "SUCCEEDED",
+            "endTime": "2014-01-13T20:38:31Z",
+            "updateTime": "2014-01-13T20:38:31Z",
+            "startTime": "2014-01-13T20:38:25Z"
+          }
+        },
+        "updateTime": "2014-01-13T20:38:25Z",
+        "nodeStep": true,
+        "id": "1",
+        "startTime": "2014-01-13T20:38:25Z"
+      },
+      {
+        "workflow": {
+          "completed": true,
+          "startTime": "2014-01-13T20:38:31Z",
+          "updateTime": "2014-01-13T20:38:36Z",
+          "stepCount": 1,
+          "allNodes": [
+            "dignan"
+          ],
+          "targetNodes": [
+            "dignan"
+          ],
+          "steps": [
+            {
+              "executionState": "SUCCEEDED",
+              "endTime": "2014-01-13T20:38:36Z",
+              "nodeStates": {
+                "dignan": {
+                  "executionState": "SUCCEEDED",
+                  "endTime": "2014-01-13T20:38:36Z",
+                  "updateTime": "2014-01-13T20:38:36Z",
+                  "startTime": "2014-01-13T20:38:31Z"
+                }
+              },
+              "updateTime": "2014-01-13T20:38:31Z",
+              "nodeStep": true,
+              "id": "1",
+              "startTime": "2014-01-13T20:38:31Z"
+            }
+          ],
+          "endTime": "2014-01-13T20:38:36Z",
+          "executionState": "SUCCEEDED"
+        },
+        "executionState": "SUCCEEDED",
+        "endTime": "2014-01-13T20:38:36Z",
+        "hasSubworkflow": true,
+        "updateTime": "2014-01-13T20:38:36Z",
+        "nodeStep": false,
+        "id": "2",
+        "startTime": "2014-01-13T20:38:31Z"
+      }
+    ]
+  }
