@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 
+	multierror "github.com/hashicorp/go-multierror"
 	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck/responses"
 )
@@ -109,11 +111,19 @@ func (c *Client) DeleteProject(p string) error {
 
 // GetProjectConfiguration gets a project's configuration
 // http://rundeck.org/docs/api/index.html#get-project-configuration
-func (c *Client) GetProjectConfiguration() error {
+func (c *Client) GetProjectConfiguration(p string) (*responses.ProjectConfigResponse, error) {
 	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+	data := &responses.ProjectConfigResponse{}
+	res, err := c.httpGet("project/"+p+"/config", requestExpects(200), requestJSON())
+	if err != nil {
+		return nil, err
+	}
+	if jsonErr := json.Unmarshal(res, data); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, jsonErr).Error()}
+	}
+	return data, nil
 }
 
 // PutProjectConfiguration replaces all configuration data with the submitted values
@@ -154,7 +164,7 @@ func (c *Client) DeleteProjectConfigurationKey() error {
 
 // GetProjectArchiveExport export exports a zip file of the project
 // http://rundeck.org/docs/api/index.html#project-archive-export
-func (c *Client) GetProjectArchiveExport() error {
+func (c *Client) GetProjectArchiveExport(p string, w io.Writer) error {
 	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
 		return err
 	}

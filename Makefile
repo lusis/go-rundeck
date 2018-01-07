@@ -12,6 +12,9 @@ all: clean test $(BINLIST)
 test:
 	@script/test
 
+bindata:
+	@cd ./pkg/rundeck/responses/testdata;  go-bindata -pkg testdata -o testdata.go *.json *.yaml *.txt *.aclpolicy; cd -
+
 build-test-container:
 	@cd docker; docker build --rm -t go-rundeck-test:2.10.1 .; cd -
 

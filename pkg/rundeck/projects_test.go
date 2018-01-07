@@ -141,3 +141,17 @@ func TestCreateProject(t *testing.T) {
 	assert.Equal(t, "testproject", obj.Name)
 	assert.Equal(t, "test project", obj.Description)
 }
+
+func TestGetProjectConfiguration(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectConfigResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.GetProjectConfiguration("testproject")
+	assert.NoError(t, cErr)
+	assert.NotNil(t, obj)
+	assert.Len(t, *obj, 33)
+}

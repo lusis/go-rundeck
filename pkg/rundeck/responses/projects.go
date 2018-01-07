@@ -85,6 +85,9 @@ func (a *ProjectInfoResponse) FromBytes(f []byte) error {
 // ProjectConfigResponse represents a projects configuration response
 type ProjectConfigResponse map[string]string
 
+// ProjectConfigResponseTestFile is test data for a ProjectConfigResponse
+const ProjectConfigResponseTestFile = "project_config.json"
+
 // ProjectConfigItemResponseTestFile is test data for a ProjectConfigItemResponse
 const ProjectConfigItemResponseTestFile = "config_item.json"
 
