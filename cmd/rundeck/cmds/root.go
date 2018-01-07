@@ -16,7 +16,7 @@ func RootCommand() {
 	}
 	cmd.AddCommand(projectCommands(),
 		listCommands(),
-		policiesCommands(),
+		systemPoliciesCommands(),
 		jobCommands(),
 		jobsCommands(),
 		executionCommands(),

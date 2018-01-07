@@ -2,11 +2,14 @@ package cmds
 
 import "github.com/spf13/cobra"
 
-func policiesCommands() *cobra.Command {
+func systemPoliciesCommands() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "policy",
-		Short: "operate on rundeck acl policies",
+		Use:   "system-policy",
+		Short: "operate on rundeck system acl policies",
 	}
 	cmd.AddCommand(createACLPolicyCommand())
+	cmd.AddCommand(getSystemACLPolicyCommand())
+	cmd.AddCommand(listSystemACLPoliciesCommand())
+	cmd.AddCommand(deleteSystemACLPolicyCommand())
 	return cmd
 }

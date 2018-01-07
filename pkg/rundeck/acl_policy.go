@@ -109,7 +109,7 @@ func (c *Client) DeleteSystemACLPolicy(name string) error {
 	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
 		return err
 	}
-	return fmt.Errorf("not yet implemented")
+	return c.httpDelete("system/acl/"+name+".aclpolicy", requestJSON(), requestExpects(204))
 }
 
 // ListProjectACLPolicies gets a project ACL Policies
