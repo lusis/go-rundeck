@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strings"
 
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
+	rundeck "github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/lusis/outputter"
 	"github.com/spf13/cobra"
 )

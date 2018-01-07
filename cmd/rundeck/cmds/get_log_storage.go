@@ -13,7 +13,7 @@ var (
 )
 
 func getLogStorageFunc(cmd *cobra.Command, args []string) error {
-	data, err := cli.Client.GetLogStorage()
+	data, err := cli.Client.GetLogStorageInfo()
 	if err != nil {
 		return err
 	}

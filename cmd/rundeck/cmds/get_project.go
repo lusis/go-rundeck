@@ -10,7 +10,7 @@ import (
 
 func getProjectFunc(cmd *cobra.Command, args []string) error {
 	projectName := args[0]
-	data, err := cli.Client.GetProject(projectName)
+	data, err := cli.Client.GetProjectInfo(projectName)
 	if err != nil {
 		return err
 	}

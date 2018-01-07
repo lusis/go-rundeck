@@ -18,7 +18,7 @@ func bulkDeleteExecutionsFunc(cmd *cobra.Command, args []string) error {
 	if len(bulkDeleteExecutionIDs) == 0 {
 		return errors.New("at least one id is required")
 	}
-	res, err := cli.Client.DeleteExecutions(bulkDeleteExecutionIDs...)
+	res, err := cli.Client.BulkDeleteExecutions(bulkDeleteExecutionIDs...)
 	if err != nil {
 		return err
 	}

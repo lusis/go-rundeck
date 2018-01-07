@@ -24,7 +24,7 @@ func createACLPolicyFunc(cmd *cobra.Command, args []string) error {
 	if readErr != nil {
 		return readErr
 	}
-	if err := cli.Client.CreateACLPolicy(policyName, bytes.NewReader(contents)); err != nil {
+	if err := cli.Client.CreateSystemACLPolicy(policyName, bytes.NewReader(contents)); err != nil {
 		return err
 	}
 	fmt.Println("policy created")

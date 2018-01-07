@@ -31,7 +31,7 @@ func deleteProjectExecutionsFunc(cmd *cobra.Command, args []string) error {
 		fmt.Println("no executions to delete")
 		return nil
 	}
-	res, err := cli.Client.DeleteExecutions(toDelete...)
+	res, err := cli.Client.BulkDeleteExecutions(toDelete...)
 	if err != nil {
 		return err
 	}

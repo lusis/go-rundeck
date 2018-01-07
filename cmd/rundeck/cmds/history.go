@@ -9,7 +9,7 @@ import (
 
 func projectHistoryFunc(cmd *cobra.Command, args []string) error {
 	projectid := args[0]
-	data, err := cli.Client.GetHistory(projectid)
+	data, err := cli.Client.ListHistory(projectid)
 	if err != nil {
 		return err
 	}

@@ -29,7 +29,7 @@ func getTokensFunc(cmd *cobra.Command, args []string) error {
 		"Roles",
 	})
 	if userid == "" {
-		data, err := cli.Client.GetTokens()
+		data, err := cli.Client.ListTokens()
 		if err != nil {
 			return err
 		}
@@ -47,7 +47,7 @@ func getTokensFunc(cmd *cobra.Command, args []string) error {
 			}
 		}
 	} else {
-		data, err := cli.Client.GetUserTokens(userid)
+		data, err := cli.Client.ListTokensForUser(userid)
 		if err != nil {
 			return err
 		}

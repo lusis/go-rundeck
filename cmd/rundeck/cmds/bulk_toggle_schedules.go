@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck.v21/responses"
+	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
 	"github.com/lusis/go-rundeck/pkg/cli"
 	"github.com/spf13/cobra"

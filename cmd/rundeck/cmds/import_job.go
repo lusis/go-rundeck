@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/lusis/go-rundeck/pkg/cli"
-	rundeck "github.com/lusis/go-rundeck/pkg/rundeck.v21"
+	rundeck "github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/spf13/cobra"
 )
 
