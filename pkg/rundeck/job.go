@@ -85,7 +85,7 @@ func RunJobRunAt(t time.Time) RunJobOption {
 // GetJobMetaData gets a job's metadata
 // http://rundeck.org/docs/api/index.html#get-job-metadata
 func (c *Client) GetJobMetaData(id string) (*JobMetaData, error) {
-	if _, err := c.hasRequiredAPIVersion(18, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.JobMetaDataResponse{}); err != nil {
 		return nil, err
 	}
 	data := &JobMetaData{}
@@ -102,7 +102,7 @@ func (c *Client) GetJobMetaData(id string) (*JobMetaData, error) {
 // GetJobDefinition gets a job definition
 // http://rundeck.org/docs/api/index.html#getting-a-job-definition
 func (c *Client) GetJobDefinition(id string, format string) ([]byte, error) {
-	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.JobYAMLResponse{}); err != nil {
 		return nil, err
 	}
 	options := []httpclient.RequestOption{
@@ -128,7 +128,7 @@ func (c *Client) GetJobInfo(id string) (*JobMetaData, error) {
 // DeleteJob deletes a job
 // http://rundeck.org/docs/api/index.html#deleting-a-job-definition
 func (c *Client) DeleteJob(id string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
 		return err
 	}
 	return c.httpDelete("job/"+id, httpclient.ExpectStatus(204))
@@ -138,7 +138,7 @@ func (c *Client) DeleteJob(id string) error {
 // ExportJob exports a job
 // http://rundeck.org/docs/api/index.html#exporting-jobs
 func (c *Client) ExportJob(id string, format string) ([]byte, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.JobYAMLResponse{}); err != nil {
 		return nil, err
 	}
 	if format != "xml" && format != "yaml" {
@@ -157,7 +157,7 @@ func (c *Client) ExportJob(id string, format string) ([]byte, error) {
 // RunJob runs a job
 // http://rundeck.org/docs/api/index.html#running-a-job
 func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
-	if _, err := c.hasRequiredAPIVersion(18, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ExecutionResponse{}); err != nil {
 		return nil, err
 	}
 	jobOpts := &requests.RunJobRequest{}
@@ -185,7 +185,7 @@ func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
 // ListJobs lists the jobs for a project
 // http://rundeck.org/docs/api/index.html#listing-jobs
 func (c *Client) ListJobs(projectID string) (*JobList, error) {
-	if _, err := c.hasRequiredAPIVersion(17, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.JobsResponse{}); err != nil {
 		return nil, err
 	}
 	data := &JobList{}
@@ -203,7 +203,7 @@ func (c *Client) ListJobs(projectID string) (*JobList, error) {
 // BulkJobDelete deletes jobs in bulk
 // http://rundeck.org/docs/api/index.html#bulk-job-delete
 func (c *Client) BulkJobDelete(ids ...string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.BulkDeleteJobResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -212,7 +212,7 @@ func (c *Client) BulkJobDelete(ids ...string) error {
 // GetExecutionsForJob gets executions for a job
 // http://rundeck.org/docs/api/index.html#getting-executions-for-a-job
 func (c *Client) GetExecutionsForJob(jobid string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.JobExecutionsResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -221,7 +221,7 @@ func (c *Client) GetExecutionsForJob(jobid string) error {
 // DeleteAllExecutionsForJob deletes all executions for a job
 // http://rundeck.org/docs/api/index.html#delete-all-executions-for-a-job
 func (c *Client) DeleteAllExecutionsForJob(jobid string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.BulkDeleteExecutionsResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -230,7 +230,7 @@ func (c *Client) DeleteAllExecutionsForJob(jobid string) error {
 // UploadFileForJobOption uploads a file for a job 'file' option type
 // http://rundeck.org/docs/api/index.html#upload-a-file-for-a-job-option
 func (c *Client) UploadFileForJobOption(ids ...string) error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.JobOptionFileUploadResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -239,7 +239,7 @@ func (c *Client) UploadFileForJobOption(ids ...string) error {
 // ListFilesUploadedForJob lists files that have been uploaded for a job
 // http://rundeck.org/docs/api/index.html#list-files-uploaded-for-a-job
 func (c *Client) ListFilesUploadedForJob(ids ...string) error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.UploadedJobInputFilesResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -248,7 +248,7 @@ func (c *Client) ListFilesUploadedForJob(ids ...string) error {
 // GetUploadedFileInfo gets info about an uploaded file
 // http://rundeck.org/docs/api/index.html#get-info-about-an-uploaded-file
 func (c *Client) GetUploadedFileInfo(ids ...string) error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.UploadedJobInputFileResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")

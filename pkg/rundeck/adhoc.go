@@ -51,7 +51,7 @@ func CmdKeepGoing() AdHocRunOption {
 // RunAdHocCommand runs an adhoc job - all nodes by default
 // http://rundeck.org/docs/api/index.html#running-adhoc-commands
 func (c *Client) RunAdHocCommand(projectID string, exec string, opts ...AdHocRunOption) (*AdHocExecution, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.AdHocExecutionResponse{}); err != nil {
 		return nil, err
 	}
 	data := &AdHocExecution{}
@@ -80,7 +80,7 @@ func (c *Client) RunAdHocCommand(projectID string, exec string, opts ...AdHocRun
 // RunAdHocScript runs a script ad-hoc
 // http://rundeck.org/docs/api/index.html#running-adhoc-scripts
 func (c *Client) RunAdHocScript() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.AdHocExecutionResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -89,7 +89,7 @@ func (c *Client) RunAdHocScript() error {
 // RunAdHocScriptFromURL runs a script ad-hoc from a url
 // http://rundeck.org/docs/api/index.html#running-adhoc-script-urls
 func (c *Client) RunAdHocScriptFromURL() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.AdHocExecutionResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")

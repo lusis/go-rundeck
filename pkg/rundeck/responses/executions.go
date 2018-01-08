@@ -11,6 +11,10 @@ import (
 // JobExecutionsResponse is the response for listing the executions for a job
 type JobExecutionsResponse ListRunningExecutionsResponse
 
+func (a JobExecutionsResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a JobExecutionsResponse) maxVersion() int  { return CurrentVersion }
+func (a JobExecutionsResponse) deprecated() bool { return false }
+
 // ListRunningExecutionsResponseTestFile is the test data for JobExecutionResponse
 const ListRunningExecutionsResponseTestFile = "executions.json"
 
@@ -392,3 +396,20 @@ type AdHocExecutionItemResponse struct {
 func (a AdHocExecutionItemResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a AdHocExecutionItemResponse) maxVersion() int  { return CurrentVersion }
 func (a AdHocExecutionItemResponse) deprecated() bool { return false }
+
+// AbortExecutionResponse is the response for aborting an execution
+type AbortExecutionResponse struct {
+	Abort struct {
+		Status string `json:"status"`
+		Reason string `json:"reason"`
+	} `json:"abort"`
+	Execution struct {
+		ID     string `json:"id"`
+		Status string `json:"status"`
+		HRef   string `json:"href"`
+	} `json:"execution"`
+}
+
+func (a AbortExecutionResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a AbortExecutionResponse) maxVersion() int  { return CurrentVersion }
+func (a AbortExecutionResponse) deprecated() bool { return false }

@@ -22,3 +22,13 @@ func GetMaxVersionFor(a VersionedResponse) int { return a.maxVersion() }
 
 // IsDeprecated indicates if a response is deprecated or not
 func IsDeprecated(a VersionedResponse) bool { return a.deprecated() }
+
+// GenericVersionedResponse is for version checking
+// Some operations don't have a response (think DELETE or PUT)
+// but we still want to do a version check on ALL functions anyway
+// This response simply responds to that
+type GenericVersionedResponse struct{}
+
+func (g GenericVersionedResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (g GenericVersionedResponse) maxVersion() int  { return CurrentVersion }
+func (g GenericVersionedResponse) deprecated() bool { return false }

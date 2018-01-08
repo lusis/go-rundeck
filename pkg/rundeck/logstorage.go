@@ -16,7 +16,7 @@ type IncompleteLogStorage responses.IncompleteLogStorageResponse
 // GetLogStorageInfo gets the logstorage
 // http://rundeck.org/docs/api/index.html#log-storage-info
 func (c *Client) GetLogStorageInfo() (*LogStorage, error) {
-	if _, err := c.hasRequiredAPIVersion(17, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.LogStorageResponse{}); err != nil {
 		return nil, err
 	}
 	ls := &LogStorage{}
@@ -33,7 +33,7 @@ func (c *Client) GetLogStorageInfo() (*LogStorage, error) {
 // GetIncompleteLogStorage gets executions with incomplete logstorage
 // http://rundeck.org/docs/api/index.html#list-executions-with-incomplete-log-storage
 func (c *Client) GetIncompleteLogStorage() (*IncompleteLogStorage, error) {
-	if _, err := c.hasRequiredAPIVersion(17, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.IncompleteLogStorageResponse{}); err != nil {
 		return nil, err
 	}
 	ls := &IncompleteLogStorage{}
@@ -50,7 +50,7 @@ func (c *Client) GetIncompleteLogStorage() (*IncompleteLogStorage, error) {
 // ResumeIncompleteLogStorage resumes processing incomplete log storage uploads
 // http://rundeck.org/docs/api/index.html#resume-incomplete-log-storage
 func (c *Client) ResumeIncompleteLogStorage() (bool, error) {
-	if _, err := c.hasRequiredAPIVersion(17, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.IncompleteLogStorageResponse{}); err != nil {
 		return false, err
 	}
 	res := make(map[string]bool)

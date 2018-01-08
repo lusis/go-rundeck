@@ -14,9 +14,7 @@ type History responses.HistoryResponse
 // ListHistory returns the history for a project
 // http://rundeck.org/docs/api/index.html#listing-history
 func (c *Client) ListHistory(project string, opts ...map[string]string) (*History, error) {
-	minVer := responses.GetMinVersionFor(responses.HistoryResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.HistoryResponse{})
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.HistoryResponse{}); err != nil {
 		return nil, err
 	}
 	u := make(map[string]string)

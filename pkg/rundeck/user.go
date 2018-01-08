@@ -18,12 +18,11 @@ type Users responses.ListUsersResponse
 // ListUsers returns all rundeck users
 // http://rundeck.org/docs/api/index.html#list-users
 func (c *Client) ListUsers() (*Users, error) {
-	minVer := responses.GetMinVersionFor(responses.ListUsersResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.ListUsersResponse{})
-	users := &Users{}
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ListUsersResponse{}); err != nil {
 		return nil, err
 	}
+	users := &Users{}
+
 	res, err := c.httpGet("user/list", requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
@@ -37,9 +36,7 @@ func (c *Client) ListUsers() (*Users, error) {
 // GetCurrentUserProfile returns information about the current user
 // http://rundeck.org/docs/api/index.html#get-user-profile
 func (c *Client) GetCurrentUserProfile() (*User, error) {
-	minVer := responses.GetMinVersionFor(responses.UserProfileResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.UserProfileResponse{})
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.UserProfileResponse{}); err != nil {
 		return nil, err
 	}
 	user := &User{}
@@ -56,9 +53,7 @@ func (c *Client) GetCurrentUserProfile() (*User, error) {
 // GetUserProfile returns information about the named user - requires admin privileges
 // http://rundeck.org/docs/api/index.html#get-another-user-profile
 func (c *Client) GetUserProfile(login string) (*User, error) {
-	minVer := responses.GetMinVersionFor(responses.UserProfileResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.UserProfileResponse{})
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.UserProfileResponse{}); err != nil {
 		return nil, err
 	}
 	user := &User{}
@@ -75,9 +70,7 @@ func (c *Client) GetUserProfile(login string) (*User, error) {
 // ModifyUserProfile updates a user
 // http://rundeck.org/docs/api/index.html#modify-user-profile
 func (c *Client) ModifyUserProfile(u *User) (*User, error) {
-	minVer := responses.GetMinVersionFor(responses.UserProfileResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.UserProfileResponse{})
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.UserProfileResponse{}); err != nil {
 		return nil, err
 	}
 	currentUser, currentUserErr := c.GetCurrentUserProfile()

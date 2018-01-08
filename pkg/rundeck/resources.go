@@ -17,7 +17,7 @@ type Resource responses.ResourceResponse
 // ListResourcesForProject returns resources for a project (usually nodes)
 // http://rundeck.org/docs/api/index.html#list-resources-for-a-project
 func (c *Client) ListResourcesForProject(p string) (*Resources, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ResourceCollectionResponse{}); err != nil {
 		return nil, err
 	}
 	ls := &Resources{}
@@ -34,7 +34,7 @@ func (c *Client) ListResourcesForProject(p string) (*Resources, error) {
 // GetResourceInfo get a specific resource within a project (usually a node)
 // http://rundeck.org/docs/api/index.html#getting-resource-info
 func (c *Client) GetResourceInfo(p, n string) (*responses.ResourceDetailResponse, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ResourceDetailResponse{}); err != nil {
 		return nil, err
 	}
 	r := Resource{}
@@ -52,7 +52,7 @@ func (c *Client) GetResourceInfo(p, n string) (*responses.ResourceDetailResponse
 // UpdateResource updates a project resource
 // http://rundeck.org/docs/api/index.html#list-resources-for-a-project
 func (c *Client) UpdateResource() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ResourceResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -61,7 +61,7 @@ func (c *Client) UpdateResource() error {
 // GetProjectReadme gets a project's readme.md
 // http://rundeck.org/docs/api/index.html#get-readme-file
 func (c *Client) GetProjectReadme() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ResourceResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -70,7 +70,7 @@ func (c *Client) GetProjectReadme() error {
 // PutProjectReadme creates or modifies a project's readme.md
 // http://rundeck.org/docs/api/index.html#put-readme-file
 func (c *Client) PutProjectReadme() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ResourceResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -78,7 +78,7 @@ func (c *Client) PutProjectReadme() error {
 
 // DeleteProjectReadme deletes a project's readme.md
 func (c *Client) DeleteProjectReadme() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ResourceResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -87,7 +87,7 @@ func (c *Client) DeleteProjectReadme() error {
 // GetProjectMotd gets a project's Motd.md
 // http://rundeck.org/docs/api/index.html#get-readme-file
 func (c *Client) GetProjectMotd() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ResourceResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -96,7 +96,7 @@ func (c *Client) GetProjectMotd() error {
 // PutProjectMotd creates or modifies a project's motd.md
 // http://rundeck.org/docs/api/index.html#put-readme-file
 func (c *Client) PutProjectMotd() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ResourceResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -104,7 +104,7 @@ func (c *Client) PutProjectMotd() error {
 
 // DeleteProjectMotd deletes a project's motd.md
 func (c *Client) DeleteProjectMotd() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ResourceResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")

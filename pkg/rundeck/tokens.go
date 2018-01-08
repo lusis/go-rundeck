@@ -39,9 +39,7 @@ func TokenRoles(roles ...string) TokenOption {
 // ListTokens gets all tokens for the current user
 // http://rundeck.org/docs/api/index.html#list-tokens
 func (c *Client) ListTokens() (*Tokens, error) {
-	minVer := responses.GetMinVersionFor(responses.ListTokensResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.ListTokensResponse{})
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ListTokensResponse{}); err != nil {
 		return nil, err
 	}
 	tokens := Tokens{}
@@ -59,9 +57,7 @@ func (c *Client) ListTokens() (*Tokens, error) {
 // ListTokensForUser gets the api tokens for a user
 // http://rundeck.org/docs/api/index.html#list-tokens
 func (c *Client) ListTokensForUser(user string) ([]*Token, error) {
-	minVer := responses.GetMinVersionFor(responses.ListTokensResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.ListTokensResponse{})
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ListTokensResponse{}); err != nil {
 		return nil, err
 	}
 	data, err := c.httpGet("tokens/"+user, requestJSON(), requestExpects(200))
@@ -79,9 +75,7 @@ func (c *Client) ListTokensForUser(user string) ([]*Token, error) {
 // GetToken gets a token
 // http://rundeck.org/docs/api/index.html#get-a-token
 func (c *Client) GetToken(tokenID string) (*Token, error) {
-	minVer := responses.GetMinVersionFor(responses.TokenResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.TokenResponse{})
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.TokenResponse{}); err != nil {
 		return nil, err
 	}
 
@@ -100,9 +94,7 @@ func (c *Client) GetToken(tokenID string) (*Token, error) {
 // CreateToken creates a token
 // http://rundeck.org/docs/api/index.html#create-a-token
 func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
-	minVer := responses.GetMinVersionFor(responses.TokenResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.TokenResponse{})
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.TokenResponse{}); err != nil {
 		return nil, err
 	}
 	tokenRequest := &Token{}
@@ -131,9 +123,7 @@ func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
 // DeleteToken deletes a token
 // http://rundeck.org/docs/api/index.html#delete-a-token
 func (c *Client) DeleteToken(token string) error {
-	minVer := responses.GetMinVersionFor(responses.TokenResponse{})
-	maxVer := responses.GetMaxVersionFor(responses.TokenResponse{})
-	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.TokenResponse{}); err != nil {
 		return err
 	}
 	url := fmt.Sprintf("token/%s", token)
