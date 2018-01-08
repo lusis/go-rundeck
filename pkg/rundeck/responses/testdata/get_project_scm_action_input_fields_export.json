@@ -1,0 +1,68 @@
+{
+  "actionId": "project-commit",
+  "description": "Commit changes to local git repo.",
+  "exportItems": [
+    {
+      "deleted": false,
+      "itemId": "test/sleep-job-d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323.yaml",
+      "job": {
+        "groupPath": "test",
+        "jobId": "d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323",
+        "jobName": "sleep-job"
+      },
+      "originalId": null,
+      "renamed": false
+    },
+    {
+      "deleted": false,
+      "itemId": "others/things/another-job-50d87da6-903b-4743-8e0e-0464bff7d413.yaml",
+      "job": {
+        "groupPath": "others/things",
+        "jobId": "50d87da6-903b-4743-8e0e-0464bff7d413",
+        "jobName": "another-job"
+      },
+      "originalId": null,
+      "renamed": false
+    }
+  ],
+  "fields": [
+    {
+      "defaultValue": null,
+      "description": "Enter a commit message. Committing to branch: `master`",
+      "name": "message",
+      "renderingOptions": {
+        "displayType": "MULTI_LINE"
+      },
+      "required": true,
+      "scope": null,
+      "title": "Commit Message",
+      "type": "String",
+      "values": null
+    },
+    {
+      "defaultValue": null,
+      "description": "Enter a tag name to include, will be pushed with the branch.",
+      "name": "tagName",
+      "renderingOptions": {},
+      "required": false,
+      "scope": null,
+      "title": "Tag",
+      "type": "String",
+      "values": null
+    },
+    {
+      "defaultValue": null,
+      "description": "Check to push to the remote",
+      "name": "push",
+      "renderingOptions": {},
+      "required": false,
+      "scope": null,
+      "title": "Push Remotely?",
+      "type": "Boolean",
+      "values": null
+    }
+  ],
+  "importItems": null,
+  "integration": "export",
+  "title": "Commit Changes to Git"
+}

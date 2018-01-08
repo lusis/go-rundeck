@@ -1,0 +1,15 @@
+{
+  "actionId": "import-all",
+  "description": "Import the modifications to Rundeck",
+  "exportItems": null,
+  "fields": [],
+  "importItems": [
+    {
+      "itemId": "import-test/new-sleep-job.yaml",
+      "job": null,
+      "tracked": false
+    }
+  ],
+  "integration": "import",
+  "title": "Import remote Changes"
+}

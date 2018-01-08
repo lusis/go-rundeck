@@ -1,0 +1,9 @@
+{
+  "actions": [
+    "import-all"
+  ],
+  "integration": "import",
+  "message": "1 unimported file(s) found",
+  "project": "testproject",
+  "synchState": "IMPORT_NEEDED"
+}
