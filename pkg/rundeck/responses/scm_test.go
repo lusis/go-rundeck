@@ -161,3 +161,33 @@ func TestGetProjectSCMStatusResponseExport(t *testing.T) {
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.NotNil(t, obj)
 }
+
+func TestGetProjectSCMConfigResponseImport(t *testing.T) {
+	obj := &GetProjectSCMConfigResponse{}
+	data, dataErr := testdata.GetBytes(GetProjectSCMStatusResponseImportTestFile)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+
+	err := obj.FromBytes(data)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+	assert.NotNil(t, obj)
+}
+
+func TestGetProjectSCMConfigResponseExport(t *testing.T) {
+	obj := &GetProjectSCMConfigResponse{}
+	data, dataErr := testdata.GetBytes(GetProjectSCMConfigResponseExportTestFile)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+
+	err := obj.FromBytes(data)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+	assert.NotNil(t, obj)
+}

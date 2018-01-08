@@ -167,25 +167,13 @@ func (a *GetProjectSCMStatusResponse) FromBytes(f []byte) error {
 
 // GetProjectSCMConfigResponse is the response for getting a project's scm config
 // http://rundeck.org/docs/api/index.html#get-project-scm-config
-/*
-{
-  "config": {
-    "key": "$string",
-    "key2": "$string"
-  },
-  "enabled": $boolean,
-  "integration": "$integration",
-  "project": "$project",
-  "type": "$type"
-}
-*/
 type GetProjectSCMConfigResponse struct {
 	SCMResponse
-	Config      map[string]string `json:"config"`
-	Enabled     bool              `json:"enabled"`
-	Integration string            `json:"integration"`
-	Project     string            `json:"project"`
-	Type        string            `json:"type"`
+	Config      *map[string]string `json:"config"`
+	Enabled     bool               `json:"enabled"`
+	Integration string             `json:"integration"`
+	Project     string             `json:"project"`
+	Type        string             `json:"type"`
 }
 
 // GetProjectSCMConfigResponseImportTestFile is testdata for GetProjectSCMConfigResponse for import plugins
@@ -293,6 +281,7 @@ func (a *GetJobSCMStatusResponse) FromBytes(f []byte) error {
 
 // GetJobSCMDiffResponse is the response for a job scm diff
 // http://rundeck.org/docs/api/index.html#get-job-scm-diff
+// TODO: break Commit into its own type to avoid nested structs issues
 type GetJobSCMDiffResponse struct {
 	SCMResponse
 	Commit struct {
