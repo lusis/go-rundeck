@@ -20,6 +20,7 @@ func TestExecutionResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, 1, obj.ID)
 	assert.Equal(t, "[url]", obj.HRef)
 	assert.Equal(t, "[url]", obj.Permalink)
@@ -59,6 +60,7 @@ func TestListRunningExecutionsResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Len(t, obj.Executions, 1)
 	assert.Len(t, obj.Executions[0].FailedNodes, 2)
 	assert.Len(t, obj.Executions[0].SuccessfulNodes, 1)
@@ -82,6 +84,7 @@ func TestExecutionInputFilesResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Len(t, obj.Files, 1)
 	assert.Equal(t, 2014, obj.Files[0].DateCreated.Year())
 	assert.Equal(t, 2017, obj.Files[0].ExpirationDate.Year())
@@ -99,6 +102,7 @@ func TestBulkDeleteExecutionsResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Len(t, obj.Failures, 3)
 	for _, f := range obj.Failures {
 		assert.NotEmpty(t, f.ID)
@@ -122,6 +126,7 @@ func TestExecutionStateResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.True(t, obj.Completed)
 	assert.Equal(t, "SUCCEEDED", obj.ExecutionState)
 	assert.NotNil(t, obj.EndTime)
@@ -164,6 +169,7 @@ func TestAdHocExecutionResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "Immediate execution scheduled (X)", obj.Message)
 	assert.Equal(t, 1, obj.Execution.ID)
 	assert.Equal(t, "[API Href]", obj.Execution.HRef)

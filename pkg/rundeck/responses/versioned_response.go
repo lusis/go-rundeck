@@ -2,9 +2,9 @@ package responses
 
 // VersionedResponse is an interface for a Rundeck Response that supports versioning information
 type VersionedResponse interface {
-	MinVersion() int
-	MaxVersion() int
-	Deprecated() bool
+	minVersion() int
+	maxVersion() int
+	deprecated() bool
 }
 
 // AbsoluteMinimumVersion is the absolute minimum version this library will support
@@ -15,16 +15,10 @@ const AbsoluteMinimumVersion = 14
 const CurrentVersion = 21
 
 // GetMinVersionFor gets the minimum api version required for a response
-func GetMinVersionFor(a VersionedResponse) int {
-	return a.MinVersion()
-}
+func GetMinVersionFor(a VersionedResponse) int { return a.minVersion() }
 
 // GetMaxVersionFor gets the maximum api version required for a response
-func GetMaxVersionFor(a VersionedResponse) int {
-	return a.MaxVersion()
-}
+func GetMaxVersionFor(a VersionedResponse) int { return a.maxVersion() }
 
 // IsDeprecated indicates if a response is deprecated or not
-func IsDeprecated(a VersionedResponse) bool {
-	return a.Deprecated()
-}
+func IsDeprecated(a VersionedResponse) bool { return a.deprecated() }

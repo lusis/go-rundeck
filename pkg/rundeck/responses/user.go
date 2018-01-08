@@ -17,20 +17,9 @@ type UserProfileResponse struct {
 	Email     string `json:"email,omitempty"`
 }
 
-// MinVersion is the minimum version of the API required for this response
-func (u UserProfileResponse) MinVersion() int {
-	return 21
-}
-
-// MaxVersion is the maximum version of the API that this response supports
-func (u UserProfileResponse) MaxVersion() int {
-	return CurrentVersion
-}
-
-// Deprecated is if a given response is deprecated
-func (u UserProfileResponse) Deprecated() bool {
-	return false
-}
+func (u UserProfileResponse) minVersion() int  { return 21 }
+func (u UserProfileResponse) maxVersion() int  { return CurrentVersion }
+func (u UserProfileResponse) deprecated() bool { return false }
 
 // UserProfileResponseTestFile is test data for a UserInfoResponse
 const UserProfileResponseTestFile = "user.json"
@@ -67,20 +56,9 @@ type ListUsersResponse []*UserProfileResponse
 // ListUsersResponseTestFile is test data for a UsersInfoResponse
 const ListUsersResponseTestFile = "users.json"
 
-// MinVersion is the minimum version of the API required for this response
-func (u ListUsersResponse) MinVersion() int {
-	return 21
-}
-
-// MaxVersion is the maximum version of the API that this response supports
-func (u ListUsersResponse) MaxVersion() int {
-	return CurrentVersion
-}
-
-// Deprecated is if a given response is deprecated
-func (u ListUsersResponse) Deprecated() bool {
-	return false
-}
+func (u ListUsersResponse) minVersion() int  { return 21 }
+func (u ListUsersResponse) maxVersion() int  { return CurrentVersion }
+func (u ListUsersResponse) deprecated() bool { return false }
 
 // FromReader returns a UsersInfoResponse from an io.Reader
 func (u *ListUsersResponse) FromReader(i io.Reader) error {

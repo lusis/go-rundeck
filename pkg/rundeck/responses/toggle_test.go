@@ -14,5 +14,6 @@ func TestBulkToggleResponse(t *testing.T) {
 		t.Fatal(dataErr.Error())
 	}
 	err := obj.FromBytes(data)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.NoError(t, err)
 }

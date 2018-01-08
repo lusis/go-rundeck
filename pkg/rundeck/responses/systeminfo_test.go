@@ -21,6 +21,7 @@ func TestSystemInfoResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.NotNil(t, obj.System)
 	assert.NotNil(t, obj.System.Timestamp)
 	assert.NotNil(t, obj.System.Rundeck)

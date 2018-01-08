@@ -20,6 +20,7 @@ func TestACLResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "", obj.Path)
 	assert.Equal(t, "directory", obj.Type)
 	assert.Equal(t, "[API Href]", obj.Href)
@@ -44,6 +45,7 @@ func TestFailedACLValidationResponse(t *testing.T) {
 		t.Error(bErr.Error())
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.False(t, obj.Valid)
 	assert.Len(t, obj.Policies, 2)
 	first := obj.Policies[0]

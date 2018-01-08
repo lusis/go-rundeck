@@ -10,3 +10,7 @@ type ErrorResponse struct {
 	ErrorCode  string `json:"errorCode"`
 	Message    string `json:"message"`
 }
+
+func (a ErrorResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ErrorResponse) maxVersion() int  { return CurrentVersion }
+func (a ErrorResponse) deprecated() bool { return false }

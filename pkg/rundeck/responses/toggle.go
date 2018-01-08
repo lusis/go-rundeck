@@ -36,20 +36,9 @@ type BulkToggleResponse struct {
 	Succeeded     []BulkToggleEntryResponse `json:"succeeded"`
 }
 
-// MinVersion is the minimum version of the API required for this response
-func (a BulkToggleResponse) MinVersion() int {
-	return 14
-}
-
-// MaxVersion is the maximum version of the API that this response supports
-func (a BulkToggleResponse) MaxVersion() int {
-	return CurrentVersion
-}
-
-// Deprecated is if a given response is deprecated
-func (a BulkToggleResponse) Deprecated() bool {
-	return false
-}
+func (a BulkToggleResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a BulkToggleResponse) maxVersion() int  { return CurrentVersion }
+func (a BulkToggleResponse) deprecated() bool { return false }
 
 // BulkToggleEntryResponse represents an individual entry in a BulkToggleResponse
 type BulkToggleEntryResponse struct {
@@ -58,20 +47,9 @@ type BulkToggleEntryResponse struct {
 	Message   string `json:"message"`
 }
 
-// MinVersion is the minimum version of the API required for this response
-func (a BulkToggleEntryResponse) MinVersion() int {
-	return 14
-}
-
-// MaxVersion is the maximum version of the API that this response supports
-func (a BulkToggleEntryResponse) MaxVersion() int {
-	return CurrentVersion
-}
-
-// Deprecated is if a given response is deprecated
-func (a BulkToggleEntryResponse) Deprecated() bool {
-	return false
-}
+func (a BulkToggleEntryResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a BulkToggleEntryResponse) maxVersion() int  { return CurrentVersion }
+func (a BulkToggleEntryResponse) deprecated() bool { return false }
 
 // FromReader returns an BulkToggleResponse from an io.Reader
 func (a *BulkToggleResponse) FromReader(i io.Reader) error {
@@ -109,17 +87,6 @@ type ToggleResponse struct {
 	Success bool `json:"success"`
 }
 
-// MinVersion is the minimum version of the API required for this response
-func (a ToggleResponse) MinVersion() int {
-	return 14
-}
-
-// MaxVersion is the maximum version of the API that this response supports
-func (a ToggleResponse) MaxVersion() int {
-	return CurrentVersion
-}
-
-// Deprecated is if a given response is deprecated
-func (a ToggleResponse) Deprecated() bool {
-	return false
-}
+func (a ToggleResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ToggleResponse) maxVersion() int  { return CurrentVersion }
+func (a ToggleResponse) deprecated() bool { return false }

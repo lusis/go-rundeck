@@ -12,6 +12,10 @@ import (
 // JobsResponse is a collection of JobResponse
 type JobsResponse []*JobResponse
 
+func (a JobsResponse) minVersion() int  { return 17 }
+func (a JobsResponse) maxVersion() int  { return CurrentVersion }
+func (a JobsResponse) deprecated() bool { return false }
+
 // JobsResponseTestFile is the test data for JobsResponse
 const JobsResponseTestFile = "jobs.json"
 
@@ -57,6 +61,10 @@ type JobResponse struct {
 	ServerOwned    bool   `json:"serverOwned"`
 }
 
+func (a JobResponse) minVersion() int  { return 17 }
+func (a JobResponse) maxVersion() int  { return CurrentVersion }
+func (a JobResponse) deprecated() bool { return false }
+
 // JobMetaDataResponseTestFile is the test data for a JobMetaDataResponse
 const JobMetaDataResponseTestFile = "job_metadata.json"
 
@@ -74,6 +82,10 @@ type JobMetaDataResponse struct {
 	Enabled         bool   `json:"enabled"`
 	AverageDuration int64  `json:"averageDuration"`
 }
+
+func (a JobMetaDataResponse) minVersion() int  { return 18 }
+func (a JobMetaDataResponse) maxVersion() int  { return CurrentVersion }
+func (a JobMetaDataResponse) deprecated() bool { return false }
 
 // FromReader returns a JobMetaDataResponse from an io.Reader
 func (a *JobMetaDataResponse) FromReader(i io.Reader) error {
@@ -112,6 +124,10 @@ type ImportedJobEntryResponse struct {
 	Messages  string `json:"error,omitempty"`
 }
 
+func (a ImportedJobEntryResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ImportedJobEntryResponse) maxVersion() int  { return CurrentVersion }
+func (a ImportedJobEntryResponse) deprecated() bool { return false }
+
 // ImportedJobResponseTestFile is the test data for an ImportedJobResponse
 const ImportedJobResponseTestFile = "imported_job.json"
 
@@ -121,6 +137,10 @@ type ImportedJobResponse struct {
 	Failed    []ImportedJobEntryResponse `json:"failed"`
 	Skipped   []ImportedJobEntryResponse `json:"skipped"`
 }
+
+func (a ImportedJobResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ImportedJobResponse) maxVersion() int  { return CurrentVersion }
+func (a ImportedJobResponse) deprecated() bool { return false }
 
 // FromReader returns a ImportedJobResponse from an io.Reader
 func (a *ImportedJobResponse) FromReader(i io.Reader) error {
@@ -147,23 +167,31 @@ func (a *ImportedJobResponse) FromBytes(f []byte) error {
 	return a.FromReader(file)
 }
 
-// BulkJobEntryReponse represents a bulk job entry response
-type BulkJobEntryReponse struct {
+// BulkJobEntryResponse represents a bulk job entry response
+type BulkJobEntryResponse struct {
 	ID        string `json:"id"`
 	Message   string `json:"message"`
 	ErrorCode string `json:"errorCode,omitempty"`
 }
+
+func (a BulkJobEntryResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a BulkJobEntryResponse) maxVersion() int  { return CurrentVersion }
+func (a BulkJobEntryResponse) deprecated() bool { return false }
 
 // BulkDeleteJobResponseTestFile is the test data for BulkDeleteJobResponse
 const BulkDeleteJobResponseTestFile = "bulk_job_delete.json"
 
 // BulkDeleteJobResponse represents a bulk job delete response
 type BulkDeleteJobResponse struct {
-	RequestCount  int                   `json:"requestCount"`
-	AllSuccessful bool                  `json:"allSuccessful"`
-	Succeeded     []BulkJobEntryReponse `json:"succeeeded"`
-	Failed        []BulkJobEntryReponse `json:"failed"`
+	RequestCount  int                    `json:"requestCount"`
+	AllSuccessful bool                   `json:"allSuccessful"`
+	Succeeded     []BulkJobEntryResponse `json:"succeeeded"`
+	Failed        []BulkJobEntryResponse `json:"failed"`
 }
+
+func (a BulkDeleteJobResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a BulkDeleteJobResponse) maxVersion() int  { return CurrentVersion }
+func (a BulkDeleteJobResponse) deprecated() bool { return false }
 
 // FromReader returns a BulkDeleteJobResponse from an io.Reader
 func (a *BulkDeleteJobResponse) FromReader(i io.Reader) error {
@@ -198,6 +226,10 @@ type JobOptionFileUploadResponse struct {
 	Total   int               `json:"total"`
 	Options map[string]string `json:"options"`
 }
+
+func (a JobOptionFileUploadResponse) minVersion() int  { return 19 }
+func (a JobOptionFileUploadResponse) maxVersion() int  { return CurrentVersion }
+func (a JobOptionFileUploadResponse) deprecated() bool { return false }
 
 // FromReader returns a JobOptionFileUploadResponse from an io.Reader
 func (a *JobOptionFileUploadResponse) FromReader(i io.Reader) error {
@@ -239,6 +271,10 @@ type UploadedJobInputFileResponse struct {
 	ExecID         int       `json:"execId"`
 }
 
+func (a UploadedJobInputFileResponse) minVersion() int  { return 19 }
+func (a UploadedJobInputFileResponse) maxVersion() int  { return CurrentVersion }
+func (a UploadedJobInputFileResponse) deprecated() bool { return false }
+
 // UploadedJobInputFilesResponseTestFile is the test data for a UploadedJobInputFileResponse
 const UploadedJobInputFilesResponseTestFile = "uploaded_job_input_files.json"
 
@@ -247,6 +283,10 @@ type UploadedJobInputFilesResponse struct {
 	Paging PagingResponse                 `json:"paging"`
 	Files  []UploadedJobInputFileResponse `json:"files"`
 }
+
+func (a UploadedJobInputFilesResponse) minVersion() int  { return 19 }
+func (a UploadedJobInputFilesResponse) maxVersion() int  { return CurrentVersion }
+func (a UploadedJobInputFilesResponse) deprecated() bool { return false }
 
 // FromReader returns a UploadedJobInputFilesResponse from an io.Reader
 func (a *UploadedJobInputFilesResponse) FromReader(i io.Reader) error {

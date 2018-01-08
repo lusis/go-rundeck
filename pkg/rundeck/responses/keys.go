@@ -19,6 +19,10 @@ type ListKeysResponse struct {
 	Path      string                     `json:"path"`
 }
 
+func (a ListKeysResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ListKeysResponse) maxVersion() int  { return CurrentVersion }
+func (a ListKeysResponse) deprecated() bool { return false }
+
 // FromReader returns a ListKeysResponse from an io.Reader
 func (a *ListKeysResponse) FromReader(i io.Reader) error {
 	b, err := ioutil.ReadAll(i)
@@ -52,6 +56,10 @@ type ListKeysResourceResponse struct {
 	Type string          `json:"type"`
 	Path string          `json:"path"`
 }
+
+func (a ListKeysResourceResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ListKeysResourceResponse) maxVersion() int  { return CurrentVersion }
+func (a ListKeysResourceResponse) deprecated() bool { return false }
 
 // ListKeysResourceResponseTestFile is the test data for a KeyMetaResponse
 const ListKeysResourceResponseTestFile = "key_metadata.json"
@@ -88,3 +96,7 @@ type KeyMetaResponse struct {
 	RundeckContentSize string `json:"Rundeck-content-size"`
 	RundeckContentType string `json:"Rundeck-content-type"`
 }
+
+func (a KeyMetaResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a KeyMetaResponse) maxVersion() int  { return CurrentVersion }
+func (a KeyMetaResponse) deprecated() bool { return false }

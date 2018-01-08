@@ -3,6 +3,10 @@ package responses
 // JobYAMLResponse represents a rundeck job-yaml response
 type JobYAMLResponse []*JobYAMLDetailResponse
 
+func (a JobYAMLResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a JobYAMLResponse) maxVersion() int  { return CurrentVersion }
+func (a JobYAMLResponse) deprecated() bool { return false }
+
 // JobYAMLDetailResponse represents the details of a yaml job definition response
 type JobYAMLDetailResponse struct {
 	Description        string                   `yaml:"description"`
@@ -18,6 +22,10 @@ type JobYAMLDetailResponse struct {
 	Sequence           *JobCommandsYAMLResponse `yaml:"sequence"`
 }
 
+func (a JobYAMLDetailResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a JobYAMLDetailResponse) maxVersion() int  { return CurrentVersion }
+func (a JobYAMLDetailResponse) deprecated() bool { return false }
+
 // JobOptionYAMLResponse represents a jobs options in a yaml job definition response
 type JobOptionYAMLResponse struct {
 	Description string `yaml:"description,omitempty"`
@@ -27,7 +35,15 @@ type JobOptionYAMLResponse struct {
 	Value       string `yaml:"value,omitempty"`
 }
 
+func (a JobOptionYAMLResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a JobOptionYAMLResponse) maxVersion() int  { return CurrentVersion }
+func (a JobOptionYAMLResponse) deprecated() bool { return false }
+
 // JobCommandsYAMLResponse represents a jobs commands in a yaml job definition response
 type JobCommandsYAMLResponse struct {
 	Commands map[string]interface{} `yaml:"commands,inline"`
 }
+
+func (a JobCommandsYAMLResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a JobCommandsYAMLResponse) maxVersion() int  { return CurrentVersion }
+func (a JobCommandsYAMLResponse) deprecated() bool { return false }

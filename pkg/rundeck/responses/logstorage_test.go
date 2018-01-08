@@ -19,6 +19,7 @@ func TestLogStorageResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.True(t, obj.Enabled)
 	assert.Equal(t, "NAME", obj.PluginName)
 	assert.Equal(t, 369, obj.SucceededCount)
@@ -42,6 +43,7 @@ func TestIncompleteLogStorageResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.NotNil(t, obj.Executions)
 	assert.Len(t, obj.Executions, 1)
 	assert.Equal(t, 1, obj.Total)

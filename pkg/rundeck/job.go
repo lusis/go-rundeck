@@ -102,7 +102,7 @@ func (c *Client) GetJobMetaData(id string) (*JobMetaData, error) {
 // GetJobDefinition gets a job definition
 // http://rundeck.org/docs/api/index.html#getting-a-job-definition
 func (c *Client) GetJobDefinition(id string, format string) ([]byte, error) {
-	if _, err := c.hasRequiredAPIVersion(1, maxRundeckVersionInt); err != nil {
+	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
 		return nil, err
 	}
 	options := []httpclient.RequestOption{

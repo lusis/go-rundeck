@@ -21,20 +21,9 @@ type TokenResponse struct {
 	Duration   string    `json:"duration,omitempty"`
 }
 
-// MinVersion is the minimum version of the API required for this response
-func (t TokenResponse) MinVersion() int {
-	return 19
-}
-
-// MaxVersion is the maximum version of the API that this response supports
-func (t TokenResponse) MaxVersion() int {
-	return CurrentVersion
-}
-
-// Deprecated is if a given response is deprecated
-func (t TokenResponse) Deprecated() bool {
-	return false
-}
+func (t TokenResponse) minVersion() int  { return 19 }
+func (t TokenResponse) maxVersion() int  { return CurrentVersion }
+func (t TokenResponse) deprecated() bool { return false }
 
 // TokenResponseTestFile is test data for a TokenResponse
 const TokenResponseTestFile = "token.json"
@@ -68,20 +57,9 @@ func (t *TokenResponse) FromBytes(f []byte) error {
 // http://rundeck.org/docs/api/index.html#list-tokens
 type ListTokensResponse []*TokenResponse
 
-// MinVersion is the minimum version of the API required for this response
-func (t ListTokensResponse) MinVersion() int {
-	return 19
-}
-
-// MaxVersion is the maximum version of the API that this response supports
-func (t ListTokensResponse) MaxVersion() int {
-	return CurrentVersion
-}
-
-// Deprecated is if a given response is deprecated
-func (t ListTokensResponse) Deprecated() bool {
-	return false
-}
+func (t ListTokensResponse) minVersion() int  { return 19 }
+func (t ListTokensResponse) maxVersion() int  { return CurrentVersion }
+func (t ListTokensResponse) deprecated() bool { return false }
 
 // ListTokensResponseTestFile is test data for a TokensResponse
 const ListTokensResponseTestFile = "tokens.json"

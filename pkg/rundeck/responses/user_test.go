@@ -20,6 +20,7 @@ func TestUserInfoResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "admin", obj.Login)
 	assert.Equal(t, "Admin", obj.FirstName)
 	assert.Equal(t, "McAdmin", obj.LastName)
@@ -39,6 +40,7 @@ func TestUsersInfoResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Len(t, obj, 2)
 	assert.NotNil(t, obj[0])
 	assert.NotNil(t, obj[1])

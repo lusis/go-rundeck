@@ -23,6 +23,10 @@ type LogStorageResponse struct {
 	MissingCount    int    `json:"missingCount"`
 }
 
+func (a LogStorageResponse) minVersion() int  { return 17 }
+func (a LogStorageResponse) maxVersion() int  { return CurrentVersion }
+func (a LogStorageResponse) deprecated() bool { return false }
+
 // FromReader returns a LogStorageResponse from an io.Reader
 func (a *LogStorageResponse) FromReader(i io.Reader) error {
 	b, err := ioutil.ReadAll(i)
@@ -58,6 +62,10 @@ type IncompleteLogStorageResponse struct {
 	Offset     int                                      `json:"offset"`
 	Executions []*IncompleteLogStorageExecutionResponse `json:"executions"`
 }
+
+func (a IncompleteLogStorageResponse) minVersion() int  { return 17 }
+func (a IncompleteLogStorageResponse) maxVersion() int  { return CurrentVersion }
+func (a IncompleteLogStorageResponse) deprecated() bool { return false }
 
 // FromReader returns a IncompleteLogStorageResponse from an io.Reader
 func (a *IncompleteLogStorageResponse) FromReader(i io.Reader) error {
@@ -99,3 +107,7 @@ type IncompleteLogStorageExecutionResponse struct {
 	} `json:"storage"`
 	Errors []string `json:"errors"`
 }
+
+func (a IncompleteLogStorageExecutionResponse) minVersion() int  { return 17 }
+func (a IncompleteLogStorageExecutionResponse) maxVersion() int  { return CurrentVersion }
+func (a IncompleteLogStorageExecutionResponse) deprecated() bool { return false }
