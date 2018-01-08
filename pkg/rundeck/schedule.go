@@ -12,7 +12,9 @@ import (
 // DisableSchedule disables a scheduled job
 // http://rundeck.org/docs/api/index.html#disable-scheduling-for-a-job
 func (c *Client) DisableSchedule(id string) (bool, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	minVer := responses.GetMinVersionFor(responses.ToggleResponse{})
+	maxVer := responses.GetMaxVersionFor(responses.ToggleResponse{})
+	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
 		return false, err
 	}
 	t := &responses.ToggleResponse{}
@@ -29,7 +31,9 @@ func (c *Client) DisableSchedule(id string) (bool, error) {
 // EnableSchedule enables a scheduled job
 // http://rundeck.org/docs/api/index.html#enable-scheduling-for-a-job
 func (c *Client) EnableSchedule(id string) (bool, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	minVer := responses.GetMinVersionFor(responses.ToggleResponse{})
+	maxVer := responses.GetMaxVersionFor(responses.ToggleResponse{})
+	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
 		return false, err
 	}
 	t := &responses.ToggleResponse{}
@@ -46,7 +50,9 @@ func (c *Client) EnableSchedule(id string) (bool, error) {
 // BulkEnableSchedule enables scheduled jobs in bulk
 // http://rundeck.org/docs/api/index.html#bulk-toggle-job-schedules
 func (c *Client) BulkEnableSchedule(ids ...string) (*responses.BulkToggleResponse, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	minVer := responses.GetMinVersionFor(responses.BulkToggleResponse{})
+	maxVer := responses.GetMaxVersionFor(responses.BulkToggleResponse{})
+	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
 		return nil, err
 	}
 	req := &requests.BulkToggleRequest{
@@ -70,7 +76,9 @@ func (c *Client) BulkEnableSchedule(ids ...string) (*responses.BulkToggleRespons
 // BulkDisableSchedule enables scheduled jobs in bulk
 // http://rundeck.org/docs/api/index.html#bulk-toggle-job-schedules
 func (c *Client) BulkDisableSchedule(ids ...string) (*responses.BulkToggleResponse, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	minVer := responses.GetMinVersionFor(responses.BulkToggleResponse{})
+	maxVer := responses.GetMaxVersionFor(responses.BulkToggleResponse{})
+	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
 		return nil, err
 	}
 	req := &requests.BulkToggleRequest{

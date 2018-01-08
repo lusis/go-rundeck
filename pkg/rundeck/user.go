@@ -10,18 +10,23 @@ import (
 )
 
 // User represents a user in rundeck
-type User responses.UserInfoResponse
+type User responses.UserProfileResponse
+
+// Users represents a collection of users
+type Users responses.ListUsersResponse
 
 // ListUsers returns all rundeck users
 // http://rundeck.org/docs/api/index.html#list-users
-func (c *Client) ListUsers() ([]*User, error) {
-	if _, err := c.hasRequiredAPIVersion(21, maxRundeckVersionInt); err != nil {
+func (c *Client) ListUsers() (*Users, error) {
+	minVer := responses.GetMinVersionFor(responses.ListUsersResponse{})
+	maxVer := responses.GetMaxVersionFor(responses.ListUsersResponse{})
+	users := &Users{}
+	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
 		return nil, err
 	}
-	var users []*User
 	res, err := c.httpGet("user/list", requestJSON(), requestExpects(200))
 	if err != nil {
-		return users, err
+		return nil, err
 	}
 	if jsonErr := json.Unmarshal(res, &users); jsonErr != nil {
 		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
@@ -32,7 +37,9 @@ func (c *Client) ListUsers() ([]*User, error) {
 // GetCurrentUserProfile returns information about the current user
 // http://rundeck.org/docs/api/index.html#get-user-profile
 func (c *Client) GetCurrentUserProfile() (*User, error) {
-	if _, err := c.hasRequiredAPIVersion(21, maxRundeckVersionInt); err != nil {
+	minVer := responses.GetMinVersionFor(responses.UserProfileResponse{})
+	maxVer := responses.GetMaxVersionFor(responses.UserProfileResponse{})
+	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
 		return nil, err
 	}
 	user := &User{}
@@ -49,7 +56,9 @@ func (c *Client) GetCurrentUserProfile() (*User, error) {
 // GetUserProfile returns information about the named user - requires admin privileges
 // http://rundeck.org/docs/api/index.html#get-another-user-profile
 func (c *Client) GetUserProfile(login string) (*User, error) {
-	if _, err := c.hasRequiredAPIVersion(21, maxRundeckVersionInt); err != nil {
+	minVer := responses.GetMinVersionFor(responses.UserProfileResponse{})
+	maxVer := responses.GetMaxVersionFor(responses.UserProfileResponse{})
+	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
 		return nil, err
 	}
 	user := &User{}
@@ -66,7 +75,9 @@ func (c *Client) GetUserProfile(login string) (*User, error) {
 // ModifyUserProfile updates a user
 // http://rundeck.org/docs/api/index.html#modify-user-profile
 func (c *Client) ModifyUserProfile(u *User) (*User, error) {
-	if _, err := c.hasRequiredAPIVersion(21, maxRundeckVersionInt); err != nil {
+	minVer := responses.GetMinVersionFor(responses.UserProfileResponse{})
+	maxVer := responses.GetMaxVersionFor(responses.UserProfileResponse{})
+	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
 		return nil, err
 	}
 	currentUser, currentUserErr := c.GetCurrentUserProfile()

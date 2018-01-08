@@ -8,8 +8,8 @@ import (
 )
 
 func TestUserInfoResponse(t *testing.T) {
-	obj := UserInfoResponse{}
-	data, dataErr := testdata.GetBytes(UserInfoResponseTestFile)
+	obj := UserProfileResponse{}
+	data, dataErr := testdata.GetBytes(UserProfileResponseTestFile)
 	if dataErr != nil {
 		t.Error(dataErr.Error())
 		t.FailNow()
@@ -27,8 +27,8 @@ func TestUserInfoResponse(t *testing.T) {
 }
 
 func TestUsersInfoResponse(t *testing.T) {
-	obj := UsersInfoResponse{}
-	data, dataErr := testdata.GetBytes(UsersInfoResponseTestFile)
+	obj := ListUsersResponse{}
+	data, dataErr := testdata.GetBytes(ListUsersResponseTestFile)
 	if dataErr != nil {
 		t.Error(dataErr.Error())
 		t.FailNow()

@@ -10,7 +10,7 @@ import (
 )
 
 func TestGetUsers(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.UsersInfoResponseTestFile)
+	jsonfile, err := testdata.GetBytes(responses.ListUsersResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -22,7 +22,7 @@ func TestGetUsers(t *testing.T) {
 	s, err := client.ListUsers()
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
-	assert.Len(t, s, 2)
+	assert.Len(t, *s, 2)
 }
 
 func TestGetUsersJSONError(t *testing.T) {
@@ -48,7 +48,7 @@ func TestGetUsersInvalidStatus(t *testing.T) {
 }
 
 func TestGetUserInfo(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.UserInfoResponseTestFile)
+	jsonfile, err := testdata.GetBytes(responses.UserProfileResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -89,7 +89,7 @@ func TestGetUserInfoInvalidStatus(t *testing.T) {
 }
 
 func TestGetCurrentUserInfo(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.UserInfoResponseTestFile)
+	jsonfile, err := testdata.GetBytes(responses.UserProfileResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}

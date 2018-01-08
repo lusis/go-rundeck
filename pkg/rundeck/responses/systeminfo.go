@@ -9,8 +9,24 @@ import (
 )
 
 // SystemInfoResponse represents a system info response
+// http://rundeck.org/docs/api/index.html#system-info
 type SystemInfoResponse struct {
 	System *SystemsResponse `json:"system"`
+}
+
+// MinVersion is the minimum version of the API required for this response
+func (a SystemInfoResponse) MinVersion() int {
+	return 14
+}
+
+// MaxVersion is the maximum version of the API that this response supports
+func (a SystemInfoResponse) MaxVersion() int {
+	return CurrentVersion
+}
+
+// Deprecated is if a given response is deprecated
+func (a SystemInfoResponse) Deprecated() bool {
+	return false
 }
 
 // SystemInfoResponseTestFile is test data for a SystemInfoResponse

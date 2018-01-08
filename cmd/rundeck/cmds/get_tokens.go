@@ -33,7 +33,8 @@ func getTokensFunc(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		for _, d := range data {
+
+		for _, d := range *data {
 			if rowErr := cli.OutputFormatter.AddRow([]string{
 				d.ID,
 				d.User,

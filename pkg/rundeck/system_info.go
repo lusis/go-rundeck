@@ -13,7 +13,9 @@ type SystemInfo responses.SystemInfoResponse
 // GetSystemInfo gets system information from the rundeck server
 // http://rundeck.org/docs/api/index.html#system-info
 func (c *Client) GetSystemInfo() (*SystemInfo, error) {
-	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+	minVer := responses.GetMinVersionFor(responses.SystemInfoResponse{})
+	maxVer := responses.GetMaxVersionFor(responses.SystemInfoResponse{})
+	if _, err := c.hasRequiredAPIVersion(minVer, maxVer); err != nil {
 		return nil, err
 	}
 	ls := SystemInfo{}

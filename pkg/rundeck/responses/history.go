@@ -12,9 +12,25 @@ import (
 const HistoryResponseTestFile = "history.json"
 
 // HistoryResponse represents a project history response
+// http://rundeck.org/docs/api/index.html#listing-history
 type HistoryResponse struct {
 	Paging *PagingResponse         `json:"paging"`
 	Events []*HistoryEventResponse `json:"events"`
+}
+
+// MinVersion is the minimum version of the API required for this response
+func (a HistoryResponse) MinVersion() int {
+	return 14
+}
+
+// MaxVersion is the maximum version of the API that this response supports
+func (a HistoryResponse) MaxVersion() int {
+	return CurrentVersion
+}
+
+// Deprecated is if a given response is deprecated
+func (a HistoryResponse) Deprecated() bool {
+	return false
 }
 
 // FromReader returns a HistoryResponse from an io.Reader
@@ -63,4 +79,19 @@ type HistoryEventResponse struct {
 		HRef      string `json:"href"`
 		Permalink string `json:"permalink"`
 	} `json:"execution"`
+}
+
+// MinVersion is the minimum version of the API required for this response
+func (a HistoryEventResponse) MinVersion() int {
+	return 14
+}
+
+// MaxVersion is the maximum version of the API that this response supports
+func (a HistoryEventResponse) MaxVersion() int {
+	return CurrentVersion
+}
+
+// Deprecated is if a given response is deprecated
+func (a HistoryEventResponse) Deprecated() bool {
+	return false
 }

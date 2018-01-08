@@ -36,11 +36,41 @@ type BulkToggleResponse struct {
 	Succeeded     []BulkToggleEntryResponse `json:"succeeded"`
 }
 
+// MinVersion is the minimum version of the API required for this response
+func (a BulkToggleResponse) MinVersion() int {
+	return 14
+}
+
+// MaxVersion is the maximum version of the API that this response supports
+func (a BulkToggleResponse) MaxVersion() int {
+	return CurrentVersion
+}
+
+// Deprecated is if a given response is deprecated
+func (a BulkToggleResponse) Deprecated() bool {
+	return false
+}
+
 // BulkToggleEntryResponse represents an individual entry in a BulkToggleResponse
 type BulkToggleEntryResponse struct {
 	ID        string `json:"id"`
 	ErrorCode string `json:"errorCode,omitempty"`
 	Message   string `json:"message"`
+}
+
+// MinVersion is the minimum version of the API required for this response
+func (a BulkToggleEntryResponse) MinVersion() int {
+	return 14
+}
+
+// MaxVersion is the maximum version of the API that this response supports
+func (a BulkToggleEntryResponse) MaxVersion() int {
+	return CurrentVersion
+}
+
+// Deprecated is if a given response is deprecated
+func (a BulkToggleEntryResponse) Deprecated() bool {
+	return false
 }
 
 // FromReader returns an BulkToggleResponse from an io.Reader
@@ -66,4 +96,30 @@ func (a *BulkToggleResponse) FromFile(f string) error {
 func (a *BulkToggleResponse) FromBytes(f []byte) error {
 	file := bytes.NewReader(f)
 	return a.FromReader(file)
+}
+
+// SuccessToggleResponseTestFile is the test data for a successful toggle
+const SuccessToggleResponseTestFile = "success.json"
+
+// FailToggleResponseTestFile is the test data for a successful toggle
+const FailToggleResponseTestFile = "failed.json"
+
+// ToggleResponse is the response for a toggled job, exeuction or schedule
+type ToggleResponse struct {
+	Success bool `json:"success"`
+}
+
+// MinVersion is the minimum version of the API required for this response
+func (a ToggleResponse) MinVersion() int {
+	return 14
+}
+
+// MaxVersion is the maximum version of the API that this response supports
+func (a ToggleResponse) MaxVersion() int {
+	return CurrentVersion
+}
+
+// Deprecated is if a given response is deprecated
+func (a ToggleResponse) Deprecated() bool {
+	return false
 }
