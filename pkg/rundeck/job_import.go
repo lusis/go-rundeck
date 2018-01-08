@@ -48,7 +48,7 @@ func ImportUUID(f string) JobImportOption {
 // ImportJob imports a job
 // http://rundeck.org/docs/api/index.html#importing-jobs
 func (c *Client) ImportJob(project string, data io.Reader, opt ...JobImportOption) (*JobImportResult, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ImportedJobResponse{}); err != nil {
 		return nil, err
 	}
 	jobRes := &JobImportResult{}

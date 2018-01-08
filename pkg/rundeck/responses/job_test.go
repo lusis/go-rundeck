@@ -19,6 +19,7 @@ func TestJobsResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Len(t, obj, 1)
 	assert.Equal(t, "[UUID]", obj[0].ID)
 	assert.Equal(t, "[name]", obj[0].Name)
@@ -47,6 +48,7 @@ func TestJobMetaDataResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "[UUID]", obj.ID)
 	assert.Equal(t, "[name]", obj.Name)
 	assert.Equal(t, "[group]", obj.Group)
@@ -72,6 +74,7 @@ func TestImportedJobResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 }
 
 func TestBulkDeleteJobResponse(t *testing.T) {
@@ -86,6 +89,7 @@ func TestBulkDeleteJobResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 }
 
 func TestJobOptionFileUploadResponse(t *testing.T) {
@@ -100,6 +104,7 @@ func TestJobOptionFileUploadResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 }
 
 func TestUploadedJobInputFilesResponse(t *testing.T) {

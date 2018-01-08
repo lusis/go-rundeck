@@ -14,6 +14,10 @@ const ListProjectsResponseTestFile = "list_projects.json"
 // ListProjectsResponse represents a list projects response
 type ListProjectsResponse []*ListProjectsEntryResponse
 
+func (a ListProjectsResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ListProjectsResponse) maxVersion() int  { return CurrentVersion }
+func (a ListProjectsResponse) deprecated() bool { return false }
+
 // FromReader returns a ListProjectsResponse from an io.Reader
 func (a *ListProjectsResponse) FromReader(i io.Reader) error {
 	b, err := ioutil.ReadAll(i)
@@ -46,6 +50,10 @@ type ListProjectsEntryResponse struct {
 	Description string `json:"description,omitempty"`
 }
 
+func (a ListProjectsEntryResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ListProjectsEntryResponse) maxVersion() int  { return CurrentVersion }
+func (a ListProjectsEntryResponse) deprecated() bool { return false }
+
 // ProjectInfoResponseTestFile is test data for a ProjectInfoResponse
 const ProjectInfoResponseTestFile = "project_info.json"
 
@@ -56,6 +64,10 @@ type ProjectInfoResponse struct {
 	Description string                 `json:"description,omitempty"`
 	Config      *ProjectConfigResponse `json:"config"`
 }
+
+func (a ProjectInfoResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ProjectInfoResponse) maxVersion() int  { return CurrentVersion }
+func (a ProjectInfoResponse) deprecated() bool { return false }
 
 // FromReader returns a ProjectInfoResponse from an io.Reader
 func (a *ProjectInfoResponse) FromReader(i io.Reader) error {
@@ -85,6 +97,10 @@ func (a *ProjectInfoResponse) FromBytes(f []byte) error {
 // ProjectConfigResponse represents a projects configuration response
 type ProjectConfigResponse map[string]string
 
+func (a ProjectConfigResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ProjectConfigResponse) maxVersion() int  { return CurrentVersion }
+func (a ProjectConfigResponse) deprecated() bool { return false }
+
 // ProjectConfigResponseTestFile is test data for a ProjectConfigResponse
 const ProjectConfigResponseTestFile = "project_config.json"
 
@@ -96,6 +112,10 @@ type ProjectConfigItemResponse struct {
 	Key   string `json:"key"`
 	Value string `json:"value"`
 }
+
+func (a ProjectConfigItemResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ProjectConfigItemResponse) maxVersion() int  { return CurrentVersion }
+func (a ProjectConfigItemResponse) deprecated() bool { return false }
 
 // FromReader returns a ProjectConfigItemResponse from an io.Reader
 func (a *ProjectConfigItemResponse) FromReader(i io.Reader) error {
@@ -132,6 +152,10 @@ type ProjectArchiveExportAsyncResponse struct {
 	Percentage int    `json:"percentage"`
 }
 
+func (a ProjectArchiveExportAsyncResponse) minVersion() int  { return 19 }
+func (a ProjectArchiveExportAsyncResponse) maxVersion() int  { return CurrentVersion }
+func (a ProjectArchiveExportAsyncResponse) deprecated() bool { return false }
+
 // FromReader returns a ProjectArchiveExportAsyncResponse from an io.Reader
 func (a *ProjectArchiveExportAsyncResponse) FromReader(i io.Reader) error {
 	b, err := ioutil.ReadAll(i)
@@ -167,6 +191,10 @@ type ProjectImportArchiveResponse struct {
 	ExecutionErrors *[]string `json:"execution_errors,omitempty"`
 	ACLErrors       *[]string `json:"acl_errors,omitempty"`
 }
+
+func (a ProjectImportArchiveResponse) minVersion() int  { return 19 }
+func (a ProjectImportArchiveResponse) maxVersion() int  { return CurrentVersion }
+func (a ProjectImportArchiveResponse) deprecated() bool { return false }
 
 // FromReader returns a ProjectImportArchiveResponse from an io.Reader
 func (a *ProjectImportArchiveResponse) FromReader(i io.Reader) error {

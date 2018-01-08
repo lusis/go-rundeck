@@ -20,6 +20,7 @@ func TestTokenResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "user3", obj.User)
 	assert.Equal(t, "VjkbX2zUAwnXjDIbRYFp824tF5X2N7W1", obj.Token)
 	assert.Equal(t, "c13de457-c429-4476-9acd-e1c89e3c2928", obj.ID)

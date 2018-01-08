@@ -9,9 +9,14 @@ import (
 )
 
 // SystemInfoResponse represents a system info response
+// http://rundeck.org/docs/api/index.html#system-info
 type SystemInfoResponse struct {
 	System *SystemsResponse `json:"system"`
 }
+
+func (a SystemInfoResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a SystemInfoResponse) maxVersion() int  { return CurrentVersion }
+func (a SystemInfoResponse) deprecated() bool { return false }
 
 // SystemInfoResponseTestFile is test data for a SystemInfoResponse
 const SystemInfoResponseTestFile = "systeminfo.json"

@@ -19,6 +19,7 @@ func TestListKeysResourceResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), kmd)
 	assert.Equal(t, "public", kmd.Meta.RundeckKeyType)
 	assert.Equal(t, "393", kmd.Meta.RundeckContentSize)
 	assert.Equal(t, "application/pgp-keys", kmd.Meta.RundeckContentType)
@@ -40,6 +41,7 @@ func TestListKeysResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), keys)
 	assert.Len(t, keys.Resources, 4)
 	assert.Equal(t, "keys", keys.Path)
 	assert.Equal(t, "directory", keys.Type)

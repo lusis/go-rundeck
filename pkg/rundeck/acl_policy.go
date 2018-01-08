@@ -16,7 +16,7 @@ type ACLPolicies responses.ACLResponse
 // ListSystemACLPolicies gets the system ACL Policies
 // http://rundeck.org/docs/api/index.html#list-system-acl-policies
 func (c *Client) ListSystemACLPolicies() (*ACLPolicies, error) {
-	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return nil, err
 	}
 	data := &ACLPolicies{}
@@ -33,7 +33,7 @@ func (c *Client) ListSystemACLPolicies() (*ACLPolicies, error) {
 // GetSystemACLPolicy returns the named acl policy
 // http://rundeck.org/docs/api/index.html#get-an-acl-policy
 func (c *Client) GetSystemACLPolicy(policy string) ([]byte, error) {
-	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return nil, err
 	}
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", policy)
@@ -47,7 +47,7 @@ func (c *Client) GetSystemACLPolicy(policy string) ([]byte, error) {
 // CreateSystemACLPolicy creates a system acl policy
 // http://rundeck.org/docs/api/index.html#create-an-acl-policy
 func (c *Client) CreateSystemACLPolicy(name string, contents io.Reader) error {
-	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
@@ -81,7 +81,7 @@ func (c *Client) CreateSystemACLPolicy(name string, contents io.Reader) error {
 // UpdateSystemACLPolicy creates a system acl policy
 // http://rundeck.org/docs/api/index.html#update-an-acl-policy
 func (c *Client) UpdateSystemACLPolicy(name string, contents io.Reader) error {
-	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
 	url := fmt.Sprintf("system/acl/%s.aclpolicy", name)
@@ -106,7 +106,7 @@ func (c *Client) UpdateSystemACLPolicy(name string, contents io.Reader) error {
 // DeleteSystemACLPolicy deletes a system ACL Policy
 // http://rundeck.org/docs/api/index.html#delete-an-acl-policy
 func (c *Client) DeleteSystemACLPolicy(name string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
 	return c.httpDelete("system/acl/"+name+".aclpolicy", requestJSON(), requestExpects(204))
@@ -115,7 +115,7 @@ func (c *Client) DeleteSystemACLPolicy(name string) error {
 // ListProjectACLPolicies gets a project ACL Policies
 // http://rundeck.org/docs/api/index.html#list-project-acl-policies
 func (c *Client) ListProjectACLPolicies(name string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -124,7 +124,7 @@ func (c *Client) ListProjectACLPolicies(name string) error {
 // GetProjectACLPolicy gets a project ACL Policy
 // http://rundeck.org/docs/api/index.html#get-a-project-acl-policy
 func (c *Client) GetProjectACLPolicy(name string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -133,7 +133,7 @@ func (c *Client) GetProjectACLPolicy(name string) error {
 // DeleteProjectACLPolicy deletes a project ACL Policy
 // http://rundeck.org/docs/api/index.html#delete-a-project-acl-policy
 func (c *Client) DeleteProjectACLPolicy(name string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -142,7 +142,7 @@ func (c *Client) DeleteProjectACLPolicy(name string) error {
 // CreateProjectACLPolicy creates a project ACL Policy
 // http://rundeck.org/docs/api/index.html#create-a-project-acl-policy
 func (c *Client) CreateProjectACLPolicy(name string) error {
-	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -151,7 +151,7 @@ func (c *Client) CreateProjectACLPolicy(name string) error {
 // UpdateProjectACLPolicy updates a project ACL Policy
 // http://rundeck.org/docs/api/index.html#update-a-project-acl-policy
 func (c *Client) UpdateProjectACLPolicy(name string) error {
-	if _, err := c.hasRequiredAPIVersion(14, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")

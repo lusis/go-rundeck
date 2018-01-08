@@ -19,6 +19,7 @@ func TestHistoryResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Len(t, obj.Events, 6)
 	for _, e := range obj.Events {
 		assert.NotNil(t, e)

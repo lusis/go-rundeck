@@ -22,6 +22,10 @@ type ACLResponse struct {
 	Resources []ACLResourceResponse `json:"resources,omitempty"`
 }
 
+func (a ACLResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ACLResponse) maxVersion() int  { return CurrentVersion }
+func (a ACLResponse) deprecated() bool { return false }
+
 // FromReader returns an ACLResponse from an io.Reader
 func (a *ACLResponse) FromReader(i io.Reader) error {
 	b, err := ioutil.ReadAll(i)
@@ -55,17 +59,29 @@ type ACLResourceResponse struct {
 	Name string `json:"name,omitempty"`
 }
 
+func (a ACLResourceResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ACLResourceResponse) maxVersion() int  { return CurrentVersion }
+func (a ACLResourceResponse) deprecated() bool { return false }
+
 // FailedACLValidationResponse represents a failed ACL validation response
 type FailedACLValidationResponse struct {
 	Valid    bool                      `json:"valid"`
 	Policies []FailedACLPolicyResponse `json:"policies"`
 }
 
+func (a FailedACLValidationResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a FailedACLValidationResponse) maxVersion() int  { return CurrentVersion }
+func (a FailedACLValidationResponse) deprecated() bool { return false }
+
 // FailedACLPolicyResponse represents a failed ACL policy
 type FailedACLPolicyResponse struct {
 	Policy string   `json:"policy"`
 	Errors []string `json:"errors"`
 }
+
+func (a FailedACLPolicyResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a FailedACLPolicyResponse) maxVersion() int  { return CurrentVersion }
+func (a FailedACLPolicyResponse) deprecated() bool { return false }
 
 // FromReader returns a FailedACLValidationResponse from an io.Reader
 func (a *FailedACLValidationResponse) FromReader(i io.Reader) error {

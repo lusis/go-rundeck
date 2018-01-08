@@ -7,7 +7,7 @@ else
 	GOPATH := $(GOPATH):$(TRAVIS_BUILD_DIR)
 endif
 
-all: clean test $(BINLIST)
+all: clean bindata test $(BINLIST)
 
 test:
 	@script/test
@@ -34,4 +34,4 @@ $(BINLIST):
 clean:
 	@rm -rf bin/
 
-.PHONY: all clean test $(BINLIST)
+.PHONY: all clean bindata test $(BINLIST)

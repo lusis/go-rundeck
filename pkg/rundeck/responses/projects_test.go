@@ -20,6 +20,7 @@ func TestListProjectsResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Len(t, obj, 1)
 	assert.Equal(t, "[API Href]", obj[0].URL)
 	assert.Equal(t, "testproject", obj[0].Name)
@@ -39,6 +40,7 @@ func TestProjectInfoResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "[API Href]", obj.URL)
 	assert.Equal(t, "testproject", obj.Name)
 	assert.Equal(t, "test project", obj.Description)
@@ -59,6 +61,7 @@ func TestProjectConfigItemResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "project.ssh-connect-timeout", obj.Key)
 	assert.Equal(t, "0", obj.Value)
 }
@@ -76,6 +79,7 @@ func TestProjectArchiveExportAsyncResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "[TOKEN]", obj.Token)
 	assert.False(t, obj.Ready)
 	assert.Equal(t, 75, obj.Percentage)
@@ -93,7 +97,7 @@ func TestProjectImportArchiveResponse(t *testing.T) {
 		t.Error(err)
 		t.FailNow()
 	}
-
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "successful", obj.ImportStatus)
 	assert.Nil(t, obj.Errors)
 	assert.Nil(t, obj.ExecutionErrors)
@@ -113,6 +117,7 @@ func TestProjectArchiveImportFailedResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "failed", obj.ImportStatus)
 	assert.NotNil(t, obj.Errors)
 	assert.Len(t, *obj.Errors, 2)

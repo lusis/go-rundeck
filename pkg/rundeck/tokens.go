@@ -14,6 +14,9 @@ type Token struct {
 	responses.TokenResponse
 }
 
+// Tokens is a collection of Token
+type Tokens responses.ListTokensResponse
+
 // TokenOption is a type for options in creating new tokens
 type TokenOption func(*Token) error
 
@@ -35,11 +38,11 @@ func TokenRoles(roles ...string) TokenOption {
 
 // ListTokens gets all tokens for the current user
 // http://rundeck.org/docs/api/index.html#list-tokens
-func (c *Client) ListTokens() ([]*Token, error) {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+func (c *Client) ListTokens() (*Tokens, error) {
+	if err := c.checkRequiredAPIVersion(responses.ListTokensResponse{}); err != nil {
 		return nil, err
 	}
-	tokens := make([]*Token, 0)
+	tokens := Tokens{}
 	data, err := c.httpGet("tokens", requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
@@ -48,12 +51,15 @@ func (c *Client) ListTokens() ([]*Token, error) {
 	if jsonErr != nil {
 		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
 	}
-	return tokens, nil
+	return &tokens, nil
 }
 
 // ListTokensForUser gets the api tokens for a user
 // http://rundeck.org/docs/api/index.html#list-tokens
 func (c *Client) ListTokensForUser(user string) ([]*Token, error) {
+	if err := c.checkRequiredAPIVersion(responses.ListTokensResponse{}); err != nil {
+		return nil, err
+	}
 	data, err := c.httpGet("tokens/"+user, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
@@ -69,9 +75,10 @@ func (c *Client) ListTokensForUser(user string) ([]*Token, error) {
 // GetToken gets a token
 // http://rundeck.org/docs/api/index.html#get-a-token
 func (c *Client) GetToken(tokenID string) (*Token, error) {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.TokenResponse{}); err != nil {
 		return nil, err
 	}
+
 	data, err := c.httpGet("token/"+tokenID, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
@@ -87,7 +94,7 @@ func (c *Client) GetToken(tokenID string) (*Token, error) {
 // CreateToken creates a token
 // http://rundeck.org/docs/api/index.html#create-a-token
 func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.TokenResponse{}); err != nil {
 		return nil, err
 	}
 	tokenRequest := &Token{}
@@ -116,7 +123,7 @@ func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
 // DeleteToken deletes a token
 // http://rundeck.org/docs/api/index.html#delete-a-token
 func (c *Client) DeleteToken(token string) error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.TokenResponse{}); err != nil {
 		return err
 	}
 	url := fmt.Sprintf("token/%s", token)

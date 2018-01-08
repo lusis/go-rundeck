@@ -85,7 +85,7 @@ func ProjectExportAcls(b bool) ProjectExportOption {
 // GetProjectInfo gets a project by name
 // http://rundeck.org/docs/api/index.html#getting-project-info
 func (c *Client) GetProjectInfo(name string) (*Project, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectInfoResponse{}); err != nil {
 		return nil, err
 	}
 	p := &responses.ProjectInfoResponse{}
@@ -109,7 +109,7 @@ func (c *Client) GetProjectInfo(name string) (*Project, error) {
 // ListProjects lists all projects
 // http://rundeck.org/docs/api/index.html#listing-projects
 func (c *Client) ListProjects() (*Projects, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ListProjectsResponse{}); err != nil {
 		return nil, err
 	}
 	data := &responses.ListProjectsResponse{}
@@ -134,7 +134,7 @@ func (c *Client) ListProjects() (*Projects, error) {
 // CreateProject makes a project
 // http://rundeck.org/docs/api/index.html#project-creation
 func (c *Client) CreateProject(name string, properties map[string]string) (*Project, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectInfoResponse{}); err != nil {
 		return nil, err
 	}
 	req := &requests.ProjectCreationRequest{
@@ -162,7 +162,7 @@ func (c *Client) CreateProject(name string, properties map[string]string) (*Proj
 // DeleteProject deletes a project
 // http://rundeck.org/docs/api/index.html#project-deletion
 func (c *Client) DeleteProject(p string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectInfoResponse{}); err != nil {
 		return err
 	}
 	url := fmt.Sprintf("project/%s", p)
@@ -172,7 +172,7 @@ func (c *Client) DeleteProject(p string) error {
 // GetProjectConfiguration gets a project's configuration
 // http://rundeck.org/docs/api/index.html#get-project-configuration
 func (c *Client) GetProjectConfiguration(p string) (*responses.ProjectConfigResponse, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectConfigResponse{}); err != nil {
 		return nil, err
 	}
 	data := &responses.ProjectConfigResponse{}
@@ -189,7 +189,7 @@ func (c *Client) GetProjectConfiguration(p string) (*responses.ProjectConfigResp
 // PutProjectConfiguration replaces all configuration data with the submitted values
 // http://rundeck.org/docs/api/index.html#put-project-configuration
 func (c *Client) PutProjectConfiguration() error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectConfigResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -198,7 +198,7 @@ func (c *Client) PutProjectConfiguration() error {
 // GetProjectConfigurationKey gets a specific configuration key
 // http://rundeck.org/docs/api/index.html#get-project-configuration-key
 func (c *Client) GetProjectConfigurationKey() error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectConfigItemResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -207,7 +207,7 @@ func (c *Client) GetProjectConfigurationKey() error {
 // PutProjectConfigurationKey sets a value for a configuration key
 // http://rundeck.org/docs/api/index.html#put-project-configuration-key
 func (c *Client) PutProjectConfigurationKey() error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectConfigItemResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -216,7 +216,7 @@ func (c *Client) PutProjectConfigurationKey() error {
 // DeleteProjectConfigurationKey deletes a configuration key
 // http://rundeck.org/docs/api/index.html#delete-project-configuration-key
 func (c *Client) DeleteProjectConfigurationKey() error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectConfigItemResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -225,7 +225,7 @@ func (c *Client) DeleteProjectConfigurationKey() error {
 // GetProjectArchiveExport export exports a zip file of the project
 // http://rundeck.org/docs/api/index.html#project-archive-export
 func (c *Client) GetProjectArchiveExport(p string, w io.Writer, opts ...ProjectExportOption) error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectInfoResponse{}); err != nil {
 		return err
 	}
 	params := &map[string]string{}
@@ -250,7 +250,7 @@ func (c *Client) GetProjectArchiveExport(p string, w io.Writer, opts ...ProjectE
 // GetProjectArchiveExportAsync export a zip archive of a project async
 // http://rundeck.org/docs/api/index.html#project-archive-export-async
 func (c *Client) GetProjectArchiveExportAsync() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectArchiveExportAsyncResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -259,7 +259,7 @@ func (c *Client) GetProjectArchiveExportAsync() error {
 // GetProjectArchiveExportAsyncStatus gets the status of an async export request
 // http://rundeck.org/docs/api/index.html#project-archive-export-async-status
 func (c *Client) GetProjectArchiveExportAsyncStatus() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectArchiveExportAsyncResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -268,7 +268,7 @@ func (c *Client) GetProjectArchiveExportAsyncStatus() error {
 // GetProjectArchiveExportAsyncDownload downloads an async project export archive file
 // http://rundeck.org/docs/api/index.html#project-archive-export-async-download
 func (c *Client) GetProjectArchiveExportAsyncDownload() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectArchiveExportAsyncResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -277,7 +277,7 @@ func (c *Client) GetProjectArchiveExportAsyncDownload() error {
 // ProjectArchiveImport imports a zip archive to a project
 // http://rundeck.org/docs/api/index.html#project-archive-import
 func (c *Client) ProjectArchiveImport() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ProjectImportArchiveResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")

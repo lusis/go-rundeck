@@ -17,7 +17,7 @@ type ExecutionState responses.ExecutionStateResponse
 // GetExecutionInfo returns the details of a job execution
 // http://rundeck.org/docs/api/index.html#execution-info
 func (c *Client) GetExecutionInfo(executionID string) (*Execution, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ExecutionResponse{}); err != nil {
 		return nil, err
 	}
 	exec := &Execution{}
@@ -34,7 +34,7 @@ func (c *Client) GetExecutionInfo(executionID string) (*Execution, error) {
 // GetExecutionState returns the state of an execution
 // http://rundeck.org/docs/api/index.html#execution-state
 func (c *Client) GetExecutionState(executionID string) (*ExecutionState, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ExecutionStateResponse{}); err != nil {
 		return nil, err
 	}
 	data := &ExecutionState{}
@@ -51,7 +51,7 @@ func (c *Client) GetExecutionState(executionID string) (*ExecutionState, error) 
 // GetExecutionOutput returns the output of an execution
 // http://rundeck.org/docs/api/index.html#execution-output
 func (c *Client) GetExecutionOutput(executionID string) ([]byte, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
 		return nil, err
 	}
 	return c.httpGet("execution/"+executionID+"/output", accept("text/plain"), requestExpects(200))
@@ -60,7 +60,7 @@ func (c *Client) GetExecutionOutput(executionID string) ([]byte, error) {
 // DeleteExecution deletes an execution
 // http://rundeck.org/docs/api/index.html#delete-an-execution
 func (c *Client) DeleteExecution(id string) error {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
 		return err
 	}
 	return c.httpDelete("execution/"+id, requestJSON(), requestExpects(204))
@@ -69,7 +69,7 @@ func (c *Client) DeleteExecution(id string) error {
 // DisableExecution disables an execution
 // http://rundeck.org/docs/api/index.html#disable-executions-for-a-job
 func (c *Client) DisableExecution(id string) (bool, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ToggleResponse{}); err != nil {
 		return false, err
 	}
 	t := &responses.ToggleResponse{}
@@ -86,7 +86,7 @@ func (c *Client) DisableExecution(id string) (bool, error) {
 // EnableExecution enables an execution
 // http://rundeck.org/docs/api/index.html#enable-executions-for-a-job
 func (c *Client) EnableExecution(id string) (bool, error) {
-	if _, err := c.hasRequiredAPIVersion(minJSONSupportedAPIVersion, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ToggleResponse{}); err != nil {
 		return false, err
 	}
 	t := &responses.ToggleResponse{}
@@ -103,7 +103,7 @@ func (c *Client) EnableExecution(id string) (bool, error) {
 // ListInputFilesForExecution lists input files used for an execution
 // http://rundeck.org/docs/api/index.html#list-input-files-for-an-execution
 func (c *Client) ListInputFilesForExecution() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.ExecutionInputFilesResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")
@@ -112,7 +112,7 @@ func (c *Client) ListInputFilesForExecution() error {
 // AbortExecution lists input files used for an execution
 // http://rundeck.org/docs/api/index.html#aborting-executions
 func (c *Client) AbortExecution() error {
-	if _, err := c.hasRequiredAPIVersion(19, maxRundeckVersionInt); err != nil {
+	if err := c.checkRequiredAPIVersion(responses.AbortExecutionResponse{}); err != nil {
 		return err
 	}
 	return fmt.Errorf("not yet implemented")

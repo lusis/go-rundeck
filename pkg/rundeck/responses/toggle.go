@@ -36,12 +36,20 @@ type BulkToggleResponse struct {
 	Succeeded     []BulkToggleEntryResponse `json:"succeeded"`
 }
 
+func (a BulkToggleResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a BulkToggleResponse) maxVersion() int  { return CurrentVersion }
+func (a BulkToggleResponse) deprecated() bool { return false }
+
 // BulkToggleEntryResponse represents an individual entry in a BulkToggleResponse
 type BulkToggleEntryResponse struct {
 	ID        string `json:"id"`
 	ErrorCode string `json:"errorCode,omitempty"`
 	Message   string `json:"message"`
 }
+
+func (a BulkToggleEntryResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a BulkToggleEntryResponse) maxVersion() int  { return CurrentVersion }
+func (a BulkToggleEntryResponse) deprecated() bool { return false }
 
 // FromReader returns an BulkToggleResponse from an io.Reader
 func (a *BulkToggleResponse) FromReader(i io.Reader) error {
@@ -67,3 +75,18 @@ func (a *BulkToggleResponse) FromBytes(f []byte) error {
 	file := bytes.NewReader(f)
 	return a.FromReader(file)
 }
+
+// SuccessToggleResponseTestFile is the test data for a successful toggle
+const SuccessToggleResponseTestFile = "success.json"
+
+// FailToggleResponseTestFile is the test data for a successful toggle
+const FailToggleResponseTestFile = "failed.json"
+
+// ToggleResponse is the response for a toggled job, exeuction or schedule
+type ToggleResponse struct {
+	Success bool `json:"success"`
+}
+
+func (a ToggleResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a ToggleResponse) maxVersion() int  { return CurrentVersion }
+func (a ToggleResponse) deprecated() bool { return false }

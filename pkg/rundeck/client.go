@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"strconv"
 
 	"golang.org/x/net/publicsuffix"
 )
@@ -67,6 +68,14 @@ func clientConfigFrom(from string) (*ClientConfig, error) {
 		if os.Getenv("RUNDECK_VERSION") == "" {
 			config.APIVersion = MaxRundeckVersion
 		} else {
+			ver := os.Getenv("RUNDECK_VERSION")
+			intVer, intverErr := strconv.Atoi(ver)
+			if intverErr != nil {
+				return nil, intverErr
+			}
+			if intVer < minJSONSupportedAPIVersion {
+				return nil, fmt.Errorf("minimum api version supported is %d", minJSONSupportedAPIVersion)
+			}
 			config.APIVersion = os.Getenv("RUNDECK_VERSION")
 		}
 

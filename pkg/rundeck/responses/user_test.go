@@ -8,8 +8,8 @@ import (
 )
 
 func TestUserInfoResponse(t *testing.T) {
-	obj := UserInfoResponse{}
-	data, dataErr := testdata.GetBytes(UserInfoResponseTestFile)
+	obj := UserProfileResponse{}
+	data, dataErr := testdata.GetBytes(UserProfileResponseTestFile)
 	if dataErr != nil {
 		t.Error(dataErr.Error())
 		t.FailNow()
@@ -20,6 +20,7 @@ func TestUserInfoResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "admin", obj.Login)
 	assert.Equal(t, "Admin", obj.FirstName)
 	assert.Equal(t, "McAdmin", obj.LastName)
@@ -27,8 +28,8 @@ func TestUserInfoResponse(t *testing.T) {
 }
 
 func TestUsersInfoResponse(t *testing.T) {
-	obj := UsersInfoResponse{}
-	data, dataErr := testdata.GetBytes(UsersInfoResponseTestFile)
+	obj := ListUsersResponse{}
+	data, dataErr := testdata.GetBytes(ListUsersResponseTestFile)
 	if dataErr != nil {
 		t.Error(dataErr.Error())
 		t.FailNow()
@@ -39,6 +40,7 @@ func TestUsersInfoResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Len(t, obj, 2)
 	assert.NotNil(t, obj[0])
 	assert.NotNil(t, obj[1])

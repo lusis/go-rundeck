@@ -20,6 +20,7 @@ func TestResourceCollectionResponse(t *testing.T) {
 		t.FailNow()
 	}
 
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Len(t, obj, 11)
 }
 
@@ -36,6 +37,7 @@ func TestResourceResponse(t *testing.T) {
 		t.FailNow()
 	}
 	node := obj["node-0-fake"]
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 	assert.Equal(t, "node-0-fake", node.NodeName)
 	assert.Equal(t, "nodehost-fake", node.HostName)
 	assert.Equal(t, "stub", node.NodeExectutor)

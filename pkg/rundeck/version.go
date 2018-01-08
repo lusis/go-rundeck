@@ -3,16 +3,20 @@ package rundeck
 import (
 	"fmt"
 	"strconv"
+
+	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 )
 
-func (c *Client) hasRequiredAPIVersion(min, max int) (bool, error) {
+func (c *Client) checkRequiredAPIVersion(r responses.VersionedResponse) error {
 	reqVersion, err := strconv.Atoi(c.Config.APIVersion)
 	if err != nil {
-		return false, err
+		return err
 	}
+	min := responses.GetMinVersionFor(r)
+	max := responses.GetMaxVersionFor(r)
 	if reqVersion >= min && reqVersion <= max {
-		return true, nil
+		return nil
 	}
-	return false, fmt.Errorf("Requested API version (%d) does not meet the requirements for this api call (min: %d, max: %d)",
+	return fmt.Errorf("Requested API version (%d) does not meet the requirements for this api call (min: %d, max: %d)",
 		reqVersion, min, max)
 }
