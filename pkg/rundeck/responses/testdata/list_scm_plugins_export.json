@@ -1,0 +1,12 @@
+{
+  "integration": "export",
+  "plugins": [
+    {
+      "configured": true,
+      "description": "Export Jobs to a Git Repository",
+      "enabled": true,
+      "title": "Git Export",
+      "type": "git-export"
+    }
+  ]
+}

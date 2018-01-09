@@ -1,0 +1,38 @@
+{
+  "commit": {
+    "author": "rundeck<rundeck@rundeck>",
+    "commitId": "5e773481877684a9d48643bf89c28aabe4f88763",
+    "date": "2018-01-08T19:28:26Z",
+    "info": {
+      "date": "2018-01-08T19:28:26Z",
+      "authorEmail": "rundeck@rundeck",
+      "authorName": "rundeck",
+      "commitId6": "5e7734",
+      "commitId": "5e773481877684a9d48643bf89c28aabe4f88763",
+      "authorTime": "2018-01-08T19:28:26Z",
+      "authorTimeZone": "GMT+00:00",
+      "message": "initial commit"
+    },
+    "message": "initial commit"
+  },
+  "diffContent": "@@ -1,5 +1,5 @@\n - description: sleeps a while\n-  executionEnabled: true\n+  executionEnabled: false\n   group: test\n   loglevel: INFO\n   multipleExecutions: true\n",
+  "id": "6c66133e-03ed-48e3-aaa2-d2a646a4e47f",
+  "incomingCommit": {
+    "author": "rundeck<rundeck@rundeck>",
+    "commitId": "5e773481877684a9d48643bf89c28aabe4f88763",
+    "date": "2018-01-08T19:28:26Z",
+    "info": {
+      "date": "2018-01-08T19:28:26Z",
+      "authorEmail": "rundeck@rundeck",
+      "authorName": "rundeck",
+      "commitId6": "5e7734",
+      "commitId": "5e773481877684a9d48643bf89c28aabe4f88763",
+      "authorTime": "2018-01-08T19:28:26Z",
+      "authorTimeZone": "GMT+00:00",
+      "message": "initial commit"
+    },
+    "message": "initial commit"
+  },
+  "integration": "import",
+  "project": "testproject"
+}

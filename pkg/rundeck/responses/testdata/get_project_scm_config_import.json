@@ -1,0 +1,21 @@
+{
+  "config": {
+    "url": "/home/rundeck-import.git/",
+    "fetchAutomatically": "true",
+    "dir": "/var/rundeck/projects/testproject/scm",
+    "_useFilePattern": "",
+    "filePattern": ".*\\.yaml",
+    "importUuidBehavior": "remove",
+    "useFilePattern": "true",
+    "strictHostKeyChecking": "yes",
+    "sshPrivateKeyPath": "",
+    "format": "yaml",
+    "branch": "master",
+    "gitPasswordPath": "",
+    "pathTemplate": "${job.group}${job.name}-${job.id}.${config.format}"
+  },
+  "enabled": true,
+  "integration": "import",
+  "project": "testproject",
+  "type": "git-import"
+}

@@ -1,13 +1,5 @@
 package responses
 
-import (
-	"bytes"
-	"encoding/json"
-	"io"
-	"io/ioutil"
-	"os"
-)
-
 // JobExecutionsResponse is the response for listing the executions for a job
 type JobExecutionsResponse ListRunningExecutionsResponse
 
@@ -27,31 +19,6 @@ type ListRunningExecutionsResponse struct {
 func (a ListRunningExecutionsResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a ListRunningExecutionsResponse) maxVersion() int  { return CurrentVersion }
 func (a ListRunningExecutionsResponse) deprecated() bool { return false }
-
-// FromReader returns an ListRunningExecutionsResponse from an io.Reader
-func (a *ListRunningExecutionsResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromFile returns an ListRunningExectionsResponse from a file
-func (a *ListRunningExecutionsResponse) FromFile(f string) error {
-	file, err := os.Open(f)
-	defer func() { _ = file.Close() }()
-	if err != nil {
-		return err
-	}
-	return a.FromReader(file)
-}
-
-// FromBytes returns a ListRunningExecutionsResponse from a byte slice
-func (a *ListRunningExecutionsResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
 
 // ExecutionResponseTestFile is the test data for ExecutionResponse
 const ExecutionResponseTestFile = "execution.json"
@@ -84,31 +51,6 @@ type ExecutionResponse struct {
 func (a ExecutionResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a ExecutionResponse) maxVersion() int  { return CurrentVersion }
 func (a ExecutionResponse) deprecated() bool { return false }
-
-// FromReader returns an ExecutionResponse from an io.Reader
-func (a *ExecutionResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromFile returns an ExectionResponse from a file
-func (a *ExecutionResponse) FromFile(f string) error {
-	file, err := os.Open(f)
-	defer func() { _ = file.Close() }()
-	if err != nil {
-		return err
-	}
-	return a.FromReader(file)
-}
-
-// FromBytes returns a ExecutionResponse from a byte slice
-func (a *ExecutionResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
 
 // ExecutionJobEntryResponse represents an individual job execution entry response
 type ExecutionJobEntryResponse struct {
@@ -158,31 +100,6 @@ func (a ExecutionInputFilesResponse) minVersion() int  { return 19 }
 func (a ExecutionInputFilesResponse) maxVersion() int  { return CurrentVersion }
 func (a ExecutionInputFilesResponse) deprecated() bool { return false }
 
-// FromReader returns an ExecutionInputFilesResponse from an io.Reader
-func (a *ExecutionInputFilesResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromFile returns an ExecutionInputFilesResponse from a file
-func (a *ExecutionInputFilesResponse) FromFile(f string) error {
-	file, err := os.Open(f)
-	defer func() { _ = file.Close() }()
-	if err != nil {
-		return err
-	}
-	return a.FromReader(file)
-}
-
-// FromBytes returns a ExecutionInputFilesResponse from a byte slice
-func (a *ExecutionInputFilesResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
-
 // BulkDeleteExecutionsResponseTestFile is test data for an ExecutionInputFileResponse
 const BulkDeleteExecutionsResponseTestFile = "bulk_delete_executions.json"
 
@@ -198,31 +115,6 @@ type BulkDeleteExecutionsResponse struct {
 func (a BulkDeleteExecutionsResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a BulkDeleteExecutionsResponse) maxVersion() int  { return CurrentVersion }
 func (a BulkDeleteExecutionsResponse) deprecated() bool { return false }
-
-// FromReader returns an BulkDeleteExecutionsResponse from an io.Reader
-func (a *BulkDeleteExecutionsResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromFile returns an BulkDeleteExecutionsResponse from a file
-func (a *BulkDeleteExecutionsResponse) FromFile(f string) error {
-	file, err := os.Open(f)
-	defer func() { _ = file.Close() }()
-	if err != nil {
-		return err
-	}
-	return a.FromReader(file)
-}
-
-// FromBytes returns a BulkDeleteExecutionsResponse from a byte slice
-func (a *BulkDeleteExecutionsResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
 
 // BulkDeleteExecutionFailureResponse represents an individual bulk delete executions failure entry
 type BulkDeleteExecutionFailureResponse struct {
@@ -246,88 +138,70 @@ type ExecutionStateResponse struct {
 	TargetNodes    []string                                     `json:"targetNodes"`
 	Nodes          map[string][]ExecutionStateNodeEntryResponse `json:"nodes"`
 	ExecutionID    int                                          `json:"executionId"`
-	Steps          []json.RawMessage                            `json:"steps"`
+	Steps          []interface{}                                `json:"steps"`
 }
 
 func (a ExecutionStateResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a ExecutionStateResponse) maxVersion() int  { return CurrentVersion }
 func (a ExecutionStateResponse) deprecated() bool { return false }
 
-// FromReader returns an ExecutionStateResponse from an io.Reader
-func (a *ExecutionStateResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromFile returns an ExecutionStateResponse from a file
-func (a *ExecutionStateResponse) FromFile(f string) error {
-	file, err := os.Open(f)
-	defer func() { _ = file.Close() }()
-	if err != nil {
-		return err
-	}
-	return a.FromReader(file)
-}
-
-// FromBytes returns a ExecutionStateResponse from a byte slice
-func (a *ExecutionStateResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
-
 // ExecutionStepResponse represents an execution step
 type ExecutionStepResponse struct {
-	ExecutionState string                        `json:"executionState"`
-	EndTime        *JSONTime                     `json:"endTime"`
-	NodeStates     map[string]*NodeStateResponse `json:"nodeStates"`
-	UpdateTime     *JSONTime                     `json:"updateTime"`
-	NodeStep       bool                          `json:"nodeStep"`
-	ID             string                        `json:"id"`
-	StartTime      *JSONTime                     `json:"startTime"`
+	ID              string                        `json:"id"`
+	StepCTX         string                        `json:"stepctx"`
+	ParameterStates map[string]interface{}        `json:"parameterStates"`
+	Duration        int                           `json:"duration"`
+	NodeStep        bool                          `json:"nodeStep"`
+	ExecutionState  string                        `json:"executionState"`
+	StartTime       *JSONTime                     `json:"startTime"`
+	UpdateTime      *JSONTime                     `json:"updateTime"`
+	EndTime         *JSONTime                     `json:"endTime"`
+	NodeStates      map[string]*NodeStateResponse `json:"nodeStates"`
 }
 
 func (a ExecutionStepResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a ExecutionStepResponse) maxVersion() int  { return CurrentVersion }
 func (a ExecutionStepResponse) deprecated() bool { return false }
 
-// WorkflowResponse represents a workflow response
-type WorkflowResponse struct {
-	Completed      bool              `json:"completed"`
-	EndTime        *JSONTime         `json:"endTime"`
-	StartTime      *JSONTime         `json:"startTime"`
-	UpdateTime     *JSONTime         `json:"updateTime"`
-	StepCount      int               `json:"stepCount"`
-	AllNodes       []string          `json:"allNodes"`
-	TargetNodes    []string          `json:"targetNodes"`
-	ExecutionState string            `json:"executionState"`
-	Steps          []json.RawMessage `json:"steps"`
-}
-
-func (a WorkflowResponse) minVersion() int  { return AbsoluteMinimumVersion }
-func (a WorkflowResponse) maxVersion() int  { return CurrentVersion }
-func (a WorkflowResponse) deprecated() bool { return false }
-
 // WorkflowStepResponse represents a workflow step response
 type WorkflowStepResponse struct {
-	Workflow       *WorkflowResponse `json:"workflow"`
-	ExecutionState string            `json:"executionState"`
-	EndTime        *JSONTime         `json:"endTime"`
-	StartTime      *JSONTime         `json:"startTime"`
-	UpdateTime     *JSONTime         `json:"updateTime"`
-	HasSubworkFlow bool              `json:"hasSubworkFlow"`
-	NodeStep       bool              `json:"nodeStep"`
-	ID             string            `json:"id"`
+	ID              string                 `json:"id"`
+	StepCTX         string                 `json:"stepctx"`
+	ParameterStates map[string]interface{} `json:"parameterStates"`
+	Duration        int                    `json:"duration"`
+	NodeStep        bool                   `json:"nodeStep"`
+	ExecutionState  string                 `json:"executionState"`
+	StartTime       *JSONTime              `json:"startTime"`
+	UpdateTime      *JSONTime              `json:"updateTime"`
+	EndTime         *JSONTime              `json:"endTime"`
+	Workflow        *WorkflowResponse      `json:"workflow"`
+	HasSubworkFlow  bool                   `json:"hasSubworkFlow"`
 }
 
 func (a WorkflowStepResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a WorkflowStepResponse) maxVersion() int  { return CurrentVersion }
 func (a WorkflowStepResponse) deprecated() bool { return false }
 
+// WorkflowResponse represents a workflow response
+type WorkflowResponse struct {
+	Completed      bool          `json:"completed"`
+	EndTime        *JSONTime     `json:"endTime"`
+	StartTime      *JSONTime     `json:"startTime"`
+	UpdateTime     *JSONTime     `json:"updateTime"`
+	StepCount      int           `json:"stepCount"`
+	AllNodes       []string      `json:"allNodes"`
+	TargetNodes    []string      `json:"targetNodes"`
+	ExecutionState string        `json:"executionState"`
+	Steps          []interface{} `json:"steps"`
+}
+
+func (a WorkflowResponse) minVersion() int  { return AbsoluteMinimumVersion }
+func (a WorkflowResponse) maxVersion() int  { return CurrentVersion }
+func (a WorkflowResponse) deprecated() bool { return false }
+
 // NodeStateResponse represents a nodeState response
 type NodeStateResponse struct {
+	Duration       int       `json:"duration"`
 	ExecutionState string    `json:"executionState"`
 	EndTime        *JSONTime `json:"endTime"`
 	UpdateTime     *JSONTime `json:"updateTime"`
@@ -360,31 +234,6 @@ type AdHocExecutionResponse struct {
 func (a AdHocExecutionResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a AdHocExecutionResponse) maxVersion() int  { return CurrentVersion }
 func (a AdHocExecutionResponse) deprecated() bool { return false }
-
-// FromReader returns an AdHocExecutionResponse from an io.Reader
-func (a *AdHocExecutionResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromFile returns an AdHocExecutionResponse from a file
-func (a *AdHocExecutionResponse) FromFile(f string) error {
-	file, err := os.Open(f)
-	defer func() { _ = file.Close() }()
-	if err != nil {
-		return err
-	}
-	return a.FromReader(file)
-}
-
-// FromBytes returns a AdHocExecutionResponse from a byte slice
-func (a *AdHocExecutionResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
 
 // AdHocExecutionItemResponse is an individual adhoc execution response
 type AdHocExecutionItemResponse struct {

@@ -48,3 +48,11 @@
 [[constraint]]
   branch = "master"
   name = "github.com/hashicorp/go-multierror"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/xeipuuv/gojsonschema"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/mitchellh/mapstructure"

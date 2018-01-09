@@ -1,0 +1,20 @@
+{
+  "config": {
+    "url": "/home/rundeck-export.git/",
+    "fetchAutomatically": "true",
+    "dir": "/var/rundeck/projects/testproject/scm",
+    "committerEmail": "${user.email}",
+    "committerName": "${user.fullName}",
+    "strictHostKeyChecking": "yes",
+    "sshPrivateKeyPath": "",
+    "branch": "master",
+    "format": "yaml",
+    "gitPasswordPath": "",
+    "exportUuidBehavior": "preserve",
+    "pathTemplate": "${job.group}${job.name}-${job.id}.${config.format}"
+  },
+  "enabled": true,
+  "integration": "export",
+  "project": "testproject",
+  "type": "git-export"
+}

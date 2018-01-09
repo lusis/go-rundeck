@@ -1,0 +1,12 @@
+{
+  "integration": "import",
+  "plugins": [
+    {
+      "configured": true,
+      "description": "Import Jobs from a Git Repository",
+      "enabled": true,
+      "title": "Git Import",
+      "type": "git-import"
+    }
+  ]
+}

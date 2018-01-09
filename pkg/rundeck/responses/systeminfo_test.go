@@ -1,9 +1,11 @@
 package responses
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
+	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,30 +14,15 @@ func TestSystemInfoResponse(t *testing.T) {
 
 	data, dataErr := testdata.GetBytes(SystemInfoResponseTestFile)
 	if dataErr != nil {
-		t.Error(dataErr.Error())
-		t.FailNow()
+		t.Fatalf(dataErr.Error())
 	}
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
-
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj.System)
-	assert.NotNil(t, obj.System.Timestamp)
-	assert.NotNil(t, obj.System.Rundeck)
-	assert.NotNil(t, obj.System.Executions)
-	assert.NotNil(t, obj.System.OS)
-	assert.NotNil(t, obj.System.JVM)
-	assert.NotNil(t, obj.System.Stats)
-	assert.NotNil(t, obj.System.Stats.Uptime)
-	assert.NotNil(t, obj.System.Stats.Uptime.Since)
-	assert.NotNil(t, obj.System.Stats.Uptime.Since.DateTime)
-	assert.NotNil(t, obj.System.Stats.CPU)
-	assert.NotNil(t, obj.System.Stats.Memory)
-	assert.NotNil(t, obj.System.Stats.Threads)
-	assert.NotNil(t, obj.System.Stats.Scheduler)
-	assert.NotNil(t, obj.System.Metrics)
-	assert.NotNil(t, obj.System.ThreadDump)
 }

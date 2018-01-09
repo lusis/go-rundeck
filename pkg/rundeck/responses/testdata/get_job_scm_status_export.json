@@ -1,0 +1,11 @@
+{
+  "actions": [
+    "job-commit"
+  ],
+  "commit": null,
+  "id": "d1b9f2c1-d6a6-43ca-8e9f-85519d5a1323",
+  "integration": "export",
+  "message": "Created",
+  "project": "testproject",
+  "synchState": "CREATE_NEEDED"
+}

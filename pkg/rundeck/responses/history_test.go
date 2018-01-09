@@ -1,9 +1,11 @@
 package responses
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
+	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,21 +13,15 @@ func TestHistoryResponse(t *testing.T) {
 	obj := &HistoryResponse{}
 	data, dataErr := testdata.GetBytes(HistoryResponseTestFile)
 	if dataErr != nil {
-		t.Error(dataErr.Error())
-		t.FailNow()
+		t.Fatalf(dataErr.Error())
 	}
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.Len(t, obj.Events, 6)
-	for _, e := range obj.Events {
-		assert.NotNil(t, e)
-		assert.NotNil(t, e.NodeSummary)
-		assert.NotNil(t, e.Execution)
-		assert.NotNil(t, e.DateStarted)
-		assert.NotNil(t, e.DateEnded)
-	}
 }

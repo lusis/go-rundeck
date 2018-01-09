@@ -1,0 +1,9 @@
+{
+  "actions": [
+    "project-commit"
+  ],
+  "integration": "export",
+  "message": "Some changes have not been committed",
+  "project": "testproject",
+  "synchState": "EXPORT_NEEDED"
+}

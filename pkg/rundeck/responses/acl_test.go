@@ -1,9 +1,11 @@
 package responses
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
+	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,23 +16,15 @@ func TestACLResponse(t *testing.T) {
 		t.Error(err.Error())
 		t.FailNow()
 	}
-	bErr := obj.FromBytes(data)
-	if bErr != nil {
-		t.Error(bErr.Error())
-		t.FailNow()
-	}
-
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.Equal(t, "", obj.Path)
-	assert.Equal(t, "directory", obj.Type)
-	assert.Equal(t, "[API Href]", obj.Href)
-	assert.Len(t, obj.Resources, 1)
-
-	resource := obj.Resources[0]
-	assert.Equal(t, "name.aclpolicy", resource.Name)
-	assert.Equal(t, "file", resource.Type)
-	assert.Equal(t, "name.aclpolicy", resource.Path)
-	assert.Equal(t, "[API Href]", resource.Href)
 }
 
 func TestFailedACLValidationResponse(t *testing.T) {
@@ -40,18 +34,13 @@ func TestFailedACLValidationResponse(t *testing.T) {
 		t.Error(err.Error())
 		t.FailNow()
 	}
-	bErr := obj.FromBytes(data)
-	if bErr != nil {
-		t.Error(bErr.Error())
-		t.FailNow()
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.False(t, obj.Valid)
-	assert.Len(t, obj.Policies, 2)
-	first := obj.Policies[0]
-	second := obj.Policies[1]
-	assert.Equal(t, "file1.aclpolicy[1]", first.Policy)
-	assert.Len(t, first.Errors, 2)
-	assert.Equal(t, "file1.aclpolicy[2]", second.Policy)
-	assert.Len(t, second.Errors, 2)
 }

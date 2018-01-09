@@ -1,0 +1,197 @@
+{
+  "fields": [
+    {
+      "defaultValue": "${user.fullName}",
+      "description": "Name of committer/author of changes.\n\nCan be set to `${user.firstName} ${user.lastName}` or\n`${user.fullName}` to expand as the name\nof the committing user.",
+      "name": "committerName",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE"
+      },
+      "required": true,
+      "scope": "Unspecified",
+      "title": "Committer Name",
+      "type": "String",
+      "values": null
+    },
+    {
+      "defaultValue": "${user.email}",
+      "description": "Email of committer/author of changes.\n\nCan be set to `${user.email}` to expand\nas the email of the committing user",
+      "name": "committerEmail",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE"
+      },
+      "required": true,
+      "scope": "Unspecified",
+      "title": "Committer Email",
+      "type": "String",
+      "values": null
+    },
+    {
+      "defaultValue": "preserve",
+      "description": "How to handle UUIDs for exported Job source files\n\n* `preserve` - Write the Job UUID into exported Jobs, and as `${job.id}` in the \"File Path Template\"\n* `original` - Write the imported Source UUID into exported Jobs, and use it as the `${job.sourceId}` in the \"File Path\nTemplate\".\n* `remove` - Do not write a UUID into the exported Jobs.\n",
+      "name": "exportUuidBehavior",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE"
+      },
+      "required": false,
+      "scope": "Unspecified",
+      "title": "Export UUID Behavior",
+      "type": "Select",
+      "values": [
+        "preserve",
+        "original",
+        "remove"
+      ]
+    },
+    {
+      "defaultValue": "${job.group}${job.name}-${job.id}.${config.format}",
+      "description": "Path template for storing a Job to a file within the base dir.\n\nAvailable expansion patterns:\n\n* `${job.name}` - the job name\n* `${job.group}` - blank, or `path/`\n* `${job.project}` - project name\n* `${job.id}` - job UUID\n* `${job.sourceId}` - Original Job UUID from imported source (see *Strip Job UUID*)\n* `${config.format}` - Serialization format chosen below.\n\nIf you set `Strip Job UUID` to true, then you most likely do not want to include `${job.id}` in the expansion pattern,\nas it the job UUID after import will be different than the one on disk.\n",
+      "name": "pathTemplate",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE",
+        "groupName": "Job Source Files"
+      },
+      "required": true,
+      "scope": "Unspecified",
+      "title": "File Path Template",
+      "type": "FreeSelect",
+      "values": [
+        "${job.group}${job.name}-${job.id}.${config.format}",
+        "${job.group}${job.name}-${job.sourceId}.${config.format}",
+        "${job.group}${job.name}.${config.format}"
+      ]
+    },
+    {
+      "defaultValue": "/var/rundeck/projects/testproject/scm",
+      "description": "Directory for checkout",
+      "name": "dir",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE",
+        "groupName": "Git Repository"
+      },
+      "required": true,
+      "scope": "Unspecified",
+      "title": "Base Directory",
+      "type": "String",
+      "values": null
+    },
+    {
+      "defaultValue": null,
+      "description": "Checkout url.\n\nSee [git-clone](https://www.kernel.org/pub/software/scm/git/docs/git-clone.html)\nspecifically the [GIT URLS](https://www.kernel.org/pub/software/scm/git/docs/git-clone.html#URLS) section.\n\nSome examples:\n\n* `ssh://[user@]host.xz[:port]/path/to/repo.git/`\n* `git://host.xz[:port]/path/to/repo.git/`\n* `http[s]://host.xz[:port]/path/to/repo.git/`\n* `ftp[s]://host.xz[:port]/path/to/repo.git/`\n* `rsync://host.xz/path/to/repo.git/`",
+      "name": "url",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE",
+        "groupName": "Git Repository"
+      },
+      "required": true,
+      "scope": "Unspecified",
+      "title": "Git URL",
+      "type": "String",
+      "values": null
+    },
+    {
+      "defaultValue": "master",
+      "description": "Checkout branch",
+      "name": "branch",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE",
+        "groupName": "Git Repository"
+      },
+      "required": true,
+      "scope": "Unspecified",
+      "title": "Branch",
+      "type": "String",
+      "values": null
+    },
+    {
+      "defaultValue": "yes",
+      "description": "Use strict host key checking.\n\nIf `yes`, require remote host SSH key is defined in the `~/.ssh/known_hosts` file, otherwise do not verify.",
+      "name": "strictHostKeyChecking",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE",
+        "groupName": "Authentication",
+        "grouping": "secondary"
+      },
+      "required": true,
+      "scope": "Unspecified",
+      "title": "SSH: Strict Host Key Checking",
+      "type": "Select",
+      "values": [
+        "yes",
+        "no"
+      ]
+    },
+    {
+      "defaultValue": null,
+      "description": "Path can include variable references\n\n* `${user.login}` login name of logged in user\n* `${project}` current project name",
+      "name": "sshPrivateKeyPath",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE",
+        "groupName": "Authentication",
+        "storage-path-root": "keys",
+        "storage-file-meta-filter": "Rundeck-key-type=private",
+        "selectionAccessor": "STORAGE_PATH",
+        "grouping": "secondary"
+      },
+      "required": false,
+      "scope": "Unspecified",
+      "title": "SSH Key Storage Path",
+      "type": "String",
+      "values": null
+    },
+    {
+      "defaultValue": null,
+      "description": "Password to authenticate remotely (e.g. for SSH or HTTPS URLs).\n\nPath can include variable references\n\n* `${user.login}` login name of logged in user\n* `${project}` current project name",
+      "name": "gitPasswordPath",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE",
+        "groupName": "Authentication",
+        "storage-path-root": "keys",
+        "storage-file-meta-filter": "Rundeck-data-type=password",
+        "selectionAccessor": "STORAGE_PATH",
+        "grouping": "secondary"
+      },
+      "required": false,
+      "scope": "Unspecified",
+      "title": "Password Storage Path",
+      "type": "String",
+      "values": null
+    },
+    {
+      "defaultValue": "xml",
+      "description": "Format for serializing Job definitions",
+      "name": "format",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE",
+        "groupName": "Job Source Files"
+      },
+      "required": true,
+      "scope": "Unspecified",
+      "title": "Format",
+      "type": "Select",
+      "values": [
+        "xml",
+        "yaml"
+      ]
+    },
+    {
+      "defaultValue": "true",
+      "description": "Automatically fetch remote changes for local comparison. If false, you can perform it manually",
+      "name": "fetchAutomatically",
+      "renderingOptions": {
+        "displayType": "SINGLE_LINE",
+        "groupName": "Git Repository"
+      },
+      "required": false,
+      "scope": "Unspecified",
+      "title": "Fetch Automatically",
+      "type": "Select",
+      "values": [
+        "true",
+        "false"
+      ]
+    }
+  ],
+  "integration": "export",
+  "type": "git-export"
+}
