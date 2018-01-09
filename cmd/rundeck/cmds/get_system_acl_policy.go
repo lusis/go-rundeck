@@ -2,6 +2,7 @@ package cmds
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/lusis/go-rundeck/pkg/cli"
 	"github.com/spf13/cobra"
@@ -9,6 +10,9 @@ import (
 
 func getSystemACLPolicyFunc(cmd *cobra.Command, args []string) error {
 	policyName := args[0]
+	if strings.HasSuffix(policyName, ".aclpolicy") {
+		return fmt.Errorf("policy name should not end with .aclpolicy")
+	}
 	res, err := cli.Client.GetSystemACLPolicy(policyName)
 	if err != nil {
 		return err
