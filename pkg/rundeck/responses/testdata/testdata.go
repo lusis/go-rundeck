@@ -64,6 +64,7 @@
 // job_definition.yaml
 // execution_output.txt
 // foo.aclpolicy
+// project.aclpolicy
 // DO NOT EDIT!
 
 package testdata
@@ -246,7 +247,7 @@ func disable_scm_plugin_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "disable_scm_plugin_export.json", size: 131, mode: os.FileMode(420), modTime: time.Unix(1515442323, 0)}
+	info := bindataFileInfo{name: "disable_scm_plugin_export.json", size: 131, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -266,7 +267,7 @@ func disable_scm_plugin_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "disable_scm_plugin_import.json", size: 131, mode: os.FileMode(420), modTime: time.Unix(1515442284, 0)}
+	info := bindataFileInfo{name: "disable_scm_plugin_import.json", size: 131, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -286,7 +287,7 @@ func enable_scm_plugin_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "enable_scm_plugin_export.json", size: 130, mode: os.FileMode(420), modTime: time.Unix(1515442256, 0)}
+	info := bindataFileInfo{name: "enable_scm_plugin_export.json", size: 130, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -306,7 +307,7 @@ func enable_scm_plugin_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "enable_scm_plugin_import.json", size: 130, mode: os.FileMode(420), modTime: time.Unix(1515442229, 0)}
+	info := bindataFileInfo{name: "enable_scm_plugin_import.json", size: 130, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -406,7 +407,7 @@ func execution_stateJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "execution_state.json", size: 5751, mode: os.FileMode(420), modTime: time.Unix(1515510706, 0)}
+	info := bindataFileInfo{name: "execution_state.json", size: 5751, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -486,7 +487,7 @@ func get_job_scm_action_input_fields_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_job_scm_action_input_fields_export.json", size: 1424, mode: os.FileMode(420), modTime: time.Unix(1515443273, 0)}
+	info := bindataFileInfo{name: "get_job_scm_action_input_fields_export.json", size: 1424, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -506,7 +507,7 @@ func get_job_scm_action_input_fields_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_job_scm_action_input_fields_import.json", size: 210, mode: os.FileMode(420), modTime: time.Unix(1515443318, 0)}
+	info := bindataFileInfo{name: "get_job_scm_action_input_fields_import.json", size: 210, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -526,7 +527,7 @@ func get_job_scm_diff_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_job_scm_diff_export.json", size: 173, mode: os.FileMode(420), modTime: time.Unix(1515443214, 0)}
+	info := bindataFileInfo{name: "get_job_scm_diff_export.json", size: 173, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -546,7 +547,7 @@ func get_job_scm_diff_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_job_scm_diff_import.json", size: 1353, mode: os.FileMode(420), modTime: time.Unix(1515443148, 0)}
+	info := bindataFileInfo{name: "get_job_scm_diff_import.json", size: 1353, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -566,7 +567,7 @@ func get_job_scm_status_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_job_scm_status_export.json", size: 218, mode: os.FileMode(420), modTime: time.Unix(1515442712, 0)}
+	info := bindataFileInfo{name: "get_job_scm_status_export.json", size: 218, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -586,7 +587,7 @@ func get_job_scm_status_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_job_scm_status_import.json", size: 211, mode: os.FileMode(420), modTime: time.Unix(1515443051, 0)}
+	info := bindataFileInfo{name: "get_job_scm_status_import.json", size: 211, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -606,7 +607,7 @@ func get_project_scm_action_input_fields_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_project_scm_action_input_fields_export.json", size: 1749, mode: os.FileMode(420), modTime: time.Unix(1515442901, 0)}
+	info := bindataFileInfo{name: "get_project_scm_action_input_fields_export.json", size: 1749, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -626,7 +627,7 @@ func get_project_scm_action_input_fields_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_project_scm_action_input_fields_import.json", size: 317, mode: os.FileMode(420), modTime: time.Unix(1515442871, 0)}
+	info := bindataFileInfo{name: "get_project_scm_action_input_fields_import.json", size: 317, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -646,7 +647,7 @@ func get_project_scm_config_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_project_scm_config_export.json", size: 575, mode: os.FileMode(420), modTime: time.Unix(1515442479, 0)}
+	info := bindataFileInfo{name: "get_project_scm_config_export.json", size: 575, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -666,7 +667,7 @@ func get_project_scm_config_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_project_scm_config_import.json", size: 582, mode: os.FileMode(420), modTime: time.Unix(1515442465, 0)}
+	info := bindataFileInfo{name: "get_project_scm_config_import.json", size: 582, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -686,7 +687,7 @@ func get_project_scm_status_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_project_scm_status_export.json", size: 185, mode: os.FileMode(420), modTime: time.Unix(1515442826, 0)}
+	info := bindataFileInfo{name: "get_project_scm_status_export.json", size: 185, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -706,7 +707,7 @@ func get_project_scm_status_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_project_scm_status_import.json", size: 203, mode: os.FileMode(420), modTime: time.Unix(1515442803, 0)}
+	info := bindataFileInfo{name: "get_project_scm_status_import.json", size: 203, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -726,7 +727,7 @@ func get_scm_input_plugin_fields_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_scm_input_plugin_fields_export.json", size: 7222, mode: os.FileMode(420), modTime: time.Unix(1515442148, 0)}
+	info := bindataFileInfo{name: "get_scm_input_plugin_fields_export.json", size: 7222, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -746,7 +747,7 @@ func get_scm_input_plugin_fields_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "get_scm_input_plugin_fields_import.json", size: 6271, mode: os.FileMode(420), modTime: time.Unix(1515442173, 0)}
+	info := bindataFileInfo{name: "get_scm_input_plugin_fields_import.json", size: 6271, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -966,7 +967,7 @@ func list_scm_plugins_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "list_scm_plugins_export.json", size: 223, mode: os.FileMode(420), modTime: time.Unix(1515442084, 0)}
+	info := bindataFileInfo{name: "list_scm_plugins_export.json", size: 223, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -986,7 +987,7 @@ func list_scm_plugins_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "list_scm_plugins_import.json", size: 225, mode: os.FileMode(420), modTime: time.Unix(1515442067, 0)}
+	info := bindataFileInfo{name: "list_scm_plugins_import.json", size: 225, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1126,7 +1127,7 @@ func project_scm_status_exportJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project_scm_status_export.json", size: 121, mode: os.FileMode(420), modTime: time.Unix(1515442437, 0)}
+	info := bindataFileInfo{name: "project_scm_status_export.json", size: 121, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1146,7 +1147,7 @@ func project_scm_status_importJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project_scm_status_import.json", size: 171, mode: os.FileMode(420), modTime: time.Unix(1515442423, 0)}
+	info := bindataFileInfo{name: "project_scm_status_import.json", size: 171, mode: os.FileMode(420), modTime: time.Unix(1515522046, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1411,6 +1412,26 @@ func fooAclpolicy() (*asset, error) {
 	return a, nil
 }
 
+var _projectAclpolicy = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x84\x90\xc1\x8a\xc5\x20\x0c\x45\xf7\x7e\xc5\x85\x59\x08\x03\x43\xf7\xfe\x8d\xd5\xb4\x63\xeb\x24\x43\x54\xca\xfb\xfb\x47\xec\xdb\x77\x97\x84\x9c\x43\x72\x5d\xa6\x96\xb4\xfc\xf7\x22\x1c\x10\x47\x23\x45\x4c\x89\x5a\x73\x9b\x68\x70\x80\x52\x93\xa1\x89\xac\x06\x7e\x10\x6b\x95\x2b\xc0\x7f\x7b\x7c\xdd\x0d\x94\x62\x5e\x92\x52\xec\x64\x13\x9c\x85\x73\x73\x40\xcc\xbf\x92\x9e\x38\x1d\xcc\x85\xf7\xe5\x2c\xb5\x16\xde\x6f\x08\x87\xac\x66\x38\x64\x0d\x78\x10\x5c\x5a\x3a\x2d\x99\x2a\x75\x32\xdb\x34\x41\xb6\x79\xca\xc7\xc3\x92\x1f\x1f\xd0\xc1\xd8\x44\x27\x66\xfb\xcd\xad\x2f\x63\x2c\x13\x8e\x7f\x14\xe0\x67\x3e\xde\xbd\x03\x00\x00\xff\xff\xd6\xe2\x04\xf3\x35\x01\x00\x00")
+
+func projectAclpolicyBytes() ([]byte, error) {
+	return bindataRead(
+		_projectAclpolicy,
+		"project.aclpolicy",
+	)
+}
+
+func projectAclpolicy() (*asset, error) {
+	bytes, err := projectAclpolicyBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "project.aclpolicy", size: 309, mode: os.FileMode(420), modTime: time.Unix(1515532560, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
 // Asset loads and returns the asset for the given name.
 // It returns an error if the asset could not be found or
 // could not be loaded.
@@ -1527,6 +1548,7 @@ var _bindata = map[string]func() (*asset, error){
 	"job_definition.yaml": job_definitionYaml,
 	"execution_output.txt": execution_outputTxt,
 	"foo.aclpolicy": fooAclpolicy,
+	"project.aclpolicy": projectAclpolicy,
 }
 
 // AssetDir returns the file names below a certain
@@ -1616,6 +1638,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 	"list_scm_plugins_export.json": &bintree{list_scm_plugins_exportJson, map[string]*bintree{}},
 	"list_scm_plugins_import.json": &bintree{list_scm_plugins_importJson, map[string]*bintree{}},
 	"logstorage.json": &bintree{logstorageJson, map[string]*bintree{}},
+	"project.aclpolicy": &bintree{projectAclpolicy, map[string]*bintree{}},
 	"project_archive_export_async.json": &bintree{project_archive_export_asyncJson, map[string]*bintree{}},
 	"project_archive_import.json": &bintree{project_archive_importJson, map[string]*bintree{}},
 	"project_archive_import_failed.json": &bintree{project_archive_import_failedJson, map[string]*bintree{}},
