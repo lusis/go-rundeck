@@ -1,13 +1,5 @@
 package responses
 
-import (
-	"bytes"
-	"encoding/json"
-	"io"
-	"io/ioutil"
-	"os"
-)
-
 // LogStorageResponseTestFile is the test data for a LogStorageResponse
 const LogStorageResponseTestFile = "logstorage.json"
 
@@ -27,31 +19,6 @@ func (a LogStorageResponse) minVersion() int  { return 17 }
 func (a LogStorageResponse) maxVersion() int  { return CurrentVersion }
 func (a LogStorageResponse) deprecated() bool { return false }
 
-// FromReader returns a LogStorageResponse from an io.Reader
-func (a *LogStorageResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromFile returns a LogStorageResponse from a file
-func (a *LogStorageResponse) FromFile(f string) error {
-	file, err := os.Open(f)
-	defer func() { _ = file.Close() }()
-	if err != nil {
-		return err
-	}
-	return a.FromReader(file)
-}
-
-// FromBytes returns a LogStorageResponse from a byte slice
-func (a *LogStorageResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
-
 // IncompleteLogStorageResponseTestFile is test data for an IncompleteLogStorageResponse
 const IncompleteLogStorageResponseTestFile = "incomplete_logstorage_executions.json"
 
@@ -66,31 +33,6 @@ type IncompleteLogStorageResponse struct {
 func (a IncompleteLogStorageResponse) minVersion() int  { return 17 }
 func (a IncompleteLogStorageResponse) maxVersion() int  { return CurrentVersion }
 func (a IncompleteLogStorageResponse) deprecated() bool { return false }
-
-// FromReader returns a IncompleteLogStorageResponse from an io.Reader
-func (a *IncompleteLogStorageResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromFile returns a IncompleteLogStorageResponse from a file
-func (a *IncompleteLogStorageResponse) FromFile(f string) error {
-	file, err := os.Open(f)
-	defer func() { _ = file.Close() }()
-	if err != nil {
-		return err
-	}
-	return a.FromReader(file)
-}
-
-// FromBytes returns a IncompleteLogStorageResponse from a byte slice
-func (a *IncompleteLogStorageResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
 
 // IncompleteLogStorageExecutionResponse represents an incomplete log storage execution response
 type IncompleteLogStorageExecutionResponse struct {

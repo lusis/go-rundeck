@@ -46,23 +46,50 @@ The content should be gathered from an actual live running rundeck server (you c
 
 After saving the file, `make bindata` should be called from the top-level of the repo to ensure the assets are available.
 
-- All responses should provide a `FromBytes` and `FromReader` function that can be used in testing.
+- All responses should provide be tested via strict mapstructure decoding
 
-This is not neccessary for "fractional" responses that were created as part of avoiding nested structs mentioned above
+Example:
 
 ```go
-// FromReader returns a GetProjectSCMConfigResponse from an io.Reader
-func (a *GetProjectSCMConfigResponse) FromReader(i io.Reader) error {
-    b, err := ioutil.ReadAll(i)
-    if err != nil {
-        return err
+func TestHistoryResponse(t *testing.T) {
+    obj := &HistoryResponse{}
+    data, dataErr := testdata.GetBytes(HistoryResponseTestFile)
+    if dataErr != nil {
+        t.Fatalf(dataErr.Error())
     }
-    return json.Unmarshal(b, a)
-}
-
-// FromBytes returns a GetProjectSCMConfigResponse from a byte slice
-func (a *GetProjectSCMConfigResponse) FromBytes(f []byte) error {
-    file := bytes.NewReader(f)
-    return a.FromReader(file)
+    // unmarshal into a map[string]interface
+    placeholder := make(map[string]interface{})
+    _ = json.Unmarshal(data, &placeholder)
+    // create a new decoder config and set the result to our instance of type
+    config := newMSDecoderConfig()
+    config.Result = obj
+    decoder, newErr := mapstructure.NewDecoder(config)
+    assert.NoError(t, newErr)
+    // attempt to decode our unmarshalled data
+    dErr := decoder.Decode(placeholder)
+    assert.NoError(t, dErr)
 }
 ```
+
+If you get any failures from decoding, your struct definition is wrong for handling the json:
+
+```text
+--- FAIL: TestHistoryResponse (0.00s)
+    assertions.go:237:
+
+    Error Trace:    history_test.go:26
+
+    Error:        Received unexpected error 6 error(s) decoding:
+
+            * 'events[0]' has invalid keys: statusString
+            * 'events[1]' has invalid keys: statusString
+            * 'events[2]' has invalid keys: statusString
+            * 'events[3]' has invalid keys: job, statusString
+            * 'events[4]' has invalid keys: job, statusString
+            * 'events[5]' has invalid keys: job, statusString
+```
+
+In this case we had some undocumented fields but using output from a live server and attempting to decode it caught that.
+
+Note that we don't need to test the values of individual fields.
+**Response tests are ONLY concerned with struct definitions matching real world data**

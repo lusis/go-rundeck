@@ -1,13 +1,5 @@
 package responses
 
-import (
-	"bytes"
-	"encoding/json"
-	"io"
-	"io/ioutil"
-	"os"
-)
-
 // BulkToggleResponseTestFile is test data for an ExecutionInputFileResponse
 const BulkToggleResponseTestFile = "bulk_toggle.json"
 
@@ -50,31 +42,6 @@ type BulkToggleEntryResponse struct {
 func (a BulkToggleEntryResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a BulkToggleEntryResponse) maxVersion() int  { return CurrentVersion }
 func (a BulkToggleEntryResponse) deprecated() bool { return false }
-
-// FromReader returns an BulkToggleResponse from an io.Reader
-func (a *BulkToggleResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromFile returns an BulkToggleResponse from a file
-func (a *BulkToggleResponse) FromFile(f string) error {
-	file, err := os.Open(f)
-	defer func() { _ = file.Close() }()
-	if err != nil {
-		return err
-	}
-	return a.FromReader(file)
-}
-
-// FromBytes returns a BulkResponse from a byte slice
-func (a *BulkToggleResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
 
 // SuccessToggleResponseTestFile is the test data for a successful toggle
 const SuccessToggleResponseTestFile = "success.json"

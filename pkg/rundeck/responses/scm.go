@@ -29,21 +29,6 @@ const ListSCMPluginsResponseImportTestFile = "list_scm_plugins_import.json"
 // ListSCMPluginsResponseExportTestFile is the test data for list scm plugins response for export scm
 const ListSCMPluginsResponseExportTestFile = "list_scm_plugins_export.json"
 
-// FromReader returns a ListSCMPluginsResponse from an io.Reader
-func (a *ListSCMPluginsResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromBytes returns a ListSCMPluginsResponse from a byte slice
-func (a *ListSCMPluginsResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
-
 // SCMPluginResponse is an individual Plugin entry in ListSCMPluginsResponse
 type SCMPluginResponse struct {
 	SCMResponse
@@ -79,21 +64,6 @@ const GetSCMPluginInputFieldsResponseImportTestData = "get_scm_input_plugin_fiel
 // GetSCMPluginInputFieldsResponseExportTestData is test data for GetSCMPluginInputFieldsResponse export plugins
 const GetSCMPluginInputFieldsResponseExportTestData = "get_scm_input_plugin_fields_export.json"
 
-// FromReader returns a GetSCMPluginInputFieldsResponse from an io.Reader
-func (a *GetSCMPluginInputFieldsResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromBytes returns a GetSCMPluginInputFieldsResponse from a byte slice
-func (a *GetSCMPluginInputFieldsResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
-
 // SCMPluginForProjectResponse is the response for setting up, enabling or disabling an scm plugin for a project
 // http://rundeck.org/docs/api/index.html#setup-scm-plugin-for-a-project
 // http://rundeck.org/docs/api/index.html#enable-scm-plugin-for-a-project
@@ -118,21 +88,6 @@ const SCMPluginForProjectResponseEnableExportTestFile = "enable_scm_plugin_expor
 // SCMPluginForProjectResponseDisableExportTestFile is test data for disabling an scm export plugin
 const SCMPluginForProjectResponseDisableExportTestFile = "disable_scm_plugin_export.json"
 
-// FromReader returns a SCMPluginForProjectResponse from an io.Reader
-func (a *SCMPluginForProjectResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromBytes returns a SCMPluginForProjectResponse from a byte slice
-func (a *SCMPluginForProjectResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
-
 // GetProjectSCMStatusResponse is the response for getting a project's scm status
 // http://rundeck.org/docs/api/index.html#get-project-scm-status
 type GetProjectSCMStatusResponse struct {
@@ -149,21 +104,6 @@ const GetProjectSCMStatusResponseImportTestFile = "get_project_scm_status_import
 
 // GetProjectSCMStatusResponseExportTestFile is test data for a GetProjectSCMStatusResponse export plugin
 const GetProjectSCMStatusResponseExportTestFile = "get_project_scm_status_export.json"
-
-// FromReader returns a GetProjectSCMStatusResponse from an io.Reader
-func (a *GetProjectSCMStatusResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromBytes returns a GetProjectSCMStatusResponse from a byte slice
-func (a *GetProjectSCMStatusResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
 
 // GetProjectSCMConfigResponse is the response for getting a project's scm config
 // http://rundeck.org/docs/api/index.html#get-project-scm-config
@@ -182,31 +122,16 @@ const GetProjectSCMConfigResponseImportTestFile = "get_project_scm_config_import
 // GetProjectSCMConfigResponseExportTestFile is testdata for GetProjectSCMConfigResponse for export plugins
 const GetProjectSCMConfigResponseExportTestFile = "get_project_scm_config_export.json"
 
-// FromReader returns a GetProjectSCMConfigResponse from an io.Reader
-func (a *GetProjectSCMConfigResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromBytes returns a GetProjectSCMConfigResponse from a byte slice
-func (a *GetProjectSCMConfigResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
-
 // GetSCMActionInputFieldsResponse is the response for getting a project's scm action input fields
 // http://rundeck.org/docs/api/index.html#get-project-scm-action-input-fields
 // http://rundeck.org/docs/api/index.html#get-job-scm-action-input-fields
 type GetSCMActionInputFieldsResponse struct {
 	SCMResponse
-	ActionID    string              `json:"actionId"`
-	Description string              `json:"description"`
-	Fields      []map[string]string `json:"fields"`
-	Integration string              `json:"integration"`
-	Title       string              `json:"title"`
+	ActionID    string                   `json:"actionId"`
+	Description string                   `json:"description"`
+	Fields      []map[string]interface{} `json:"fields"`
+	Integration string                   `json:"integration"`
+	Title       string                   `json:"title"`
 	ImportItems *[]struct {
 		ItemID string `json:"itemId"`
 		Job    struct {
@@ -229,20 +154,17 @@ type GetSCMActionInputFieldsResponse struct {
 	} `json:"exportItems,omitempty"`
 }
 
-// FromReader returns a GetSCMActionInputFieldsResponse from an io.Reader
-func (a *GetSCMActionInputFieldsResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
+// GetSCMActionInputFieldsResponseTestFileProjectImport is test data for project import plugins
+const GetSCMActionInputFieldsResponseTestFileProjectImport = "get_project_scm_action_input_fields_import.json"
 
-// FromBytes returns a GetSCMActionInputFieldsResponse from a byte slice
-func (a *GetSCMActionInputFieldsResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
+// GetSCMActionInputFieldsResponseTestFileProjectExport is test data for project export plugins
+const GetSCMActionInputFieldsResponseTestFileProjectExport = "get_project_scm_action_input_fields_export.json"
+
+// GetSCMActionInputFieldsResponseTestFileJobImport is test data for job import plugins
+const GetSCMActionInputFieldsResponseTestFileJobImport = "get_job_scm_action_input_fields_import.json"
+
+// GetSCMActionInputFieldsResponseTestFileJobExport is test data for job export plugins
+const GetSCMActionInputFieldsResponseTestFileJobExport = "get_job_scm_action_input_fields_export.json"
 
 // GetJobSCMStatusResponse is the response for getting a job's scm status
 // http://rundeck.org/docs/api/index.html#get-job-scm-status
@@ -264,20 +186,11 @@ type GetJobSCMStatusResponse struct {
 	SynchState  string `json:"synchState"`
 }
 
-// FromReader returns a GetJobSCMStatusResponse from an io.Reader
-func (a *GetJobSCMStatusResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
+// GetJobSCMStatusResponseTestFileImport is test data for job import plugins
+const GetJobSCMStatusResponseTestFileImport = "get_job_scm_status_import.json"
 
-// FromBytes returns a GetJobSCMStatusResponse from a byte slice
-func (a *GetJobSCMStatusResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
-}
+// GetJobSCMStatusResponseTestFileExport is test data for job import plugins
+const GetJobSCMStatusResponseTestFileExport = "get_job_scm_status_export.json"
 
 // GetJobSCMDiffResponse is the response for a job scm diff
 // http://rundeck.org/docs/api/index.html#get-job-scm-diff
@@ -304,6 +217,12 @@ type GetJobSCMDiffResponse struct {
 	Project     string `json:"project"`
 }
 
+// GetJobSCMDiffResponseTestFileImport is test data for job scm diff import plugins
+const GetJobSCMDiffResponseTestFileImport = "get_job_scm_diff_import.json"
+
+// GetJobSCMDiffResponseTestFileExport is test data for job scm diff import plugins
+const GetJobSCMDiffResponseTestFileExport = "get_job_scm_diff_export.json"
+
 // FromReader returns a GetJobSCMDiffResponse from an io.Reader
 func (a *GetJobSCMDiffResponse) FromReader(i io.Reader) error {
 	b, err := ioutil.ReadAll(i)
@@ -326,19 +245,4 @@ type PerformJobSCMActionResponse struct {
 	Input struct {
 		Message string `json:"message"`
 	} `json:"input"`
-}
-
-// FromReader returns a PerformJobSCMActionResponse from an io.Reader
-func (a *PerformJobSCMActionResponse) FromReader(i io.Reader) error {
-	b, err := ioutil.ReadAll(i)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(b, a)
-}
-
-// FromBytes returns a PerformJobSCMActionResponse from a byte slice
-func (a *PerformJobSCMActionResponse) FromBytes(f []byte) error {
-	file := bytes.NewReader(f)
-	return a.FromReader(file)
 }

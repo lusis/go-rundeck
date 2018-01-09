@@ -3,6 +3,9 @@ package responses
 // JobYAMLResponse represents a rundeck job-yaml response
 type JobYAMLResponse []*JobYAMLDetailResponse
 
+// JobYAMLResponseTestFile is test data for a job definition
+const JobYAMLResponseTestFile = "job_definition.yaml"
+
 func (a JobYAMLResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a JobYAMLResponse) maxVersion() int  { return CurrentVersion }
 func (a JobYAMLResponse) deprecated() bool { return false }
@@ -10,6 +13,7 @@ func (a JobYAMLResponse) deprecated() bool { return false }
 // JobYAMLDetailResponse represents the details of a yaml job definition response
 type JobYAMLDetailResponse struct {
 	Description        string                   `yaml:"description"`
+	LogLevel           string                   `yaml:"loglevel"`
 	ExecutionEnabled   string                   `yaml:"executionEnabled"`
 	Group              string                   `yaml:"group"`
 	ID                 string                   `yaml:"id"`

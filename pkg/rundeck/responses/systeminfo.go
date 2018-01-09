@@ -125,8 +125,9 @@ type SysInfoExecutionsResponse struct {
 
 // SysInfoOSResponse represents an OS response
 type SysInfoOSResponse struct {
-	Arch string `json:"arch"`
-	Name string `json:"name"`
+	Arch    string `json:"arch"`
+	Name    string `json:"name"`
+	Version string `json:"version"`
 }
 
 // SysInfoJVMResponse represents a jvm response

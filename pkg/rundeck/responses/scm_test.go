@@ -1,9 +1,11 @@
 package responses
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
+	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,12 +16,15 @@ func TestListSCMPluginsResponseImport(t *testing.T) {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestListSCMPluginsResponseExport(t *testing.T) {
@@ -28,13 +33,15 @@ func TestListSCMPluginsResponseExport(t *testing.T) {
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
-
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestSCMPluginResponse(t *testing.T) {
@@ -48,13 +55,15 @@ func TestGetSCMPluginInputFieldsResponseImport(t *testing.T) {
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
-
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestGetSCMPluginInputFieldsResponseExport(t *testing.T) {
@@ -64,12 +73,15 @@ func TestGetSCMPluginInputFieldsResponseExport(t *testing.T) {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestSCMPluginForProjectResponseEnableImport(t *testing.T) {
@@ -79,12 +91,15 @@ func TestSCMPluginForProjectResponseEnableImport(t *testing.T) {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestSCMPluginForProjectResponseDisableImport(t *testing.T) {
@@ -94,12 +109,15 @@ func TestSCMPluginForProjectResponseDisableImport(t *testing.T) {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestSCMPluginForProjectResponseEnableExport(t *testing.T) {
@@ -109,12 +127,15 @@ func TestSCMPluginForProjectResponseEnableExport(t *testing.T) {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestSCMPluginForProjectResponseDisableExport(t *testing.T) {
@@ -124,12 +145,15 @@ func TestSCMPluginForProjectResponseDisableExport(t *testing.T) {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestGetProjectSCMStatusResponseImport(t *testing.T) {
@@ -139,12 +163,15 @@ func TestGetProjectSCMStatusResponseImport(t *testing.T) {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestGetProjectSCMStatusResponseExport(t *testing.T) {
@@ -154,27 +181,33 @@ func TestGetProjectSCMStatusResponseExport(t *testing.T) {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestGetProjectSCMConfigResponseImport(t *testing.T) {
 	obj := &GetProjectSCMConfigResponse{}
-	data, dataErr := testdata.GetBytes(GetProjectSCMStatusResponseImportTestFile)
+	data, dataErr := testdata.GetBytes(GetProjectSCMConfigResponseImportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
 }
 
 func TestGetProjectSCMConfigResponseExport(t *testing.T) {
@@ -184,10 +217,149 @@ func TestGetProjectSCMConfigResponseExport(t *testing.T) {
 		t.Fatalf(dataErr.Error())
 	}
 
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.NotNil(t, obj)
+}
+
+func TestGetSCMActionInputFieldsResponseProjectImport(t *testing.T) {
+	obj := &GetSCMActionInputFieldsResponse{}
+	data, dataErr := testdata.GetBytes(GetSCMActionInputFieldsResponseTestFileProjectImport)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+}
+
+func TestGetSCMActionInputFieldsResponseProjectExport(t *testing.T) {
+	obj := &GetSCMActionInputFieldsResponse{}
+	data, dataErr := testdata.GetBytes(GetSCMActionInputFieldsResponseTestFileProjectExport)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+}
+
+func TestGetSCMActionInputFieldsResponseJobImport(t *testing.T) {
+	obj := &GetSCMActionInputFieldsResponse{}
+	data, dataErr := testdata.GetBytes(GetSCMActionInputFieldsResponseTestFileJobImport)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+}
+
+func TestGetSCMActionInputFieldsResponseJobExport(t *testing.T) {
+	obj := &GetSCMActionInputFieldsResponse{}
+	data, dataErr := testdata.GetBytes(GetSCMActionInputFieldsResponseTestFileJobExport)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+}
+
+func TestGetJobSCMStatusResponseImport(t *testing.T) {
+	obj := &GetJobSCMStatusResponse{}
+	data, dataErr := testdata.GetBytes(GetJobSCMStatusResponseTestFileImport)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+}
+
+func TestGetJobSCMStatusResponseExport(t *testing.T) {
+	obj := &GetJobSCMStatusResponse{}
+	data, dataErr := testdata.GetBytes(GetJobSCMStatusResponseTestFileExport)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+}
+
+func TestGetJobSCMDiffResponseExport(t *testing.T) {
+	obj := &GetJobSCMDiffResponse{}
+	data, dataErr := testdata.GetBytes(GetJobSCMDiffResponseTestFileExport)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+}
+
+func TestGetJobSCMDiffResponseImport(t *testing.T) {
+	obj := &GetJobSCMDiffResponse{}
+	data, dataErr := testdata.GetBytes(GetJobSCMDiffResponseTestFileImport)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
 }

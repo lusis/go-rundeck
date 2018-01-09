@@ -1,48 +1,44 @@
 package responses
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
+	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUserInfoResponse(t *testing.T) {
-	obj := UserProfileResponse{}
+	obj := &UserProfileResponse{}
 	data, dataErr := testdata.GetBytes(UserProfileResponseTestFile)
 	if dataErr != nil {
-		t.Error(dataErr.Error())
-		t.FailNow()
+		t.Fatalf(dataErr.Error())
 	}
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
-
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.Equal(t, "admin", obj.Login)
-	assert.Equal(t, "Admin", obj.FirstName)
-	assert.Equal(t, "McAdmin", obj.LastName)
-	assert.Equal(t, "admin@server.com", obj.Email)
 }
 
 func TestUsersInfoResponse(t *testing.T) {
-	obj := ListUsersResponse{}
+	obj := &ListUsersResponse{}
 	data, dataErr := testdata.GetBytes(ListUsersResponseTestFile)
 	if dataErr != nil {
-		t.Error(dataErr.Error())
-		t.FailNow()
+		t.Fatalf(dataErr.Error())
 	}
-	err := obj.FromBytes(data)
-	if err != nil {
-		t.Error(err)
-		t.FailNow()
-	}
-
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.Len(t, obj, 2)
-	assert.NotNil(t, obj[0])
-	assert.NotNil(t, obj[1])
-
 }
