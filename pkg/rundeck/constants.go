@@ -2,6 +2,9 @@ package rundeck
 
 import "errors"
 
+// defaultNodeFilter is the default filter to use when things require a node filter string
+const defaultNodeFilter = "name: .*"
+
 // MaxRundeckVersion is the maximum version of the api this library supports
 // can be overridden
 // TODO: make this a min/max option and validate

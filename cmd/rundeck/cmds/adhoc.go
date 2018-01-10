@@ -24,5 +24,6 @@ func adHocCommands() *cobra.Command {
 	cmd.PersistentFlags().BoolVar(&adHocNodeKeepGoing, "keep-going", false, "keep going on failure")
 	cmd.AddCommand(runAdHocCmdCommand())
 	cmd.AddCommand(runAdHocScriptCommand())
+	cmd.AddCommand(runAdHocURLCommand())
 	return cmd
 }

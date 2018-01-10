@@ -149,6 +149,8 @@ func ScriptFileExtension(e string) AdHocScriptOption {
 
 // RunAdHocScript runs a Script ad-hoc
 // http://rundeck.org/docs/api/index.html#running-adhoc-scripts
+// Because script contents can be overly complicated and large,
+// we do not currently run scripts via json body post
 func (c *Client) RunAdHocScript(projectID string, scriptData io.Reader, opts ...AdHocScriptOption) (*AdHocExecution, error) {
 	if err := c.checkRequiredAPIVersion(responses.AdHocExecutionResponse{}); err != nil {
 		return nil, err
@@ -184,77 +186,102 @@ func (c *Client) RunAdHocScript(projectID string, scriptData io.Reader, opts ...
 }
 
 // AdHocScriptURLOption is a function option type for adhoc commands
-type AdHocScriptURLOption func(c *requests.AdHocScriptURLRequest) error
+type AdHocScriptURLOption func(c *map[string]string) error
 
 // ScriptURLRunAs is the option for specifying who to run an adhoc command
 func ScriptURLRunAs(user string) AdHocScriptURLOption {
-	return func(c *requests.AdHocScriptURLRequest) error {
-		c.AsUser = user
+	return func(c *map[string]string) error {
+		(*c)["asUser"] = user
 		return nil
 	}
 }
 
 // ScriptURLNodeFilters is the option for passing node filters to an adhoc command
 func ScriptURLNodeFilters(filters string) AdHocScriptURLOption {
-	return func(c *requests.AdHocScriptURLRequest) error {
-		c.Filter = filters
+	return func(c *map[string]string) error {
+		(*c)["filter"] = filters
 		return nil
 	}
 }
 
 // ScriptURLThreadCount is the option for number of threads to run an adhoc command
 func ScriptURLThreadCount(count int) AdHocScriptURLOption {
-	return func(c *requests.AdHocScriptURLRequest) error {
-		c.NodeThreadCount = count
+	return func(c *map[string]string) error {
+		(*c)["nodeThreadcount"] = fmt.Sprintf("%d", count)
 		return nil
 	}
 }
 
 // ScriptURLKeepGoing is the option to keep running even if a node fails
-func ScriptURLKeepGoing() AdHocScriptURLOption {
-	return func(c *requests.AdHocScriptURLRequest) error {
-		c.NodeKeepGoing = true
+func ScriptURLKeepGoing(b bool) AdHocScriptURLOption {
+	return func(c *map[string]string) error {
+		(*c)["nodeKeepgoing"] = fmt.Sprintf("%t", b)
 		return nil
 	}
 }
 
 // ScriptURLInterpreter is the option to set the ScriptURL interpreter
 func ScriptURLInterpreter(i string) AdHocScriptURLOption {
-	return func(c *requests.AdHocScriptURLRequest) error {
-		c.ScriptInterpreter = i
+	return func(c *map[string]string) error {
+		(*c)["scriptInterpreter"] = i
 		return nil
 	}
 }
 
 // ScriptURLArgString is the option for setting arguments passed to the ScriptURL being run
 func ScriptURLArgString(i string) AdHocScriptURLOption {
-	return func(c *requests.AdHocScriptURLRequest) error {
-		c.ArgString = i
+	return func(c *map[string]string) error {
+		(*c)["argString"] = i
 		return nil
 	}
 }
 
 // ScriptURLArgsQuoted is the option for setting if ScriptURL and args are quoted when passed to the interpreter
 func ScriptURLArgsQuoted(q bool) AdHocScriptURLOption {
-	return func(c *requests.AdHocScriptURLRequest) error {
-		c.InterpreterArgsQuoted = q
+	return func(c *map[string]string) error {
+		(*c)["interpreterArgsQuoted"] = fmt.Sprintf("%t", q)
 		return nil
 	}
 }
 
 // ScriptURLFileExtension is the option for setting the file extension on the remote host
 func ScriptURLFileExtension(e string) AdHocScriptURLOption {
-	return func(c *requests.AdHocScriptURLRequest) error {
-		c.FileExtension = e
+	return func(c *map[string]string) error {
+		(*c)["fileExtension"] = e
 		return nil
 	}
 }
 
-// RunAdHocScriptURLFromURL runs a ScriptURL ad-hoc from a url
+// RunAdHocScriptFromURL runs a ScriptURL ad-hoc from a url
 // http://rundeck.org/docs/api/index.html#running-adhoc-ScriptURL-urls
-func (c *Client) RunAdHocScriptURLFromURL() error {
+// Due to the fact that we must still provide scriptURL as a query param,
+// we do not currently run script urls via json body post
+func (c *Client) RunAdHocScriptFromURL(projectID, scriptURL string, opts ...AdHocScriptURLOption) (*AdHocExecution, error) {
 	if err := c.checkRequiredAPIVersion(responses.AdHocExecutionResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+	data := &AdHocExecution{}
+	qp := &map[string]string{}
+	for _, opt := range opts {
+		if err := opt(qp); err != nil {
+			return nil, &OptionError{msg: multierror.Append(errOption, err).Error()}
+		}
+	}
+
+	if (*qp)["filter"] == "" {
+		(*qp)["filter"] = defaultNodeFilter
+	}
+	(*qp)["scriptURL"] = scriptURL
+	res, err := c.httpPost("project/"+projectID+"/run/url",
+		requestExpects(200),
+		accept("application/json"),
+		contentType("application/x-www-form-urlencoded"),
+		queryParams(*qp))
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(res, data); err != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, err).Error()}
+	}
+	return data, nil
 }

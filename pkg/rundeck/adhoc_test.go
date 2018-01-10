@@ -2,6 +2,7 @@ package rundeck
 
 import (
 	"errors"
+	"strings"
 	"testing"
 
 	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
@@ -101,4 +102,44 @@ func TestRunAdHocHTTPError(t *testing.T) {
 	res, resErr := client.RunAdHocCommand("testproject", "ps -ef")
 	assert.Error(t, resErr)
 	assert.Nil(t, res)
+}
+
+func TestRunAdHocScript(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	res, resErr := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"))
+	assert.NoError(t, resErr)
+	assert.NotNil(t, res)
+	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
+	assert.Equal(t, 1, res.Execution.ID)
+	assert.Equal(t, "[API Href]", res.Execution.HRef)
+	assert.Equal(t, "[GUI Href]", res.Execution.Permalink)
+}
+
+func TestRunAdHocScriptURL(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	res, resErr := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh")
+	assert.NoError(t, resErr)
+	assert.NotNil(t, res)
+	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
+	assert.Equal(t, 1, res.Execution.ID)
+	assert.Equal(t, "[API Href]", res.Execution.HRef)
+	assert.Equal(t, "[GUI Href]", res.Execution.Permalink)
 }

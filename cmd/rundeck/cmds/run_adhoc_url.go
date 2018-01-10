@@ -2,39 +2,35 @@ package cmds
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/lusis/go-rundeck/pkg/cli"
 	rundeck "github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/spf13/cobra"
 )
 
-func runAdHocScriptFunc(cmd *cobra.Command, args []string) error {
+func runAdHocURLFunc(cmd *cobra.Command, args []string) error {
 	projectID := args[0]
 	script := args[1]
-	options := []rundeck.AdHocScriptOption{
-		rundeck.ScriptThreadCount(adHocNodeThreadCount),
-		rundeck.ScriptKeepGoing(adHocNodeKeepGoing),
-		rundeck.ScriptArgsQuoted(adHocArgsQuoted),
-		rundeck.ScriptInterpreter(adHocScriptInterpreter),
+	options := []rundeck.AdHocScriptURLOption{
+		rundeck.ScriptURLThreadCount(adHocNodeThreadCount),
+		rundeck.ScriptURLKeepGoing(adHocNodeKeepGoing),
+		rundeck.ScriptURLArgsQuoted(adHocArgsQuoted),
+		rundeck.ScriptURLInterpreter(adHocScriptInterpreter),
 	}
 	if &adHocAsUser != nil {
-		options = append(options, rundeck.ScriptRunAs(adHocAsUser))
+		options = append(options, rundeck.ScriptURLRunAs(adHocAsUser))
 	}
 	if &adHocArgString != nil {
-		options = append(options, rundeck.ScriptArgString(adHocArgString))
+		options = append(options, rundeck.ScriptURLArgString(adHocArgString))
 	}
 	if &adHocFileExtension != nil {
-		options = append(options, rundeck.ScriptFileExtension(adHocFileExtension))
+		options = append(options, rundeck.ScriptURLFileExtension(adHocFileExtension))
 	}
 	if &adHocFilter != nil {
-		options = append(options, rundeck.ScriptNodeFilters(adHocFilter)) // nolint: ineffassign
+		options = append(options, rundeck.ScriptURLNodeFilters(adHocFilter)) // nolint: ineffassign
 	}
-	scriptData, scriptErr := os.Open(script)
-	if scriptErr != nil {
-		return scriptErr
-	}
-	res, err := cli.Client.RunAdHocScript(projectID, scriptData, options...)
+
+	res, err := cli.Client.RunAdHocScriptFromURL(projectID, script, options...)
 	if err != nil {
 		return err
 	}
@@ -75,12 +71,12 @@ func runAdHocScriptFunc(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func runAdHocScriptCommand() *cobra.Command {
+func runAdHocURLCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "script project-name script-file",
-		Short: "uploads the specified script and runs it against a project on the rundeck server",
+		Use:   "url project-name script-url",
+		Short: "runs script at specified url against a project on the rundeck server",
 		Args:  cobra.MinimumNArgs(2),
-		RunE:  runAdHocScriptFunc,
+		RunE:  runAdHocURLFunc,
 	}
 	rootCmd := cli.New(cmd)
 	rootCmd.Flags().StringVar(&adHocScriptInterpreter, "interpreter", "/bin/bash", "the script interpreter to use")
