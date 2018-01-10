@@ -8,7 +8,7 @@ RUN apt-get install -t jessie-backports -yq openjdk-8-jdk
 RUN apt-get install -yq openssh-client curl uuid-runtime python3 git
 RUN groupadd rundeck
 RUN useradd -g rundeck rundeck
-RUN curl -L http://dl.bintray.com/rundeck/rundeck-deb/rundeck-2.10.1-1-GA.deb -o /tmp/rundeck.deb; dpkg -i /tmp/rundeck.deb; rm -rf /tmp/rundeck.deb
+RUN curl -L http://dl.bintray.com/rundeck/rundeck-deb/rundeck-2.10.2-1-GA.deb -o /tmp/rundeck.deb; dpkg -i /tmp/rundeck.deb; rm -rf /tmp/rundeck.deb
 ADD rundeckd.init /etc/init.d/rundeckd
 ADD admin.aclpolicy /etc/rundeck/admin.aclpolicy
 ADD apitoken.aclpolicy /etc/rundeck/apitoken.aclpolicy
