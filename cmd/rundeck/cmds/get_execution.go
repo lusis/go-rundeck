@@ -25,7 +25,7 @@ func getExecutionFunc(cmd *cobra.Command, args []string) error {
 	})
 	var dateEnded string
 	if data.DateEnded.Date == nil {
-		dateEnded = "running"
+		dateEnded = "running" // nolint: goconst
 	} else {
 		dateEnded = data.DateEnded.Date.String()
 	}
