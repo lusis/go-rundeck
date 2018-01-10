@@ -52,7 +52,7 @@ func TestRunAdHocWithOptions(t *testing.T) {
 		CmdRunAs("auser"),
 		CmdNodeFilters("*"),
 		CmdThreadCount(2),
-		CmdKeepGoing(),
+		CmdKeepGoing(true),
 	}
 	res, resErr := client.RunAdHocCommand("testproject", "ps -ef", options...)
 	assert.NoError(t, resErr)

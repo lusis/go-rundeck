@@ -15,6 +15,7 @@ func RootCommand() {
 		Short: "Unified rundeck cli binary",
 	}
 	cmd.AddCommand(projectCommands(),
+		adHocCommands(),
 		listCommands(),
 		systemPoliciesCommands(),
 		jobCommands(),
