@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	multierror "github.com/hashicorp/go-multierror"
+	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck/responses"
 )
 
@@ -14,15 +15,20 @@ type Token struct {
 	responses.TokenResponse
 }
 
+// TokenRequest is a new token request
+type TokenRequest struct {
+	requests.TokenRequest
+}
+
 // Tokens is a collection of Token
 type Tokens responses.ListTokensResponse
 
 // TokenOption is a type for options in creating new tokens
-type TokenOption func(*Token) error
+type TokenOption func(*TokenRequest) error
 
 // TokenDuration is an option for setting the duration of a new token
 func TokenDuration(duration string) TokenOption {
-	return func(t *Token) error {
+	return func(t *TokenRequest) error {
 		t.Duration = duration
 		return nil
 	}
@@ -30,7 +36,7 @@ func TokenDuration(duration string) TokenOption {
 
 // TokenRoles is an option to set the roles for a new token
 func TokenRoles(roles ...string) TokenOption {
-	return func(t *Token) error {
+	return func(t *TokenRequest) error {
 		t.Roles = append(t.Roles, roles...)
 		return nil
 	}
@@ -97,7 +103,7 @@ func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
 	if err := c.checkRequiredAPIVersion(responses.TokenResponse{}); err != nil {
 		return nil, err
 	}
-	tokenRequest := &Token{}
+	tokenRequest := &TokenRequest{}
 	for _, opt := range opts {
 		if err := opt(tokenRequest); err != nil {
 			return nil, &OptionError{msg: multierror.Append(errOption, err).Error()}

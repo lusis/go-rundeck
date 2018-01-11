@@ -11,7 +11,7 @@ import (
 )
 
 func testFailedTokenOption() TokenOption {
-	return func(t *Token) error {
+	return func(t *TokenRequest) error {
 		return errors.New("option setting failed")
 	}
 }
@@ -260,7 +260,7 @@ func TestCreateTokenWithOptsError(t *testing.T) {
 }
 
 func TestTokenOption(t *testing.T) {
-	token := &Token{}
+	token := &TokenRequest{}
 	opts := []TokenOption{
 		TokenRoles("admin", "user"),
 		TokenDuration("120d"),

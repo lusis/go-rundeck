@@ -18,7 +18,6 @@ type TokenResponse struct {
 	Expiration *JSONTime `json:"expiration,omitempty"`
 	Roles      []string  `json:"roles,omitempty"`
 	Expired    bool      `json:"expired,omitempty"`
-	Duration   string    `json:"duration,omitempty"`
 }
 
 func (t TokenResponse) minVersion() int  { return 19 }

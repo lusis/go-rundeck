@@ -15,6 +15,7 @@ const minJSONSupportedAPIVersion = 14
 
 const (
 	basicAuthType = "basic"
+	tokenAuthType = "token"
 )
 
 var (

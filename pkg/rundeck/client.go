@@ -29,14 +29,22 @@ type Client struct {
 	Config     *ClientConfig
 }
 
-// NewClient creates a new client from the provided `ClientConfig`
-func NewClient(config *ClientConfig) (*Client, error) {
-	if config.HTTPClient == nil {
-		tlsClientConfig := tls.Config{InsecureSkipVerify: !config.VerifySSL}
-		transport := &http.Transport{TLSClientConfig: &tlsClientConfig}
-		client := &http.Client{Transport: transport}
-		config.HTTPClient = client
+func defaultClientConfig() (*ClientConfig, error) {
+	c, err := defaultHTTPClient(true)
+	if err != nil {
+		return nil, err
 	}
+	return &ClientConfig{
+		VerifySSL:  true,
+		APIVersion: MaxRundeckVersion,
+		HTTPClient: c,
+	}, nil
+}
+
+func defaultHTTPClient(verifySSL bool) (*http.Client, error) {
+	tlsClientConfig := tls.Config{InsecureSkipVerify: !verifySSL}
+	transport := &http.Transport{TLSClientConfig: &tlsClientConfig}
+	client := &http.Client{Transport: transport}
 	options := cookiejar.Options{
 		PublicSuffixList: publicsuffix.List,
 	}
@@ -44,30 +52,48 @@ func NewClient(config *ClientConfig) (*Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	config.HTTPClient.Jar = jar
-	client := Client{
+	client.Jar = jar
+	return client, nil
+}
+
+// NewClient creates a new client from the provided `ClientConfig`
+func NewClient(config *ClientConfig) (*Client, error) {
+	if config.HTTPClient == nil {
+		c, err := defaultHTTPClient(config.VerifySSL)
+		if err != nil {
+			return nil, err
+		}
+
+		config.HTTPClient = c
+	}
+	rdClient := Client{
 		HTTPClient: config.HTTPClient,
 		Config:     config,
 	}
-	return &client, nil
+	return &rdClient, nil
 }
 
 func clientConfigFrom(from string) (*ClientConfig, error) {
-	config := ClientConfig{}
+	config, configErr := defaultClientConfig()
+	if configErr != nil {
+		return nil, configErr
+	}
 
 	switch from {
 	case "environment":
+		if os.Getenv("RUNDECK_URL") == "" {
+			return nil, fmt.Errorf("you must set the environment variable RUNDECK_URL")
+
+		}
 		if os.Getenv("RUNDECK_TOKEN") == "" {
 			if os.Getenv("RUNDECK_USERNAME") == "" || os.Getenv("RUNDECK_PASSWORD") == "" {
 				return nil, fmt.Errorf("you must set either RUNDECK_TOKEN or RUNDECK_USERNAME and RUNDECK_PASSWORD")
 			}
 			config.AuthMethod = basicAuthType
 		} else {
-			config.AuthMethod = "token"
+			config.AuthMethod = tokenAuthType
 		}
-		if os.Getenv("RUNDECK_VERSION") == "" {
-			config.APIVersion = MaxRundeckVersion
-		} else {
+		if os.Getenv("RUNDECK_VERSION") != "" {
 			ver := os.Getenv("RUNDECK_VERSION")
 			intVer, intverErr := strconv.Atoi(ver)
 			if intverErr != nil {
@@ -78,20 +104,15 @@ func clientConfigFrom(from string) (*ClientConfig, error) {
 			}
 			config.APIVersion = os.Getenv("RUNDECK_VERSION")
 		}
-
-		if os.Getenv("RUNDECK_URL") == "" {
-			return nil, fmt.Errorf("you must set the environment variable RUNDECK_URL")
-
-		}
 		config.BaseURL = os.Getenv("RUNDECK_URL")
 	}
-	if config.AuthMethod == "token" {
+	if config.AuthMethod == tokenAuthType {
 		config.Token = os.Getenv("RUNDECK_TOKEN")
 	} else {
 		config.Username = os.Getenv("RUNDECK_USERNAME")
 		config.Password = os.Getenv("RUNDECK_PASSWORD")
 	}
-	return &config, nil
+	return config, nil
 }
 
 // NewClientFromEnv returns a new client from provided env vars
@@ -100,5 +121,30 @@ func NewClientFromEnv() (*Client, error) {
 	if configErr != nil {
 		return nil, configErr
 	}
+	return NewClient(config)
+}
+
+// NewBasicAuthClient returns a new client configured for basic auth using default settings
+func NewBasicAuthClient(username, password, url string) (*Client, error) {
+	config, configErr := defaultClientConfig()
+	if configErr != nil {
+		return nil, configErr
+	}
+	config.AuthMethod = basicAuthType
+	config.Username = username
+	config.Password = password
+	config.BaseURL = url
+	return NewClient(config)
+}
+
+// NewTokenAuthClient returns a new client configured for token auth using default settings
+func NewTokenAuthClient(token, url string) (*Client, error) {
+	config, configErr := defaultClientConfig()
+	if configErr != nil {
+		return nil, configErr
+	}
+	config.AuthMethod = tokenAuthType
+	config.Token = token
+	config.BaseURL = url
 	return NewClient(config)
 }

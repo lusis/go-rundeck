@@ -66,6 +66,30 @@ func TestNewClientCustomHTTPClient(t *testing.T) {
 	assert.Equal(t, "Custom transport used", string(res))
 }
 
+func TestNewTokenAuthClient(t *testing.T) {
+	client, err := NewTokenAuthClient("abcdefg", "http://localhost:4440")
+	assert.NoError(t, err)
+	assert.Equal(t, MaxRundeckVersion, client.Config.APIVersion)
+	assert.NotNil(t, client.HTTPClient)
+	assert.NotNil(t, client.Config.HTTPClient)
+	assert.Equal(t, "token", client.Config.AuthMethod)
+	assert.Equal(t, "abcdefg", client.Config.Token)
+	assert.True(t, client.Config.VerifySSL)
+	assert.Equal(t, "http://localhost:4440", client.Config.BaseURL)
+}
+
+func TestNewBasicAuthClient(t *testing.T) {
+	client, err := NewBasicAuthClient("abcdefg", "12345", "http://localhost:4440")
+	assert.NoError(t, err)
+	assert.Equal(t, MaxRundeckVersion, client.Config.APIVersion)
+	assert.NotNil(t, client.HTTPClient)
+	assert.NotNil(t, client.Config.HTTPClient)
+	assert.Equal(t, "basic", client.Config.AuthMethod)
+	assert.Equal(t, "abcdefg", client.Config.Username)
+	assert.Equal(t, "12345", client.Config.Password)
+	assert.True(t, client.Config.VerifySSL)
+	assert.Equal(t, "http://localhost:4440", client.Config.BaseURL)
+}
 func TestNewClientFromEnvToken(t *testing.T) {
 	_ = os.Setenv("RUNDECK_TOKEN", "lK2iaQLEkf6rINMAYOXfrFNIpuwHRq67")
 	_ = os.Setenv("RUNDECK_URL", "http://localhost:4440")
