@@ -23,7 +23,6 @@ func getTokensFunc(cmd *cobra.Command, args []string) error {
 		"ID",
 		"User",
 		"Creator",
-		"Duration",
 		"Expiration",
 		"Expired?",
 		"Roles",
@@ -34,12 +33,11 @@ func getTokensFunc(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		for _, d := range *data {
+		for _, d := range data {
 			if rowErr := cli.OutputFormatter.AddRow([]string{
 				d.ID,
 				d.User,
 				d.Creator,
-				d.Duration,
 				d.Expiration.String(),
 				fmt.Sprintf("%t", d.Expired),
 				strings.Join(d.Roles, ","),
@@ -57,7 +55,6 @@ func getTokensFunc(cmd *cobra.Command, args []string) error {
 				d.ID,
 				d.User,
 				d.Creator,
-				d.Duration,
 				d.Expiration.String(),
 				fmt.Sprintf("%t", d.Expired),
 				strings.Join(d.Roles, ","),

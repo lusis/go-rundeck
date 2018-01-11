@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	multierror "github.com/hashicorp/go-multierror"
 	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
@@ -37,18 +38,18 @@ func TokenDuration(duration string) TokenOption {
 // TokenRoles is an option to set the roles for a new token
 func TokenRoles(roles ...string) TokenOption {
 	return func(t *TokenRequest) error {
-		t.Roles = append(t.Roles, roles...)
+		t.Roles = strings.Join(roles, ",")
 		return nil
 	}
 }
 
 // ListTokens gets all tokens for the current user
 // http://rundeck.org/docs/api/index.html#list-tokens
-func (c *Client) ListTokens() (*Tokens, error) {
+func (c *Client) ListTokens() ([]*Token, error) {
 	if err := c.checkRequiredAPIVersion(responses.ListTokensResponse{}); err != nil {
 		return nil, err
 	}
-	tokens := Tokens{}
+	tokens := []*Token{}
 	data, err := c.httpGet("tokens", requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
@@ -57,7 +58,7 @@ func (c *Client) ListTokens() (*Tokens, error) {
 	if jsonErr != nil {
 		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
 	}
-	return &tokens, nil
+	return tokens, nil
 }
 
 // ListTokensForUser gets the api tokens for a user
@@ -99,10 +100,11 @@ func (c *Client) GetToken(tokenID string) (*Token, error) {
 
 // CreateToken creates a token
 // http://rundeck.org/docs/api/index.html#create-a-token
-func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
+func (c *Client) CreateToken(username string, opts ...TokenOption) (*Token, error) {
 	if err := c.checkRequiredAPIVersion(responses.TokenResponse{}); err != nil {
 		return nil, err
 	}
+
 	tokenRequest := &TokenRequest{}
 	for _, opt := range opts {
 		if err := opt(tokenRequest); err != nil {
@@ -110,10 +112,14 @@ func (c *Client) CreateToken(u string, opts ...TokenOption) (*Token, error) {
 		}
 	}
 	if len(tokenRequest.Roles) == 0 {
-		tokenRequest.Roles = []string{"*"}
+		tokenRequest.Roles = "*"
 	}
-	newToken, _ := json.Marshal(tokenRequest)
-	url := fmt.Sprintf("tokens/%s", u)
+	tokenRequest.User = username
+	newToken, marshalErr := json.Marshal(tokenRequest)
+	if marshalErr != nil {
+		return nil, marshalErr
+	}
+	url := "tokens"
 	data, err := c.httpPost(url, requestJSON(), withBody(bytes.NewReader(newToken)), requestExpects(201))
 	if err != nil {
 		return nil, err

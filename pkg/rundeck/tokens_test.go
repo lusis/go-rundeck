@@ -28,15 +28,15 @@ func TestGetTokens(t *testing.T) {
 	}
 	s, err := client.ListTokens()
 	assert.NoError(t, err)
-	assert.Len(t, (*s), 4)
-	assert.Equal(t, "user3", (*s)[0].User)
-	assert.Equal(t, "ece75ac8-2791-442e-b179-a9907d83fd05", (*s)[0].ID)
-	assert.Equal(t, "user3", (*s)[0].Creator)
-	roles := (*s)[0].Roles
+	assert.Len(t, s, 4)
+	assert.Equal(t, "user3", s[0].User)
+	assert.Equal(t, "ece75ac8-2791-442e-b179-a9907d83fd05", s[0].ID)
+	assert.Equal(t, "user3", s[0].Creator)
+	roles := s[0].Roles
 	assert.Len(t, roles, 2)
 	assert.Equal(t, "DEV_99", roles[0])
-	assert.False(t, (*s)[0].Expired)
-	assert.NotEmpty(t, (*s)[0].Expiration)
+	assert.False(t, s[0].Expired)
+	assert.NotEmpty(t, s[0].Expiration)
 
 }
 

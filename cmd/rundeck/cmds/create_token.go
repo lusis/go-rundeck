@@ -22,16 +22,15 @@ func createTokenFunc(cmd *cobra.Command, args []string) error {
 		"Expiration",
 		"Roles",
 		"Expired",
-		"Duration",
 	})
 	rowErr := cli.OutputFormatter.AddRow([]string{
 		token.ID,
 		token.User,
+		token.Token,
 		token.Creator,
 		token.Expiration.String(),
 		strings.Join(token.Roles, ", "),
 		fmt.Sprintf("%t", token.Expired),
-		token.Duration,
 	})
 	if rowErr != nil {
 		return rowErr
