@@ -73,8 +73,8 @@ func TestListProjects(t *testing.T) {
 	obj, cErr := client.ListProjects()
 	assert.NoError(t, cErr)
 	assert.NotNil(t, obj)
-	assert.Len(t, *obj, 1)
-	project := (*obj)[0]
+	assert.Len(t, obj, 1)
+	project := obj[0]
 	assert.Equal(t, "[API Href]", project.URL)
 	assert.Equal(t, "testproject", project.Name)
 	assert.Equal(t, "test project", project.Description)

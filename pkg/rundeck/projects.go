@@ -82,6 +82,41 @@ func ProjectExportAcls(b bool) ProjectExportOption {
 	}
 }
 
+// ProjectImportOption is a functional option for project imports
+type ProjectImportOption func(p *map[string]string) error
+
+// ProjectImportAcls toggles importing acls with the project
+func ProjectImportAcls(b bool) ProjectImportOption {
+	return func(p *map[string]string) error {
+		(*p)["importACL"] = fmt.Sprintf("%t", b)
+		return nil
+	}
+}
+
+// ProjectImportConfigs toggles importing configs with the project
+func ProjectImportConfigs(b bool) ProjectImportOption {
+	return func(p *map[string]string) error {
+		(*p)["importConfig"] = fmt.Sprintf("%t", b)
+		return nil
+	}
+}
+
+// ProjectImportExecutions toggles importing executions with the project
+func ProjectImportExecutions(b bool) ProjectImportOption {
+	return func(p *map[string]string) error {
+		(*p)["importExecutions"] = fmt.Sprintf("%t", b)
+		return nil
+	}
+}
+
+// ProjectImportJobUUIDs toggles importing job uuids with the project
+func ProjectImportJobUUIDs(s string) ProjectImportOption {
+	return func(p *map[string]string) error {
+		(*p)["jobUuidOption"] = s
+		return nil
+	}
+}
+
 // GetProjectInfo gets a project by name
 // http://rundeck.org/docs/api/index.html#getting-project-info
 func (c *Client) GetProjectInfo(name string) (*Project, error) {
@@ -108,7 +143,7 @@ func (c *Client) GetProjectInfo(name string) (*Project, error) {
 
 // ListProjects lists all projects
 // http://rundeck.org/docs/api/index.html#listing-projects
-func (c *Client) ListProjects() (*Projects, error) {
+func (c *Client) ListProjects() (Projects, error) {
 	if err := c.checkRequiredAPIVersion(responses.ListProjectsResponse{}); err != nil {
 		return nil, err
 	}
@@ -128,7 +163,7 @@ func (c *Client) ListProjects() (*Projects, error) {
 			Description: p.Description,
 		})
 	}
-	return projects, nil
+	return *projects, nil
 }
 
 // CreateProject makes a project
@@ -276,9 +311,30 @@ func (c *Client) GetProjectArchiveExportAsyncDownload() error {
 
 // ProjectArchiveImport imports a zip archive to a project
 // http://rundeck.org/docs/api/index.html#project-archive-import
-func (c *Client) ProjectArchiveImport() error {
+func (c *Client) ProjectArchiveImport(projectName string, f io.Reader, opts ...ProjectImportOption) (*responses.ProjectImportArchiveResponse, error) {
 	if err := c.checkRequiredAPIVersion(responses.ProjectImportArchiveResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+	// path: project/[PROJECT]/import{?jobUuidOption,importExecutions,importConfig,importACL}
+	u := "project/" + projectName + "/import"
+	params := &map[string]string{}
+	for _, opt := range opts {
+		if err := opt(params); err != nil {
+			return nil, &OptionError{msg: multierror.Append(errOption, err).Error()}
+		}
+	}
+	res, resErr := c.httpPut(u,
+		withBody(f),
+		contentType("application/zip"),
+		accept("application/json"),
+		queryParams(*params),
+		requestExpects(200))
+	if resErr != nil {
+		return nil, resErr
+	}
+	results := &responses.ProjectImportArchiveResponse{}
+	if jsonErr := json.Unmarshal(res, results); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, jsonErr).Error()}
+	}
+	return results, nil
 }

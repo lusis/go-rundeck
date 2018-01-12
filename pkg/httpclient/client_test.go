@@ -205,3 +205,12 @@ func TestPut(t *testing.T) {
 	assert.NoError(t, jErr)
 	assert.Equal(t, "this is my body", res.Data)
 }
+
+func TestPutWithParams(t *testing.T) {
+	response, err := Put("https://httpbin.org/put?somvar=true", WithBody(strings.NewReader("this is my body")), ContentType("text/plain"))
+	assert.NoError(t, err)
+	res := &testHTPPBinResponse{}
+	jErr := json.Unmarshal(response.Body, &res)
+	assert.NoError(t, jErr)
+	assert.Equal(t, "this is my body", res.Data)
+}

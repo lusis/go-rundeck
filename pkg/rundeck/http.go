@@ -120,7 +120,8 @@ func (rc *Client) httpPut(path string, opts ...httpclient.RequestOption) ([]byte
 		return nil, authErr
 	}
 	opts = append(opts, authOpt...)
-	resp, err := httpclient.Put(rc.makeAPIPath(path), opts...)
+	p := rc.makeAPIPath(path)
+	resp, err := httpclient.Put(p, opts...)
 	if err != nil {
 		if resp.Status == 409 {
 			return nil, ErrResourceConflict

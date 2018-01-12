@@ -20,7 +20,7 @@ func (c *Client) FindJobByName(name string) ([]*JobMetaData, error) {
 	}
 
 	var results []*JobMetaData
-	for _, project := range *projects {
+	for _, project := range projects {
 		jobs, err := c.ListJobs(project.Name)
 		if err != nil {
 			return nil, err

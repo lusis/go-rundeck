@@ -146,35 +146,35 @@ func New(opts ...RequestOption) (*Request, *http.Request, error) {
 
 func delete() RequestOption {
 	return func(r *Request) error {
-		r.method = "DELETE"
+		r.method = http.MethodDelete
 		return nil
 	}
 }
 
 func get() RequestOption {
 	return func(r *Request) error {
-		r.method = "GET"
+		r.method = http.MethodGet
 		return nil
 	}
 }
 
 func put() RequestOption {
 	return func(r *Request) error {
-		r.method = "PUT"
+		r.method = http.MethodPut
 		return nil
 	}
 }
 
 func post() RequestOption {
 	return func(r *Request) error {
-		r.method = "POST"
+		r.method = http.MethodPost
 		return nil
 	}
 }
 
 func head() RequestOption {
 	return func(r *Request) error {
-		r.method = "HEAD"
+		r.method = http.MethodHead
 		return nil
 	}
 }
@@ -212,6 +212,7 @@ func newHTTPRequest(opts ...RequestOption) (*Request, *http.Request, error) {
 	}
 
 	req, err := r.httpRequest()
+
 	return r, req, err
 }
 
@@ -225,13 +226,17 @@ func (cr *Request) httpRequest() (*http.Request, error) {
 	if uErr != nil {
 		return nil, uErr
 	}
-	qs := u.Query()
-	for q, p := range cr.queryParams {
-		qs.Set(q, p)
+
+	if len(cr.queryParams) > 0 {
+		qs := url.Values{}
+		for q, p := range cr.queryParams {
+			qs.Add(q, p)
+		}
+		u.RawQuery = qs.Encode()
 	}
-	u.RawQuery = qs.Encode()
 
 	req, reqErr := http.NewRequest(cr.method, u.String(), cr.body)
+
 	if reqErr != nil {
 		return nil, reqErr
 	}
@@ -273,9 +278,14 @@ func Post(url string, opts ...RequestOption) (*Response, error) {
 
 // Put performs an http PUT
 func Put(url string, opts ...RequestOption) (*Response, error) {
-	opts = append(opts, put())
-	opts = append(opts, setURL(url))
-	return doRequest(opts...)
+	doOpts := []RequestOption{
+		put(),
+		setURL(url),
+	}
+	doOpts = append(doOpts, opts...)
+	//opts = append(opts, put())
+	//opts = append(opts, setURL(url))
+	return doRequest(doOpts...)
 }
 
 // Head performs an http HEAD
@@ -292,6 +302,7 @@ func doRequest(opts ...RequestOption) (*Response, error) {
 		return nil, reqErr
 	}
 	cr.httpClient.Jar = cr.cookieJar
+
 	resp, respErr := cr.httpClient.Do(req)
 	if respErr != nil {
 		return nil, respErr
