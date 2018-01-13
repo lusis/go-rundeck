@@ -6,6 +6,8 @@ Functions in this package are not part of the standard rundeck API but are usefu
 */
 import (
 	"errors"
+	"fmt"
+	"time"
 
 	multierror "github.com/hashicorp/go-multierror"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck/responses"
@@ -94,4 +96,39 @@ func (c *Client) GetRequiredOpts(j string) (map[string]string, error) {
 		}
 	}
 	return u, nil
+}
+
+// WaitingJob is a type for determining if work is done
+type WaitingJob struct {
+	Done  bool
+	Error error
+}
+
+// WaitFor runs the provided func up to max wait time until it is done
+func (c *Client) WaitFor(f func() (bool, error), max time.Duration) (bool, error) {
+	waitChan := make(chan (WaitingJob))
+	go func() {
+		for {
+			isDone, doneErr := f()
+			if doneErr != nil {
+				waitChan <- WaitingJob{Done: false, Error: doneErr}
+			}
+			if isDone {
+				waitChan <- WaitingJob{Done: true, Error: doneErr}
+			}
+		}
+	}()
+	done := false
+	var err error
+	select {
+	case m := <-waitChan:
+		done = m.Done
+		err = m.Error
+		break
+	case <-time.After(max):
+		done = false
+		err = fmt.Errorf("timeout waiting for job to be done")
+		break
+	}
+	return done, err
 }

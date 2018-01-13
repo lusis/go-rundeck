@@ -1,4 +1,4 @@
 #!/bin/bash
-go test -v ./pkg/rundeck -tags integration -run ^TestIntegration
+go test -v ./pkg/rundeck -run ^TestIntegration
 
 

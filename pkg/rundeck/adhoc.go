@@ -68,8 +68,11 @@ func (c *Client) RunAdHocCommand(projectID string, exec string, opts ...AdHocRun
 	if req.Filter == "" {
 		req.Filter = "name: .*"
 	}
-	body, _ := json.Marshal(req)
-	res, err := c.httpGet("project/"+projectID+"/run/command", requestExpects(200), requestJSON(), withBody(bytes.NewReader(body)))
+	body, bodyErr := json.Marshal(req)
+	if bodyErr != nil {
+		return nil, bodyErr
+	}
+	res, err := c.httpPost("project/"+projectID+"/run/command", requestExpects(200), requestJSON(), withBody(bytes.NewReader(body)))
 	if err != nil {
 		return nil, err
 	}

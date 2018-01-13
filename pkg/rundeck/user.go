@@ -81,9 +81,8 @@ func (c *Client) ModifyUserProfile(u *User) (*User, error) {
 		return nil, errors.New("must provide login and at least one field to update")
 	}
 	updatePath := "user/info"
-	if u.Login != currentUser.Login {
-		// we're not updating ourself so we need to append the login to the path
-		updatePath = updatePath + "/" + u.Login
+	if currentUser.Login != u.Login {
+		updatePath = "user/info/" + u.Login
 	}
 	newUser := &User{
 		FirstName: u.FirstName,
@@ -94,7 +93,7 @@ func (c *Client) ModifyUserProfile(u *User) (*User, error) {
 	if postDataErr != nil {
 		return nil, postDataErr
 	}
-	res, resErr := c.httpPost(updatePath, withBody(bytes.NewReader(postData)), requestJSON())
+	res, resErr := c.httpPost(updatePath, withBody(bytes.NewReader(postData)), requestJSON(), requestExpects(200))
 	if resErr != nil {
 		return nil, resErr
 	}
