@@ -1,5 +1,12 @@
 language: go
 
+services:
+  - docker
+
+install:
+  - make build-test-container
+  - make run-test-container
+  
 go:
   - 1.7.x
   - 1.8.x
