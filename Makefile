@@ -10,6 +10,9 @@ endif
 all: clean bindata test $(BINLIST)
 
 test:
+ifneq ($(TRAVIS_BUILD_DIR),)
+	@script/travis-integration
+endif
 	@script/test
 
 bindata:
