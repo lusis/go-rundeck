@@ -19,8 +19,8 @@ func (s SCMResponse) deprecated() bool { return false }
 // http://rundeck.org/docs/api/index.html#list-scm-plugins
 type ListSCMPluginsResponse struct {
 	SCMResponse
-	Integration string               `json:"integration"`
-	Plugins     []*SCMPluginResponse `json:"plugins"`
+	Integration string              `json:"integration"`
+	Plugins     []SCMPluginResponse `json:"plugins"`
 }
 
 // ListSCMPluginsResponseImportTestFile is the test data for list scm plugins response for import scm
@@ -132,7 +132,7 @@ type GetSCMActionInputFieldsResponse struct {
 	Fields      []map[string]interface{} `json:"fields"`
 	Integration string                   `json:"integration"`
 	Title       string                   `json:"title"`
-	ImportItems *[]struct {
+	ImportItems []struct {
 		ItemID string `json:"itemId"`
 		Job    struct {
 			GroupPath string `json:"groupPath"`
@@ -141,7 +141,7 @@ type GetSCMActionInputFieldsResponse struct {
 		}
 		Tracked bool `json:"tracked"`
 	} `json:"importItems,omitempty"`
-	ExportItems *[]struct {
+	ExportItems []struct {
 		Deleted bool   `json:"deleted"`
 		ItemID  string `json:"itemId"`
 		Job     struct {

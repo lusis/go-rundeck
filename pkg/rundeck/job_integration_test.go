@@ -1,4 +1,4 @@
-package rundeck
+package rundeck_test
 
 import (
 	"fmt"
@@ -6,13 +6,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/stretchr/testify/suite"
 )
 
 type JobIntegrationTestSuite struct {
 	suite.Suite
-	TestProject *Project
-	TestClient  *Client
+	TestProject *rundeck.Project
+	TestClient  *rundeck.Client
 	TestJobID   string
 }
 
@@ -40,38 +41,11 @@ func (s *JobIntegrationTestSuite) TearDownSuite() {
 	}
 }
 
-var testJobDefinition = `
-- description: this is a test job
-  executionEnabled: true
-  group: test/jobs
-  id: 8c3176bf-e553-4086-b7b7-38e19974cd89
-  loglevel: INFO
-  name: testjob
-  nodeFilterEditable: false
-  nodefilters:
-    dispatch:
-      excludePrecedence: true
-      keepgoing: false
-      rankOrder: ascending
-      successOnEmptyNodeFilter: false
-      threadcount: 1
-    filter: .*
-  nodesSelectedByDefault: true
-  scheduleEnabled: true
-  sequence:
-    commands:
-    - description: ps output
-      exec: ps -ef
-    keepgoing: false
-    strategy: node-first
-  uuid: 8c3176bf-e553-4086-b7b7-38e19974cd89
-`
-
 func (s *JobIntegrationTestSuite) TestImportJob() {
 	importJob, importErr := s.TestClient.ImportJob(s.TestProject.Name,
 		strings.NewReader(testJobDefinition),
-		ImportFormat("yaml"),
-		ImportUUID("remove"))
+		rundeck.ImportFormat("yaml"),
+		rundeck.ImportUUID("remove"))
 	if importErr != nil {
 		s.T().Fatalf("job did not import. cannot continue: %s", importErr.Error())
 	}

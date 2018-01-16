@@ -1,15 +1,16 @@
-package rundeck
+package rundeck_test
 
 import (
 	"testing"
 
+	"github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/stretchr/testify/suite"
 )
 
 type TokenIntegrationTestSuite struct {
 	suite.Suite
-	CreatedTokens []Token
-	TestClient    *Client
+	CreatedTokens []rundeck.Token
+	TestClient    *rundeck.Client
 }
 
 func (s *TokenIntegrationTestSuite) TearDownSuite() {
@@ -24,7 +25,7 @@ func (s *TokenIntegrationTestSuite) TearDownSuite() {
 func (s *TokenIntegrationTestSuite) SetupSuite() {
 	client := testNewTokenAuthClient()
 	s.TestClient = client
-	s.CreatedTokens = []Token{}
+	s.CreatedTokens = []rundeck.Token{}
 }
 
 func (s *TokenIntegrationTestSuite) TestCreateToken() {

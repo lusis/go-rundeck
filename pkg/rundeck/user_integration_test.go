@@ -1,32 +1,33 @@
-package rundeck
+package rundeck_test
 
 import (
 	"testing"
 
+	"github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/stretchr/testify/suite"
 )
 
 type UserIntegrationTestSuite struct {
 	suite.Suite
-	TestClient     *Client
-	UserTestClient *Client
-	AdminProfile   User
-	UserProfile    User
+	TestClient     *rundeck.Client
+	UserTestClient *rundeck.Client
+	AdminProfile   rundeck.User
+	UserProfile    rundeck.User
 }
 
 func (s *UserIntegrationTestSuite) SetupSuite() {
 	client := testNewTokenAuthClient()
-	userClient, _ := NewTokenAuthClient(testIntegrationUserToken, testIntegrationURL)
+	userClient, _ := rundeck.NewTokenAuthClient(testIntegrationUserToken, testIntegrationURL)
 	s.TestClient = client
 	s.UserTestClient = userClient
-	adminProfile := User{
+	adminProfile := rundeck.User{
 		Login:     "admin",
 		FirstName: "Mr. Admin",
 		LastName:  "McAdmin",
 		Email:     "admin@admin.com",
 	}
 	s.AdminProfile = adminProfile
-	userProfile := User{
+	userProfile := rundeck.User{
 		Login:     "auser",
 		FirstName: "Alpha",
 		LastName:  "User",

@@ -1,18 +1,20 @@
-package rundeck
+package rundeck_test
 
 import (
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
+	"github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/stretchr/testify/suite"
 )
 
 type ProjectIntegrationTestSuite struct {
 	suite.Suite
 	TestProjectName string
-	TestProject     *Project
-	TestClient      *Client
+	TestProject     *rundeck.Project
+	TestClient      *rundeck.Client
 }
 
 func (s *ProjectIntegrationTestSuite) SetupSuite() {
@@ -61,6 +63,49 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectInfo() {
 	}
 }
 
+func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectResources() {
+	resources, getErr := s.TestClient.ListResourcesForProject(s.TestProjectName)
+	s.NoError(getErr)
+	s.Len(*resources, 5)
+}
+
+func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectReadme() {
+	var readme = `# project readme\nthis is the project readme`
+	putErr := s.TestClient.PutProjectReadme(s.TestProjectName, strings.NewReader(readme))
+	if putErr != nil {
+		s.Fail("cannot upload readme. cannot continue. %s", putErr)
+	}
+	defer s.TestClient.DeleteProjectReadme(s.TestProjectName) // nolint: errcheck
+	get, getErr := s.TestClient.GetProjectReadme(s.TestProjectName)
+	s.NoError(getErr)
+	s.Equal(readme, get)
+
+}
+
+func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectMotd() {
+	var motd = `# project motd\n*stuff is broken*`
+	putErr := s.TestClient.PutProjectMotd(s.TestProjectName, strings.NewReader(motd))
+	if putErr != nil {
+		s.Fail("cannot upload motd. cannot continue. %s", putErr)
+	}
+	defer s.TestClient.DeleteProjectMotd(s.TestProjectName) // nolint: errcheck
+	get, getErr := s.TestClient.GetProjectMotd(s.TestProjectName)
+	s.NoError(getErr)
+	s.Equal(motd, get)
+
+}
+
+func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectResource() {
+	resource, err := s.TestClient.GetResourceInfo(s.TestProjectName, "node-1-stub")
+	s.NoError(err)
+	s.NotEmpty(resource.FileCopier)
+	s.NotEmpty(resource.NodeExectutor)
+	s.NotEmpty(resource.NodeName)
+	s.NotEmpty(resource.HostName)
+	s.NotEmpty(resource.UserName)
+	s.Equal(resource.Tags, "stub")
+}
+
 func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectConfiguration() {
 	pc, pcerr := s.TestClient.GetProjectConfiguration(s.TestProjectName)
 	s.NoError(pcerr)
@@ -78,12 +123,12 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationProjectImport() {
 	if fErr != nil {
 		s.T().Fatalf("unable to create output file. cannot continue: %s", fErr)
 	}
-	opts := []ProjectExportOption{
-		ProjectExportAll(true),
-		ProjectExportConfigs(true),
-		ProjectExportAcls(true),
-		ProjectExportJobs(true),
-		ProjectExportReadmes(true),
+	opts := []rundeck.ProjectExportOption{
+		rundeck.ProjectExportAll(true),
+		rundeck.ProjectExportConfigs(true),
+		rundeck.ProjectExportAcls(true),
+		rundeck.ProjectExportJobs(true),
+		rundeck.ProjectExportReadmes(true),
 	}
 	// Export created project
 	perr := s.TestClient.GetProjectArchiveExport(s.TestProjectName, f, opts...)
@@ -108,7 +153,7 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationProjectImport() {
 	if dataErr != nil {
 		s.T().Fatalf("cannot open import file: %s", dataErr.Error())
 	}
-	imported, impErr := s.TestClient.ProjectArchiveImport(destProjectName, data, ProjectImportConfigs(true))
+	imported, impErr := s.TestClient.ProjectArchiveImport(destProjectName, data, rundeck.ProjectImportConfigs(true))
 	if impErr != nil {
 		s.T().Fatalf("could not import project. cannot continue: %s", impErr.Error())
 	}
@@ -131,12 +176,12 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectArchiveExportImpo
 	if fErr != nil {
 		s.T().Fatalf("unable to create output file. cannot continue: %s", fErr)
 	}
-	opts := []ProjectExportOption{
-		ProjectExportAll(true),
-		ProjectExportConfigs(true),
-		ProjectExportAcls(true),
-		ProjectExportJobs(true),
-		ProjectExportReadmes(true),
+	opts := []rundeck.ProjectExportOption{
+		rundeck.ProjectExportAll(true),
+		rundeck.ProjectExportConfigs(true),
+		rundeck.ProjectExportAcls(true),
+		rundeck.ProjectExportJobs(true),
+		rundeck.ProjectExportReadmes(true),
 	}
 	// Export created project
 	perr := s.TestClient.GetProjectArchiveExport(s.TestProjectName, f, opts...)

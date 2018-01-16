@@ -1,4 +1,4 @@
-package rundeck
+package rundeck_test
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,6 +17,33 @@ var testIntegrationPassword = "admin"
 var testIntegrationToken = "yays72hw87aK2AfxWifTSdcMcY81GL1p"
 var testIntegrationUserToken = "jHpBIeJRkfVHfWlmiPRxXH2GSk2DF3wy"
 var testAdHocScriptURL = "https://gist.github.com/lusis/c230f2d8323e0d440a29d25a8b3bb7af/raw/ccfa844799d375293b1028b1c8f85c2c786be0d1/test.py"
+
+var testJobDefinition = `
+- description: this is a test job
+  executionEnabled: true
+  group: test/jobs
+  id: 8c3176bf-e553-4086-b7b7-38e19974cd89
+  loglevel: INFO
+  name: testjob
+  nodeFilterEditable: false
+  nodefilters:
+    dispatch:
+      excludePrecedence: true
+      keepgoing: false
+      rankOrder: ascending
+      successOnEmptyNodeFilter: false
+      threadcount: 1
+    filter: .*
+  nodesSelectedByDefault: true
+  scheduleEnabled: true
+  sequence:
+    commands:
+    - description: ps output
+      exec: ps -ef
+    keepgoing: false
+    strategy: node-first
+  uuid: 8c3176bf-e553-4086-b7b7-38e19974cd89
+`
 
 // create a project with 5 stub nodes
 var testDefaultProjectProperties = map[string]string{
@@ -42,13 +70,13 @@ func testRundeckRunning() bool {
 	return true
 }
 
-func testNewBasicAuthClient() *Client {
-	client, _ := NewBasicAuthClient(testIntegrationUsername, testIntegrationPassword, testIntegrationURL)
+func testNewBasicAuthClient() *rundeck.Client {
+	client, _ := rundeck.NewBasicAuthClient(testIntegrationUsername, testIntegrationPassword, testIntegrationURL)
 	return client
 }
 
-func testNewTokenAuthClient() *Client {
-	client, _ := NewTokenAuthClient(testIntegrationToken, testIntegrationURL)
+func testNewTokenAuthClient() *rundeck.Client {
+	client, _ := rundeck.NewTokenAuthClient(testIntegrationToken, testIntegrationURL)
 	return client
 }
 
@@ -61,7 +89,7 @@ func TestIntegrationBasicAuth(t *testing.T) {
 	if !testRundeckRunning() {
 		t.Skip("rundeck not running for integration tests")
 	}
-	client, err := NewBasicAuthClient(testIntegrationUsername, testIntegrationPassword, testIntegrationURL)
+	client, err := rundeck.NewBasicAuthClient(testIntegrationUsername, testIntegrationPassword, testIntegrationURL)
 	assert.NoError(t, err)
 	info, infoErr := client.GetSystemInfo()
 	assert.NoError(t, infoErr)
@@ -72,7 +100,7 @@ func TestIntegrationTokenAuth(t *testing.T) {
 	if !testRundeckRunning() {
 		t.Skip("rundeck not running for integration tests")
 	}
-	client, err := NewTokenAuthClient(testIntegrationToken, testIntegrationURL)
+	client, err := rundeck.NewTokenAuthClient(testIntegrationToken, testIntegrationURL)
 	assert.NoError(t, err)
 	info, infoErr := client.GetSystemInfo()
 	assert.NoError(t, infoErr)
@@ -83,7 +111,7 @@ func TestIntegrationInvalidBasicAuth(t *testing.T) {
 	if !testRundeckRunning() {
 		t.Skip("rundeck not running for integration tests")
 	}
-	client, _ := NewBasicAuthClient("bob", "bob", testIntegrationURL)
+	client, _ := rundeck.NewBasicAuthClient("bob", "bob", testIntegrationURL)
 	info, infoErr := client.GetSystemInfo()
 	assert.Error(t, infoErr)
 	assert.Nil(t, info)

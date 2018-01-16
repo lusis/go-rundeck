@@ -1,4 +1,4 @@
-package rundeck
+package rundeck_test
 
 import (
 	"fmt"
@@ -6,13 +6,14 @@ import (
 	"testing"
 	"time"
 
+	"github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/stretchr/testify/suite"
 )
 
 type AdHocIntegrationTestSuite struct {
 	suite.Suite
-	TestProject *Project
-	TestClient  *Client
+	TestProject *rundeck.Project
+	TestClient  *rundeck.Client
 }
 
 func (s *AdHocIntegrationTestSuite) SetupSuite() {
@@ -40,7 +41,7 @@ func (s *AdHocIntegrationTestSuite) TearDownSuite() {
 }
 
 func (s *AdHocIntegrationTestSuite) TestAdHocCommand() {
-	ahe, aheErr := s.TestClient.RunAdHocCommand(s.TestProject.Name, "ps -ef", CmdThreadCount(3))
+	ahe, aheErr := s.TestClient.RunAdHocCommand(s.TestProject.Name, "ps -ef", rundeck.CmdThreadCount(3))
 	if aheErr != nil {
 		s.T().Fatalf("unable to run adhoc command. cannot continue: %s", aheErr.Error())
 	}
