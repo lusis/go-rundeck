@@ -22,7 +22,7 @@ func TestGetUsers(t *testing.T) {
 	s, err := client.ListUsers()
 	assert.NoError(t, err)
 	assert.NotNil(t, s)
-	assert.Len(t, *s, 2)
+	assert.Len(t, s, 2)
 }
 
 func TestGetUsersJSONError(t *testing.T) {

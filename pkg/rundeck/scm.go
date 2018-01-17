@@ -10,6 +10,26 @@ import (
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 )
 
+// SCMPluginForProject represents an scm plugin for a project
+type SCMPluginForProject struct {
+	responses.SCMPluginForProjectResponse
+}
+
+// ProjectSCMActionInputFields represents project scm action input fields
+type ProjectSCMActionInputFields struct {
+	responses.GetSCMActionInputFieldsResponse
+}
+
+// ProjectSCMConfig represents a project's SCM config
+type ProjectSCMConfig struct {
+	responses.GetProjectSCMConfigResponse
+}
+
+// ProjectSCMStatus represents a project's scm status
+type ProjectSCMStatus struct {
+	responses.GetProjectSCMStatusResponse
+}
+
 // SCMPlugins is a list of SCM plugins grouped by Integration (import or export)
 type SCMPlugins struct {
 	Import []responses.SCMPluginResponse
@@ -72,7 +92,7 @@ func (c *Client) GetSCMPluginInputFields(projectName, integration, pluginType st
 
 // SetupSCMPluginForProject configures and enables a plugin for a project
 // http://rundeck.org/docs/api/index.html#setup-scm-plugin-for-a-project
-func (c *Client) SetupSCMPluginForProject(project, integration, pluginType string, params map[string]string) (*responses.SCMPluginForProjectResponse, error) {
+func (c *Client) SetupSCMPluginForProject(project, integration, pluginType string, params map[string]string) (*SCMPluginForProject, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return nil, err
 	}
@@ -84,7 +104,7 @@ func (c *Client) SetupSCMPluginForProject(project, integration, pluginType strin
 	if reqBodyErr != nil {
 		return nil, reqBodyErr
 	}
-	results := &responses.SCMPluginForProjectResponse{}
+	results := &SCMPluginForProject{}
 	res, respErr := c.httpPost(u, withBody(bytes.NewReader(reqBody)), requestJSON(), requestExpects(200), requestExpects(400))
 	if respErr != nil {
 		return nil, respErr
@@ -115,13 +135,13 @@ func (c *Client) DisableSCMPluginForProject() error {
 
 // GetProjectSCMStatus Get the SCM plugin status and available actions for the project.
 // http://rundeck.org/docs/api/index.html#get-project-scm-status
-func (c *Client) GetProjectSCMStatus(project, integration string) (*responses.GetProjectSCMStatusResponse, error) {
+func (c *Client) GetProjectSCMStatus(project, integration string) (*ProjectSCMStatus, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return nil, err
 	}
 	// project/[PROJECT]/scm/[INTEGRATION]/status
 	u := fmt.Sprintf("project/%s/scm/%s/status", project, integration)
-	results := &responses.GetProjectSCMStatusResponse{}
+	results := &ProjectSCMStatus{}
 	res, resErr := c.httpGet(u, requestExpects(200), accept("application/json"))
 	if resErr != nil {
 		return nil, resErr
@@ -134,22 +154,31 @@ func (c *Client) GetProjectSCMStatus(project, integration string) (*responses.Ge
 
 // GetProjectSCMConfig Get the configuration properties for the current plugin.
 // http://rundeck.org/docs/api/index.html#get-project-scm-config
-func (c *Client) GetProjectSCMConfig() error {
+func (c *Client) GetProjectSCMConfig(projectName, integration string) (*ProjectSCMConfig, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("project/%s/scm/%s/config", projectName, integration)
+	data := &ProjectSCMConfig{}
+	res, err := c.httpGet(u, requestJSON(), requestExpects(200))
+	if err != nil {
+		return nil, err
+	}
+	if jsonErr := json.Unmarshal(res, data); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return data, nil
 }
 
 // GetProjectSCMActionInputFields Get the input fields and selectable items for a specific action.
 // http://rundeck.org/docs/api/index.html#get-project-scm-action-input-fields
-func (c *Client) GetProjectSCMActionInputFields(project, integration, action string) (*responses.GetSCMActionInputFieldsResponse, error) {
+func (c *Client) GetProjectSCMActionInputFields(project, integration, action string) (*ProjectSCMActionInputFields, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return nil, err
 	}
 	// project/[PROJECT]/scm/[INTEGRATION]/action/[ACTION_ID]/input
 	u := fmt.Sprintf("project/%s/scm/%s/action/%s/input", project, integration, action)
-	resp := &responses.GetSCMActionInputFieldsResponse{}
+	resp := &ProjectSCMActionInputFields{}
 	res, resErr := c.httpGet(u, accept("application/json"), requestExpects(200))
 	if resErr != nil {
 		return nil, resErr
@@ -205,7 +234,7 @@ func SCMActionDeleted(deleted ...string) SCMActionOption {
 
 // PerformProjectSCMAction Perform the action for the SCM integration plugin, with a set of input parameters, selected Jobs, or Items, or Items to delete.
 // http://rundeck.org/docs/api/index.html#perform-project-scm-action
-func (c *Client) PerformProjectSCMAction(project, integration, action string, opts ...SCMActionOption) (*responses.SCMPluginForProjectResponse, error) {
+func (c *Client) PerformProjectSCMAction(project, integration, action string, opts ...SCMActionOption) (*SCMPluginForProject, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return nil, err
 	}
@@ -238,7 +267,7 @@ func (c *Client) PerformProjectSCMAction(project, integration, action string, op
 	if postErr != nil {
 		return nil, postErr
 	}
-	results := &responses.SCMPluginForProjectResponse{}
+	results := &SCMPluginForProject{}
 	if jsonErr := json.Unmarshal(post, results); jsonErr != nil {
 		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
 	}

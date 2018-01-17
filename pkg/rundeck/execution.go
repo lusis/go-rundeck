@@ -9,10 +9,14 @@ import (
 )
 
 // Execution represents a job execution
-type Execution responses.ExecutionResponse
+type Execution struct {
+	responses.ExecutionResponse
+}
 
 // ExecutionState represents a job execution state
-type ExecutionState responses.ExecutionStateResponse
+type ExecutionState struct {
+	responses.ExecutionStateResponse
+}
 
 // GetExecutionInfo returns the details of a job execution
 // http://rundeck.org/docs/api/index.html#execution-info

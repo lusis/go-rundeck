@@ -138,7 +138,7 @@ func TestListJobsJSONError(t *testing.T) {
 	}
 	obj, cErr := client.ListJobs("testproject")
 	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	assert.Empty(t, obj)
 }
 
 func TestListJobsHTTPError(t *testing.T) {
@@ -149,7 +149,7 @@ func TestListJobsHTTPError(t *testing.T) {
 	}
 	obj, cErr := client.ListJobs("testproject")
 	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	assert.Empty(t, obj)
 }
 
 func TestRunJobOption(t *testing.T) {

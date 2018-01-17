@@ -9,7 +9,9 @@ import (
 )
 
 // JobImportResult is the result of a job import
-type JobImportResult responses.ImportedJobResponse
+type JobImportResult struct {
+	responses.ImportedJobResponse
+}
 
 // JobImportOption is a functional option for importing jobs
 type JobImportOption func(j *JobImportDefinition) error

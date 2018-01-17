@@ -2,6 +2,7 @@ package rundeck
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 
 	multierror "github.com/hashicorp/go-multierror"
@@ -9,10 +10,15 @@ import (
 )
 
 // Resources represents a collection of project resources (usually nodes)
-type Resources responses.ResourceCollectionResponse
+type Resources map[string]ResourceDetail
 
 // Resource represents a project resource (usually a node)
-type Resource responses.ResourceResponse
+type Resource map[string]ResourceDetail
+
+// ResourceDetail represents a resource's details
+type ResourceDetail struct {
+	responses.ResourceDetailResponse
+}
 
 // ListResourcesForProject returns resources for a project (usually nodes)
 // http://rundeck.org/docs/api/index.html#list-resources-for-a-project
@@ -33,20 +39,23 @@ func (c *Client) ListResourcesForProject(p string) (*Resources, error) {
 
 // GetResourceInfo get a specific resource within a project (usually a node)
 // http://rundeck.org/docs/api/index.html#getting-resource-info
-func (c *Client) GetResourceInfo(p, n string) (*responses.ResourceDetailResponse, error) {
+func (c *Client) GetResourceInfo(projectName, resourceName string) (*ResourceDetail, error) {
 	if err := c.checkRequiredAPIVersion(responses.ResourceDetailResponse{}); err != nil {
 		return nil, err
 	}
 	r := Resource{}
-	data, err := c.httpGet("project/"+p+"/resource/"+n, requestJSON(), requestExpects(200))
+	data, err := c.httpGet("project/"+projectName+"/resource/"+resourceName, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
 	if jsonErr := json.Unmarshal(data, &r); jsonErr != nil {
 		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
 	}
-	return r[n], nil
-
+	res, ok := r[resourceName]
+	if !ok {
+		return nil, fmt.Errorf("no such resource")
+	}
+	return &res, nil
 }
 
 // GetProjectReadme gets a project's readme.md

@@ -13,7 +13,9 @@ import (
 )
 
 // AdHocExecution represents an adhoc execution
-type AdHocExecution responses.AdHocExecutionResponse
+type AdHocExecution struct {
+	responses.AdHocExecutionResponse
+}
 
 // AdHocRunOption is a function option type for adhoc commands
 type AdHocRunOption func(c *requests.AdHocCommandRequest) error

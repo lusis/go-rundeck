@@ -14,13 +14,17 @@ import (
 )
 
 // Job represents a rundeck job
-type Job responses.JobResponse
+type Job struct {
+	responses.JobResponse
+}
 
 // JobList is a list of rundeck jobs
-type JobList responses.JobsResponse
+type JobList []Job
 
 // JobMetaData is the result of getting a job's metadata
-type JobMetaData responses.JobMetaDataResponse
+type JobMetaData struct {
+	responses.JobMetaDataResponse
+}
 
 // JobOption represents a job option
 type JobOption struct {
@@ -184,18 +188,18 @@ func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
 
 // ListJobs lists the jobs for a project
 // http://rundeck.org/docs/api/index.html#listing-jobs
-func (c *Client) ListJobs(projectID string) (*JobList, error) {
+func (c *Client) ListJobs(projectID string) (JobList, error) {
+	data := JobList{}
 	if err := c.checkRequiredAPIVersion(responses.JobsResponse{}); err != nil {
-		return nil, err
+		return data, err
 	}
-	data := &JobList{}
 	url := fmt.Sprintf("project/%s/jobs", projectID)
 	res, err := c.httpGet(url, requestJSON(), requestExpects(200))
 	if err != nil {
-		return nil, err
+		return data, err
 	}
 	if err := json.Unmarshal(res, &data); err != nil {
-		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
+		return data, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
 	}
 	return data, nil
 }

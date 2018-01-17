@@ -9,7 +9,9 @@ import (
 )
 
 // History represents a project history
-type History responses.HistoryResponse
+type History struct {
+	responses.HistoryResponse
+}
 
 // ListHistory returns the history for a project
 // http://rundeck.org/docs/api/index.html#listing-history

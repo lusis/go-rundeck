@@ -11,7 +11,9 @@ import (
 )
 
 // ACLPolicies represents ACL Policies
-type ACLPolicies responses.ACLResponse
+type ACLPolicies struct {
+	responses.ACLResponse
+}
 
 // ListSystemACLPolicies gets the system ACL Policies
 // http://rundeck.org/docs/api/index.html#list-system-acl-policies

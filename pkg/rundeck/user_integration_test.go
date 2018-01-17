@@ -20,19 +20,17 @@ func (s *UserIntegrationTestSuite) SetupSuite() {
 	userClient, _ := rundeck.NewTokenAuthClient(testIntegrationUserToken, testIntegrationURL)
 	s.TestClient = client
 	s.UserTestClient = userClient
-	adminProfile := rundeck.User{
-		Login:     "admin",
-		FirstName: "Mr. Admin",
-		LastName:  "McAdmin",
-		Email:     "admin@admin.com",
-	}
+	adminProfile := rundeck.User{}
+	adminProfile.Login = "admin"
+	adminProfile.FirstName = "Mr. Admin"
+	adminProfile.LastName = "McAdmin"
+	adminProfile.Email = "admin@admin.com"
 	s.AdminProfile = adminProfile
-	userProfile := rundeck.User{
-		Login:     "auser",
-		FirstName: "Alpha",
-		LastName:  "User",
-		Email:     "alpha@user.com",
-	}
+	userProfile := rundeck.User{}
+	userProfile.Login = "auser"
+	userProfile.FirstName = "Alpha"
+	userProfile.LastName = "User"
+	userProfile.Email = "alpha@user.com"
 	s.UserProfile = userProfile
 	_, muperr := s.TestClient.ModifyUserProfile(&s.AdminProfile)
 	if muperr != nil {
@@ -59,7 +57,7 @@ func (s *UserIntegrationTestSuite) TestGetUserProfile() {
 func (s *UserIntegrationTestSuite) TestListUsers() {
 	up, uperr := s.TestClient.ListUsers()
 	s.NoError(uperr)
-	s.Len(*up, 1)
+	s.Len(up, 1)
 }
 
 // Need to open some rundeck bugs on this.

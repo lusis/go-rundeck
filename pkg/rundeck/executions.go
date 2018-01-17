@@ -12,10 +12,19 @@ import (
 )
 
 // Executions represents a list of executions for a project
-type Executions responses.ListRunningExecutionsResponse
+type Executions struct {
+	responses.ListRunningExecutionsResponse
+}
 
 // DeletedExecutions represents the results of a bulk execution delete
-type DeletedExecutions responses.BulkDeleteExecutionsResponse
+type DeletedExecutions struct {
+	responses.BulkDeleteExecutionsResponse
+}
+
+// BulkToggleResponse represents the results of a bulk toggle request
+type BulkToggleResponse struct {
+	responses.BulkToggleResponse
+}
 
 // ListProjectExecutions lists a projects executions
 // http://rundeck.org/docs/api/index.html#execution-query
@@ -88,14 +97,14 @@ func (c *Client) BulkDeleteExecutions(ids ...int) (*DeletedExecutions, error) {
 
 // BulkEnableExecution enables job execution in bulk
 // http://rundeck.org/docs/api/index.html#bulk-toggle-job-execution
-func (c *Client) BulkEnableExecution(ids ...string) (*responses.BulkToggleResponse, error) {
+func (c *Client) BulkEnableExecution(ids ...string) (*BulkToggleResponse, error) {
 	if err := c.checkRequiredAPIVersion(responses.BulkToggleResponse{}); err != nil {
 		return nil, err
 	}
 	req := &requests.BulkToggleRequest{
 		IDs: ids,
 	}
-	results := &responses.BulkToggleResponse{}
+	results := &BulkToggleResponse{}
 	data, _ := json.Marshal(req)
 	res, err := c.httpPost("jobs/execution/enable",
 		withBody(bytes.NewReader(data)),
@@ -112,14 +121,14 @@ func (c *Client) BulkEnableExecution(ids ...string) (*responses.BulkToggleRespon
 
 // BulkDisableExecution disables job execution in bulk
 // http://rundeck.org/docs/api/index.html#bulk-toggle-job-execution
-func (c *Client) BulkDisableExecution(ids ...string) (*responses.BulkToggleResponse, error) {
+func (c *Client) BulkDisableExecution(ids ...string) (*BulkToggleResponse, error) {
 	if err := c.checkRequiredAPIVersion(responses.BulkToggleResponse{}); err != nil {
 		return nil, err
 	}
 	req := &requests.BulkToggleRequest{
 		IDs: ids,
 	}
-	results := &responses.BulkToggleResponse{}
+	results := &BulkToggleResponse{}
 	data, _ := json.Marshal(req)
 	res, err := c.httpPost("jobs/execution/disable",
 		withBody(bytes.NewReader(data)),

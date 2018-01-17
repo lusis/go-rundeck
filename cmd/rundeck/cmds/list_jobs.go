@@ -12,7 +12,7 @@ func listJobsFunc(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	cli.OutputFormatter.SetHeaders([]string{"ID", "Name", "Description", "Group", "Project"})
-	for _, d := range *data {
+	for _, d := range data {
 		if err := cli.OutputFormatter.AddRow([]string{d.ID, d.Name, d.Description, d.Group, d.Project}); err != nil {
 			return err
 		}

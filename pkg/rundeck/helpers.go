@@ -15,25 +15,25 @@ import (
 )
 
 // FindJobByName runs a job by name
-func (c *Client) FindJobByName(name string) ([]*JobMetaData, error) {
+func (c *Client) FindJobByName(name string) ([]JobMetaData, error) {
 	projects, pErr := c.ListProjects()
 	if pErr != nil {
 		return nil, pErr
 	}
 
-	var results []*JobMetaData
+	var results []JobMetaData
 	for _, project := range projects {
 		jobs, err := c.ListJobs(project.Name)
 		if err != nil {
 			return nil, err
 		}
-		for _, d := range *jobs {
+		for _, d := range jobs {
 			if d.Name == name {
 				job, joblistErr := c.GetJobInfo(d.ID)
 				if joblistErr != nil {
 					return nil, joblistErr
 				}
-				results = append(results, job)
+				results = append(results, *job)
 			}
 		}
 	}

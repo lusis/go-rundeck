@@ -54,7 +54,7 @@ func (t *TokenResponse) FromBytes(f []byte) error {
 
 // ListTokensResponse is a collection of `Token`
 // http://rundeck.org/docs/api/index.html#list-tokens
-type ListTokensResponse []*TokenResponse
+type ListTokensResponse []TokenResponse
 
 func (t ListTokensResponse) minVersion() int  { return 19 }
 func (t ListTokensResponse) maxVersion() int  { return CurrentVersion }

@@ -22,7 +22,7 @@ func (a ResourceCollectionResponse) deprecated() bool { return false }
 const ResourceResponseTestFile = "resource.json"
 
 // ResourceResponse is a single resource in a response
-type ResourceResponse map[string]*ResourceDetailResponse
+type ResourceResponse map[string]ResourceDetailResponse
 
 func (a ResourceResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a ResourceResponse) maxVersion() int  { return CurrentVersion }
