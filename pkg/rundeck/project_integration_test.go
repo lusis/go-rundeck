@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/stretchr/testify/suite"
@@ -110,7 +111,7 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectConfiguration() {
 	pc, pcerr := s.TestClient.GetProjectConfiguration(s.TestProjectName)
 	s.NoError(pcerr)
 	for k, v := range s.TestProject.Properties {
-		s.Equal(v, (*pc)[k])
+		s.Equal(v, pc[k])
 	}
 }
 
@@ -136,6 +137,80 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationProjectImport() {
 		s.T().Fatalf("cannot export project: %s", perr.Error())
 	}
 
+	// import the file into a new project
+	destProjectName := testGenerateRandomName("destproject")
+	_, destErr := s.TestClient.CreateProject(destProjectName, nil)
+	defer func() {
+		e := s.TestClient.DeleteProject(destProjectName)
+		if e != nil {
+			s.T().Errorf("unable to clean up after myself: %s", e.Error())
+		}
+	}()
+	if destErr != nil {
+		s.T().Fatalf("unable to create a test project. cannot continue: %s", destErr.Error())
+	}
+	data, dataErr := os.Open(output)
+	defer data.Close() // nolint: errcheck
+	if dataErr != nil {
+		s.T().Fatalf("cannot open import file: %s", dataErr.Error())
+	}
+	imported, impErr := s.TestClient.ProjectArchiveImport(destProjectName, data, rundeck.ProjectImportConfigs(true))
+	if impErr != nil {
+		s.T().Fatalf("could not import project. cannot continue: %s", impErr.Error())
+	}
+	s.Equal("successful", imported.ImportStatus)
+	checkImport, checkErr := s.TestClient.GetProjectInfo(destProjectName)
+	if checkErr != nil {
+		s.T().Fatalf("could not get the newly imported project. cannot continue: %s", checkErr.Error())
+	}
+	for k, v := range s.TestProject.Properties {
+		s.Equal(v, checkImport.Properties[k])
+	}
+}
+
+func (s *ProjectIntegrationTestSuite) TestIntegrationProjectAsyncExportImport() {
+	tmpDir := os.TempDir()
+
+	output := filepath.Join(tmpDir, s.TestProjectName+"-async.zip")
+	f, fErr := os.Create(output)
+	defer os.Remove(output) // nolint: errcheck
+	if fErr != nil {
+		s.T().Fatalf("unable to create output file. cannot continue: %s", fErr)
+	}
+	opts := []rundeck.ProjectExportOption{
+		rundeck.ProjectExportAll(true),
+		rundeck.ProjectExportConfigs(true),
+		rundeck.ProjectExportAcls(true),
+		rundeck.ProjectExportJobs(true),
+		rundeck.ProjectExportReadmes(true),
+	}
+	// Export created project
+	token, perr := s.TestClient.GetProjectArchiveExportAsync(s.TestProjectName, opts...)
+	if perr != nil {
+		s.T().Fatalf("cannot export project: %s", perr.Error())
+	}
+
+	s.NotEmpty(token)
+
+	// this is our doneFunc.
+	// we poll with the token until it's done
+	doneFunc := func() (bool, error) {
+		time.Sleep(500 * time.Millisecond)
+		info, infoErr := s.TestClient.GetProjectArchiveExportAsyncStatus(s.TestProjectName, token)
+		if infoErr != nil {
+			return false, infoErr
+		}
+		return info.Ready, nil
+	}
+
+	done, doneErr := s.TestClient.WaitFor(doneFunc, 5*time.Second)
+	s.NoError(doneErr)
+	s.True(done)
+
+	downloadErr := s.TestClient.GetProjectArchiveExportAsyncDownload(s.TestProjectName, token, f)
+	if downloadErr != nil {
+		s.T().Fatalf("could not download project archive. cannot continue: %s", downloadErr.Error())
+	}
 	// import the file into a new project
 	destProjectName := testGenerateRandomName("destproject")
 	_, destErr := s.TestClient.CreateProject(destProjectName, nil)
@@ -216,6 +291,47 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectArchiveExportImpo
 		s.T().Fatalf("could not get the newly imported project. cannot continue: %s", checkErr.Error())
 	}
 	s.NotEqual("stub", checkImport.Properties["service.NodeExecutor.default.provider"])
+}
+
+func (s *ProjectIntegrationTestSuite) TestIntegrationProjectConfigurationKeys() {
+	destProjectName := testGenerateRandomName("keyproject")
+	props := map[string]string{
+		"project.description": s.TestProjectName,
+	}
+	for k, v := range testDefaultProjectProperties {
+		props[k] = v
+	}
+	_, destErr := s.TestClient.CreateProject(destProjectName, props)
+	defer func() {
+		e := s.TestClient.DeleteProject(destProjectName)
+		if e != nil {
+			s.T().Errorf("unable to clean up import project after myself: %s", e.Error())
+		}
+	}()
+	if destErr != nil {
+		s.T().Fatalf("unable to create a destination test project. cannot continue: %s", destErr.Error())
+	}
+
+	_, checkErr := s.TestClient.GetProjectInfo(destProjectName)
+	if checkErr != nil {
+		s.T().Fatalf("could not get the newly imported project. cannot continue: %s", checkErr.Error())
+	}
+	nodeSource, nodeSourceErr := s.TestClient.GetProjectConfigurationKey(destProjectName, "resources.source.1.type")
+	s.NoError(nodeSourceErr)
+	s.Equal("stub", nodeSource)
+	putKeyErr := s.TestClient.PutProjectConfigurationKey(destProjectName, "foo", "bar")
+	s.NoError(putKeyErr)
+	checkKey, checkKeyErr := s.TestClient.GetProjectConfigurationKey(destProjectName, "foo")
+	s.NoError(checkKeyErr)
+	s.Equal(checkKey, "bar")
+	replaceConf, replaceConfErr := s.TestClient.PutProjectConfiguration(destProjectName, props)
+	s.NoError(replaceConfErr)
+	s.NotContains(replaceConf, "foo")
+	deleteErr := s.TestClient.DeleteProjectConfigurationKey(destProjectName, "project.description")
+	s.NoError(deleteErr)
+	_, checkAgainKeyErr := s.TestClient.GetProjectConfigurationKey(destProjectName, "project.description")
+	// key should be missing
+	s.Error(checkAgainKeyErr)
 }
 
 func TestIntegrationProjectSuite(t *testing.T) {

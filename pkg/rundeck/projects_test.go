@@ -1,6 +1,10 @@
 package rundeck
 
 import (
+	"bufio"
+	"bytes"
+	"errors"
+	"strings"
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
@@ -56,7 +60,6 @@ func TestGetProjectDecodeError(t *testing.T) {
 	obj, oErr := client.GetProjectInfo("testproject")
 	assert.Error(t, oErr)
 	assert.Nil(t, obj)
-	assert.EqualError(t, errDecoding, oErr.Error())
 }
 
 func TestListProjects(t *testing.T) {
@@ -89,7 +92,6 @@ func TestListProjectsDecodeError(t *testing.T) {
 	obj, oErr := client.ListProjects()
 	assert.Error(t, oErr)
 	assert.Nil(t, obj)
-	assert.EqualError(t, errDecoding, oErr.Error())
 }
 
 func TestListProjectsNotFound(t *testing.T) {
@@ -142,6 +144,27 @@ func TestCreateProject(t *testing.T) {
 	assert.Equal(t, "test project", obj.Description)
 }
 
+func TestCreateProjectHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectInfoResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 400)
+	defer server.Close()
+	obj, getErr := client.CreateProject("testproject", nil)
+	assert.Error(t, getErr)
+	assert.Nil(t, obj)
+}
+
+func TestCreateProjectJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 201)
+	defer server.Close()
+	obj, getErr := client.CreateProject("testproject", nil)
+	assert.Error(t, getErr)
+	assert.Nil(t, obj)
+}
+
 func TestGetProjectConfiguration(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.ProjectConfigResponseTestFile)
 	if err != nil {
@@ -153,5 +176,356 @@ func TestGetProjectConfiguration(t *testing.T) {
 	obj, cErr := client.GetProjectConfiguration("testproject")
 	assert.NoError(t, cErr)
 	assert.NotNil(t, obj)
-	assert.Len(t, *obj, 33)
+	assert.Len(t, obj, 33)
+}
+
+func TestGetProjectConfigurationJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.GetProjectConfiguration("testproject")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestGetProjectConfigurationHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectConfigResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	obj, cErr := client.GetProjectConfiguration("testproject")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestGetProjectArchiveExport(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte("testdata"), "application/zip", 200)
+	defer server.Close()
+	var buf bytes.Buffer
+	writer := bufio.NewWriter(&buf)
+	cerr := client.GetProjectArchiveExport("testproject", writer)
+	assert.NoError(t, cerr)
+}
+
+func TestGetProjectArchiveExportOptions(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte("testdata"), "application/zip", 200)
+	defer server.Close()
+	var buf bytes.Buffer
+	writer := bufio.NewWriter(&buf)
+	opts := []ProjectExportOption{
+		ProjectExportAcls(true),
+		ProjectExportAll(true),
+		ProjectExportConfigs(true),
+		ProjectExportExecutionIDs("a", "b"),
+		ProjectExportExecutions(true),
+		ProjectExportJobs(true),
+		ProjectExportReadmes(true),
+	}
+	cerr := client.GetProjectArchiveExport("testproject", writer, opts...)
+	assert.NoError(t, cerr)
+}
+
+func TestGetProjectArchiveHTTPError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte("testdata"), "application/zip", 500)
+	defer server.Close()
+	var buf bytes.Buffer
+	writer := bufio.NewWriter(&buf)
+	cerr := client.GetProjectArchiveExport("testproject", writer)
+	assert.Error(t, cerr)
+}
+
+func TestGetProjectArchiveExportOptionError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte("testdata"), "application/zip", 200)
+	defer server.Close()
+	var buf bytes.Buffer
+	writer := bufio.NewWriter(&buf)
+	opts := []ProjectExportOption{
+		func() ProjectExportOption {
+			return func(p *map[string]string) error { return errors.New("failed option") }
+		}(),
+	}
+	cerr := client.GetProjectArchiveExport("testproject", writer, opts...)
+	assert.Error(t, cerr)
+}
+
+func TestGetProjectArchiveExportAsync(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.GetProjectArchiveExportAsync("testproject")
+	assert.NoError(t, cErr)
+	assert.NotEmpty(t, obj)
+}
+
+func TestGetProjectArchiveExportAsyncOptions(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/zip", 200)
+	defer server.Close()
+
+	opts := []ProjectExportOption{
+		func() ProjectExportOption {
+			return func(p *map[string]string) error { return errors.New("failed option") }
+		}(),
+	}
+	c, cerr := client.GetProjectArchiveExportAsync("testproject", opts...)
+	assert.Error(t, cerr)
+	assert.Empty(t, c)
+}
+
+func TestGetProjectArchiveExportAsyncOptionError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/zip", 200)
+	defer server.Close()
+
+	opts := []ProjectExportOption{
+		ProjectExportAcls(true),
+		ProjectExportAll(true),
+		ProjectExportConfigs(true),
+		ProjectExportExecutionIDs("a", "b"),
+		ProjectExportExecutions(true),
+		ProjectExportJobs(true),
+		ProjectExportReadmes(true),
+	}
+	c, cerr := client.GetProjectArchiveExportAsync("testproject", opts...)
+	assert.NoError(t, cerr)
+	assert.NotEmpty(t, c)
+}
+
+func TestGetProjectArchiveExportAsyncHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	obj, cErr := client.GetProjectArchiveExportAsync("testproject")
+	assert.Error(t, cErr)
+	assert.Empty(t, obj)
+}
+
+func TestGetProjectArchiveExportAsyncJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.GetProjectArchiveExportAsync("testproject")
+	assert.Error(t, cErr)
+	assert.Empty(t, obj)
+}
+
+func TestGetProjectArchiveExportAsyncStatus(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.GetProjectArchiveExportAsyncStatus("testproject", "ABCDEFG")
+	assert.NoError(t, cErr)
+	assert.NotNil(t, obj)
+}
+
+func TestGetProjectArchiveExportAsyncStatusHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	obj, cErr := client.GetProjectArchiveExportAsyncStatus("testproject", "abcdefg")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestGetProjectArchiveExportAsyncStatusJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	obj, cErr := client.GetProjectArchiveExportAsyncStatus("testproject", "abcdefg")
+	assert.Error(t, cErr)
+	assert.Nil(t, obj)
+}
+
+func TestGetProjectArchiveExportAsyncDownload(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte("testdata"), "application/zip", 200)
+	defer server.Close()
+	var buf bytes.Buffer
+	writer := bufio.NewWriter(&buf)
+	cerr := client.GetProjectArchiveExportAsyncDownload("testproject", "abcdefg", writer)
+	assert.NoError(t, cerr)
+}
+
+func TestGetProjectArchiveExportAsyncDownloadHTTPError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte("testdata"), "application/zip", 500)
+	defer server.Close()
+	var buf bytes.Buffer
+	writer := bufio.NewWriter(&buf)
+	cerr := client.GetProjectArchiveExportAsyncDownload("testproject", "abcdefg", writer)
+	assert.Error(t, cerr)
+}
+
+func TestGetProjectArchiveImport(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectImportArchiveResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+
+	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"))
+	assert.NoError(t, cerr)
+	assert.NotNil(t, res)
+}
+
+func TestGetProjectArchiveImportOptions(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectImportArchiveResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+
+	opts := []ProjectImportOption{
+		ProjectImportJobUUIDs("preserve"),
+		ProjectImportExecutions(true),
+		ProjectImportAcls(true),
+		ProjectImportConfigs(true),
+	}
+	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"), opts...)
+	assert.NoError(t, cerr)
+	assert.NotNil(t, res)
+}
+
+func TestGetProjectArchiveImportOptionError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ProjectImportArchiveResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+
+	opts := []ProjectImportOption{
+		func() ProjectImportOption {
+			return func(p *map[string]string) error { return errors.New("failed option") }
+		}(),
+	}
+
+	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"), opts...)
+	assert.Error(t, cerr)
+	assert.Nil(t, res)
+}
+
+func TestGetProjectArchiveImportJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"))
+	assert.Error(t, cerr)
+	assert.Nil(t, res)
+}
+
+func TestGetProjectArchiveImportHTTPError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 500)
+	defer server.Close()
+	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"))
+	assert.Error(t, cerr)
+	assert.Nil(t, res)
+}
+
+func TestPutProjectConfigurationKey(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	cerr := client.PutProjectConfigurationKey("testproject", "mykey", "myval")
+	assert.NoError(t, cerr)
+}
+
+func TestPutProjectConfigurationKeyHTTPError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 500)
+	defer server.Close()
+	cerr := client.PutProjectConfigurationKey("testproject", "mykey", "myval")
+	assert.Error(t, cerr)
+}
+
+func TestGetProjectConfigurationKey(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte("stub"), "text/plain", 200)
+	defer server.Close()
+
+	res, cerr := client.GetProjectConfigurationKey("testproject", "resources.source.1.type")
+	assert.NoError(t, cerr)
+	assert.Equal(t, "stub", res)
+}
+
+func TestGetProjectConfigurationKeyHTTPError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte("stub"), "text/plain", 500)
+	defer server.Close()
+
+	res, cerr := client.GetProjectConfigurationKey("testproject", "resources.source.1.type")
+	assert.Error(t, cerr)
+	assert.Empty(t, res)
+}
+
+func TestDeleteProjectConfigurationKey(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "text/plain", 204)
+	defer server.Close()
+
+	cerr := client.DeleteProjectConfigurationKey("testproject", "resources.source.1.type")
+	assert.NoError(t, cerr)
+}
+
+func TestDeleteProjectConfigurationKeyHTTPError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "text/plain", 500)
+	defer server.Close()
+
+	cerr := client.DeleteProjectConfigurationKey("testproject", "resources.source.1.type")
+	assert.Error(t, cerr)
+}
+
+func TestPutProjectConfiguration(t *testing.T) {
+	conf := `{"foo":"bar","baz":"qux"}`
+	data := map[string]string{
+		"foo": "bar",
+		"baz": "qux",
+	}
+	client, server, _ := newTestRundeckClient([]byte(conf), "application/json", 200)
+	defer server.Close()
+	res, cerr := client.PutProjectConfiguration("testproject", data)
+	assert.NoError(t, cerr)
+	assert.Equal(t, "bar", res["foo"])
+	assert.Equal(t, "qux", res["baz"])
+}
+
+func TestPutProjectConfigurationHTTPError(t *testing.T) {
+	conf := `{"foo":"bar","baz":"qux"}`
+	data := map[string]string{
+		"foo": "bar",
+		"baz": "qux",
+	}
+	client, server, _ := newTestRundeckClient([]byte(conf), "application/json", 500)
+	defer server.Close()
+	_, cerr := client.PutProjectConfiguration("testproject", data)
+	assert.Error(t, cerr)
+}
+
+func TestPutProjectConfigurationJSONError(t *testing.T) {
+	data := map[string]string{
+		"foo": "bar",
+		"baz": "qux",
+	}
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	_, cerr := client.PutProjectConfiguration("testproject", data)
+	assert.Error(t, cerr)
 }

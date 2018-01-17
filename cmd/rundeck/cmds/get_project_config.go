@@ -15,7 +15,7 @@ func getProjectConfigFunc(cmd *cobra.Command, args []string) error {
 		"Name",
 		"Value",
 	})
-	for k, v := range *data {
+	for k, v := range data {
 		if err := cli.OutputFormatter.AddRow([]string{
 			k,
 			v}); err != nil {

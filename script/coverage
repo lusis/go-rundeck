@@ -1,4 +1,4 @@
 #!/bin/bash
 go get github.com/axw/gocov/gocov
 
-gocov test ./cmd/... ./pkg/rundeck/ ./pkg/rundeck/responses ./pkg/rundeck/requests ./pkg/httpclient ./pkg/cli | gocov report
+gocov test ./cmd/... ./pkg/rundeck/responses ./pkg/rundeck/requests ./pkg/httpclient ./pkg/cli ./pkg/rundeck | gocov report

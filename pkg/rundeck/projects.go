@@ -129,7 +129,7 @@ func (c *Client) GetProjectInfo(name string) (*Project, error) {
 		return nil, err
 	}
 	if jsonErr := json.Unmarshal(res, &p); jsonErr != nil {
-		return nil, errDecoding
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, jsonErr).Error()}
 	}
 
 	project := &Project{
@@ -153,7 +153,7 @@ func (c *Client) ListProjects() (Projects, error) {
 		return nil, err
 	}
 	if jsonErr := json.Unmarshal(res, &data); jsonErr != nil {
-		return nil, errDecoding
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, jsonErr).Error()}
 	}
 	projects := &Projects{}
 	for _, p := range *data {
@@ -183,7 +183,7 @@ func (c *Client) CreateProject(name string, properties map[string]string) (*Proj
 		return nil, postErr
 	}
 	if jsonErr := json.Unmarshal(res, &info); jsonErr != nil {
-		return nil, errDecoding
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, jsonErr).Error()}
 	}
 	project := &Project{
 		URL:         info.URL,
@@ -206,16 +206,16 @@ func (c *Client) DeleteProject(p string) error {
 
 // GetProjectConfiguration gets a project's configuration
 // http://rundeck.org/docs/api/index.html#get-project-configuration
-func (c *Client) GetProjectConfiguration(p string) (*responses.ProjectConfigResponse, error) {
+func (c *Client) GetProjectConfiguration(p string) (map[string]string, error) {
 	if err := c.checkRequiredAPIVersion(responses.ProjectConfigResponse{}); err != nil {
 		return nil, err
 	}
-	data := &responses.ProjectConfigResponse{}
+	data := map[string]string{}
 	res, err := c.httpGet("project/"+p+"/config", requestExpects(200), requestJSON())
 	if err != nil {
 		return nil, err
 	}
-	if jsonErr := json.Unmarshal(res, data); jsonErr != nil {
+	if jsonErr := json.Unmarshal(res, &data); jsonErr != nil {
 		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, jsonErr).Error()}
 	}
 	return data, nil
@@ -223,38 +223,56 @@ func (c *Client) GetProjectConfiguration(p string) (*responses.ProjectConfigResp
 
 // PutProjectConfiguration replaces all configuration data with the submitted values
 // http://rundeck.org/docs/api/index.html#put-project-configuration
-func (c *Client) PutProjectConfiguration() error {
+func (c *Client) PutProjectConfiguration(projectName string, config map[string]string) (map[string]string, error) {
 	if err := c.checkRequiredAPIVersion(responses.ProjectConfigResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+
+	body, mErr := json.Marshal(config)
+	if mErr != nil {
+		return nil, mErr
+	}
+	res, err := c.httpPut("project/"+projectName+"/config", withBody(bytes.NewReader(body)), requestExpects(200), requestJSON())
+	if err != nil {
+		return nil, err
+	}
+	data := map[string]string{}
+	if jsonErr := json.Unmarshal(res, &data); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, jsonErr).Error()}
+	}
+	return data, nil
 }
 
 // GetProjectConfigurationKey gets a specific configuration key
 // http://rundeck.org/docs/api/index.html#get-project-configuration-key
-func (c *Client) GetProjectConfigurationKey() error {
+func (c *Client) GetProjectConfigurationKey(projectName, key string) (string, error) {
 	if err := c.checkRequiredAPIVersion(responses.ProjectConfigItemResponse{}); err != nil {
-		return err
+		return "", err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("project/%s/config/%s", projectName, key)
+	res, err := c.httpGet(u, requestExpects(200), contentType("text/plain"))
+	return string(res), err
 }
 
 // PutProjectConfigurationKey sets a value for a configuration key
 // http://rundeck.org/docs/api/index.html#put-project-configuration-key
-func (c *Client) PutProjectConfigurationKey() error {
+func (c *Client) PutProjectConfigurationKey(projectName, key, value string) error {
 	if err := c.checkRequiredAPIVersion(responses.ProjectConfigItemResponse{}); err != nil {
 		return err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("project/%s/config/%s", projectName, key)
+	_, err := c.httpPut(u, withBody(bytes.NewReader([]byte(value))), requestExpects(200), contentType("text/plain"))
+	return err
 }
 
 // DeleteProjectConfigurationKey deletes a configuration key
 // http://rundeck.org/docs/api/index.html#delete-project-configuration-key
-func (c *Client) DeleteProjectConfigurationKey() error {
+func (c *Client) DeleteProjectConfigurationKey(projectName, key string) error {
 	if err := c.checkRequiredAPIVersion(responses.ProjectConfigItemResponse{}); err != nil {
 		return err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("project/%s/config/%s", projectName, key)
+	return c.httpDelete(u, requestExpects(204))
 }
 
 // GetProjectArchiveExport export exports a zip file of the project
@@ -272,7 +290,9 @@ func (c *Client) GetProjectArchiveExport(p string, w io.Writer, opts ...ProjectE
 			return &OptionError{msg: multierror.Append(errOption, err).Error()}
 		}
 	}
-	res, resErr := c.httpGet("project/"+p+"/export", requestExpects(200), queryParams(*params))
+
+	u := fmt.Sprintf("project/%s/export", p)
+	res, resErr := c.httpGet(u, requestExpects(200), accept("application/zip"), queryParams(*params))
 	if resErr != nil {
 		return resErr
 	}
@@ -284,29 +304,67 @@ func (c *Client) GetProjectArchiveExport(p string, w io.Writer, opts ...ProjectE
 
 // GetProjectArchiveExportAsync export a zip archive of a project async
 // http://rundeck.org/docs/api/index.html#project-archive-export-async
-func (c *Client) GetProjectArchiveExportAsync() error {
-	if err := c.checkRequiredAPIVersion(responses.ProjectArchiveExportAsyncResponse{}); err != nil {
-		return err
+func (c *Client) GetProjectArchiveExportAsync(p string, opts ...ProjectExportOption) (string, error) {
+	if err := c.checkRequiredAPIVersion(responses.ProjectInfoResponse{}); err != nil {
+		return "", err
 	}
-	return fmt.Errorf("not yet implemented")
+	params := &map[string]string{}
+	if len(opts) == 0 {
+		opts = append(opts, ProjectExportAll(true))
+	}
+	for _, opt := range opts {
+		if err := opt(params); err != nil {
+			return "", &OptionError{msg: multierror.Append(errOption, err).Error()}
+		}
+	}
+
+	u := fmt.Sprintf("project/%s/export/async", p)
+	res, resErr := c.httpGet(u, requestExpects(200), contentType("application/x-www-form-urlencoded"), accept("application/json"), queryParams(*params))
+	if resErr != nil {
+		return "", resErr
+	}
+	data := responses.ProjectArchiveExportAsyncResponse{}
+	if jsonErr := json.Unmarshal(res, &data); jsonErr != nil {
+		return "", &UnmarshalError{msg: multierror.Append(errEncoding, jsonErr).Error()}
+	}
+	return data.Token, nil
 }
 
 // GetProjectArchiveExportAsyncStatus gets the status of an async export request
 // http://rundeck.org/docs/api/index.html#project-archive-export-async-status
-func (c *Client) GetProjectArchiveExportAsyncStatus() error {
-	if err := c.checkRequiredAPIVersion(responses.ProjectArchiveExportAsyncResponse{}); err != nil {
-		return err
+func (c *Client) GetProjectArchiveExportAsyncStatus(p, token string) (*responses.ProjectArchiveExportAsyncResponse, error) {
+	if err := c.checkRequiredAPIVersion(responses.ProjectInfoResponse{}); err != nil {
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+
+	u := fmt.Sprintf("project/%s/export/status/%s", p, token)
+	res, resErr := c.httpGet(u, requestExpects(200), requestJSON())
+	if resErr != nil {
+		return nil, resErr
+	}
+	data := responses.ProjectArchiveExportAsyncResponse{}
+	if jsonErr := json.Unmarshal(res, &data); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, jsonErr).Error()}
+	}
+	return &data, nil
 }
 
 // GetProjectArchiveExportAsyncDownload downloads an async project export archive file
 // http://rundeck.org/docs/api/index.html#project-archive-export-async-download
-func (c *Client) GetProjectArchiveExportAsyncDownload() error {
-	if err := c.checkRequiredAPIVersion(responses.ProjectArchiveExportAsyncResponse{}); err != nil {
+func (c *Client) GetProjectArchiveExportAsyncDownload(p, token string, w io.Writer) error {
+	if err := c.checkRequiredAPIVersion(responses.ProjectInfoResponse{}); err != nil {
 		return err
 	}
-	return fmt.Errorf("not yet implemented")
+
+	u := fmt.Sprintf("project/%s/export/download/%s", p, token)
+	res, resErr := c.httpGet(u, requestExpects(200), accept("application/zip"))
+	if resErr != nil {
+		return resErr
+	}
+	if _, wErr := w.Write(res); wErr != nil {
+		return wErr
+	}
+	return nil
 }
 
 // ProjectArchiveImport imports a zip archive to a project
