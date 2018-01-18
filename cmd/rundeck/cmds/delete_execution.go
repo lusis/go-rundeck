@@ -1,13 +1,19 @@
 package cmds
 
 import (
+	"strconv"
+
 	cli "github.com/lusis/go-rundeck/pkg/cli"
 	"github.com/spf13/cobra"
 )
 
 func deleteExecutionFunc(cmd *cobra.Command, args []string) error {
 	id := args[0]
-	return cli.Client.DeleteExecution(id)
+	eID, err := strconv.Atoi(id)
+	if err != nil {
+		return err
+	}
+	return cli.Client.DeleteExecution(eID)
 }
 
 func deleteExecutionCommand() *cobra.Command {

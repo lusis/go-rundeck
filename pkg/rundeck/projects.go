@@ -201,7 +201,8 @@ func (c *Client) DeleteProject(p string) error {
 		return err
 	}
 	url := fmt.Sprintf("project/%s", p)
-	return c.httpDelete(url, requestJSON(), requestExpects(204))
+	_, err := c.httpDelete(url, requestJSON(), requestExpects(204))
+	return err
 }
 
 // GetProjectConfiguration gets a project's configuration
@@ -272,7 +273,8 @@ func (c *Client) DeleteProjectConfigurationKey(projectName, key string) error {
 		return err
 	}
 	u := fmt.Sprintf("project/%s/config/%s", projectName, key)
-	return c.httpDelete(u, requestExpects(204))
+	_, err := c.httpDelete(u, requestExpects(204))
+	return err
 }
 
 // GetProjectArchiveExport export exports a zip file of the project

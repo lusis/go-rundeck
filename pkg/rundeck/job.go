@@ -135,7 +135,8 @@ func (c *Client) DeleteJob(id string) error {
 	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
 		return err
 	}
-	return c.httpDelete("job/"+id, httpclient.ExpectStatus(204))
+	_, err := c.httpDelete("job/"+id, httpclient.ExpectStatus(204))
+	return err
 
 }
 
@@ -224,11 +225,23 @@ func (c *Client) GetExecutionsForJob(jobid string) error {
 
 // DeleteAllExecutionsForJob deletes all executions for a job
 // http://rundeck.org/docs/api/index.html#delete-all-executions-for-a-job
-func (c *Client) DeleteAllExecutionsForJob(jobid string) error {
+func (c *Client) DeleteAllExecutionsForJob(jobid string) (*DeletedExecutions, error) {
 	if err := c.checkRequiredAPIVersion(responses.BulkDeleteExecutionsResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+	data := &DeletedExecutions{}
+
+	u := fmt.Sprintf("job/%s/executions", jobid)
+	res, err := c.httpDelete(u,
+		accept("application/json"),
+		requestExpects(200))
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(res, data); err != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, err).Error()}
+	}
+	return data, nil
 }
 
 // UploadFileForJobOption uploads a file for a job 'file' option type

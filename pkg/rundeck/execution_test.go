@@ -1,6 +1,7 @@
 package rundeck
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
@@ -21,7 +22,7 @@ func TestGetExecution(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecutionInfo("1")
+	obj, oerr := client.GetExecutionInfo(1)
 	assert.NoError(t, oerr)
 	assert.Equal(t, 1, obj.ID)
 	assert.Equal(t, "[url]", obj.HRef)
@@ -62,7 +63,7 @@ func TestGetExecutionInvalidStatusCode(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecutionInfo("1")
+	obj, oerr := client.GetExecutionInfo(1)
 	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }
@@ -74,7 +75,7 @@ func TestGetExecutionJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecutionInfo("1")
+	obj, oerr := client.GetExecutionInfo(1)
 	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }
@@ -91,7 +92,7 @@ func TestGetExecutionState(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecutionState("1")
+	obj, oerr := client.GetExecutionState(1)
 	assert.NoError(t, oerr)
 	assert.NotNil(t, obj)
 }
@@ -103,7 +104,7 @@ func TestGetExecutionStateJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecutionState("1")
+	obj, oerr := client.GetExecutionState(1)
 	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }
@@ -115,7 +116,7 @@ func TestGetExecutionInvalidStatus(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecutionState("1")
+	obj, oerr := client.GetExecutionState(1)
 	assert.Error(t, oerr)
 	assert.Nil(t, obj)
 }
@@ -131,7 +132,7 @@ func TestGetExecutionOutput(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	obj, oerr := client.GetExecutionOutput("1")
+	obj, oerr := client.GetExecutionOutput(1)
 	assert.NoError(t, oerr)
 	assert.NotEqual(t, "", string(obj))
 }
@@ -143,7 +144,7 @@ func TestDeleteExecution(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	err := client.DeleteExecution("1")
+	err := client.DeleteExecution(1)
 	assert.NoError(t, err)
 }
 
@@ -154,7 +155,7 @@ func TestDisableExecutionSuccess(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	res, err := client.DisableExecution("1")
+	res, err := client.DisableExecution(1)
 	assert.NoError(t, err)
 	assert.True(t, res)
 }
@@ -166,7 +167,7 @@ func TestDisableExecutionJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	res, err := client.DisableExecution("1")
+	res, err := client.DisableExecution(1)
 	assert.Error(t, err)
 	assert.False(t, res)
 }
@@ -178,7 +179,7 @@ func TestDisableExecutionHTTPError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	res, err := client.DisableExecution("1")
+	res, err := client.DisableExecution(1)
 	assert.Error(t, err)
 	assert.False(t, res)
 }
@@ -190,7 +191,7 @@ func TestEnableExecutionSuccess(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	res, err := client.EnableExecution("1")
+	res, err := client.EnableExecution(1)
 	assert.NoError(t, err)
 	assert.True(t, res)
 }
@@ -202,7 +203,7 @@ func TestEnableExecutionJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	res, err := client.EnableExecution("1")
+	res, err := client.EnableExecution(1)
 	assert.Error(t, err)
 	assert.False(t, res)
 }
@@ -214,7 +215,78 @@ func TestEnableExecutionHTTPError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 
-	res, err := client.EnableExecution("1")
+	res, err := client.EnableExecution(1)
 	assert.Error(t, err)
 	assert.False(t, res)
+}
+
+func TestAbortExecution(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.AbortExecutionResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+
+	obj, oerr := client.AbortExecution(1)
+	assert.NoError(t, oerr)
+	assert.NotNil(t, obj)
+}
+
+func TestAbortExecutionAsUser(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.AbortExecutionResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+
+	obj, oerr := client.AbortExecution(1, AbortExecutionAsUser("auser"))
+	assert.NoError(t, oerr)
+	assert.NotNil(t, obj)
+}
+
+func TestAbortExecutionHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.AbortExecutionResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+
+	obj, oerr := client.AbortExecution(1)
+	assert.Error(t, oerr)
+	assert.Nil(t, obj)
+}
+
+func TestAbortExecutionOptionError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.AbortExecutionResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	myopt := func() AbortExecutionOption {
+		return func(m *map[string]string) error {
+			return fmt.Errorf("option error happened")
+		}
+	}
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+
+	obj, oerr := client.AbortExecution(1, myopt())
+	assert.Error(t, oerr)
+	assert.Nil(t, obj)
+}
+
+func TestAbortExecutionJSONError(t *testing.T) {
+
+	client, server, _ := newTestRundeckClient([]byte("jsonfile"), "application/json", 200)
+	defer server.Close()
+
+	obj, oerr := client.AbortExecution(1)
+	assert.Error(t, oerr)
+	assert.Nil(t, obj)
 }

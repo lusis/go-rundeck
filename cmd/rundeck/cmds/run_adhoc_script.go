@@ -38,7 +38,7 @@ func runAdHocScriptFunc(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	data, dataErr := cli.Client.GetExecutionInfo(fmt.Sprintf("%d", res.Execution.ID))
+	data, dataErr := cli.Client.GetExecutionInfo(res.Execution.ID)
 	if dataErr != nil {
 		return fmt.Errorf("Execution started but unable to get information: %s", dataErr.Error())
 	}

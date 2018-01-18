@@ -86,7 +86,8 @@ func (c *Client) DeleteProjectReadme(projectName string) error {
 	if err := c.checkRequiredAPIVersion(responses.ResourceResponse{}); err != nil {
 		return err
 	}
-	return c.httpDelete("project/"+projectName+"/readme.md", requestExpects(204))
+	_, err := c.httpDelete("project/"+projectName+"/readme.md", requestExpects(204))
+	return err
 }
 
 // GetProjectMotd gets a project's Motd.md
@@ -117,5 +118,6 @@ func (c *Client) DeleteProjectMotd(projectName string) error {
 	if err := c.checkRequiredAPIVersion(responses.ResourceResponse{}); err != nil {
 		return err
 	}
-	return c.httpDelete("project/"+projectName+"/motd.md", requestExpects(204))
+	_, err := c.httpDelete("project/"+projectName+"/motd.md", requestExpects(204))
+	return err
 }

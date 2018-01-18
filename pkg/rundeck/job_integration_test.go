@@ -1,7 +1,6 @@
 package rundeck_test
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -61,10 +60,9 @@ func (s *JobIntegrationTestSuite) TestRunJob() {
 	if runErr != nil {
 		s.T().Fatalf("job did not run. cannot continue: %s", runErr.Error())
 	}
-	runID := fmt.Sprintf("%d", runJob.ID)
 	doneFunc := func() (bool, error) {
 		time.Sleep(500 * time.Millisecond)
-		info, infoErr := s.TestClient.GetExecutionState(runID)
+		info, infoErr := s.TestClient.GetExecutionState(runJob.ID)
 		if infoErr != nil {
 			return false, infoErr
 		}
@@ -73,7 +71,7 @@ func (s *JobIntegrationTestSuite) TestRunJob() {
 	done, doneErr := s.TestClient.WaitFor(doneFunc, 5*time.Second)
 	s.NoError(doneErr)
 	s.True(done)
-	info, _ := s.TestClient.GetExecutionState(runID)
+	info, _ := s.TestClient.GetExecutionState(runJob.ID)
 	s.Equal("SUCCEEDED", info.ExecutionState)
 }
 

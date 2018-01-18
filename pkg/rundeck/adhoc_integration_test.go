@@ -1,7 +1,6 @@
 package rundeck_test
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 	"time"
@@ -47,7 +46,7 @@ func (s *AdHocIntegrationTestSuite) TestAdHocCommand() {
 	}
 	doneFunc := func() (bool, error) {
 		time.Sleep(500 * time.Millisecond)
-		info, infoErr := s.TestClient.GetExecutionState(fmt.Sprintf("%d", ahe.Execution.ID))
+		info, infoErr := s.TestClient.GetExecutionState(ahe.Execution.ID)
 		if infoErr != nil {
 			return false, infoErr
 		}
@@ -56,7 +55,7 @@ func (s *AdHocIntegrationTestSuite) TestAdHocCommand() {
 	done, doneErr := s.TestClient.WaitFor(doneFunc, 5*time.Second)
 	s.NoError(doneErr)
 	s.True(done)
-	info, _ := s.TestClient.GetExecutionState(fmt.Sprintf("%d", ahe.Execution.ID))
+	info, _ := s.TestClient.GetExecutionState(ahe.Execution.ID)
 	s.Equal("SUCCEEDED", info.ExecutionState)
 }
 
@@ -70,7 +69,7 @@ echo "hello"
 	}
 	doneFunc := func() (bool, error) {
 		time.Sleep(500 * time.Millisecond)
-		info, infoErr := s.TestClient.GetExecutionState(fmt.Sprintf("%d", ahe.Execution.ID))
+		info, infoErr := s.TestClient.GetExecutionState(ahe.Execution.ID)
 		if infoErr != nil {
 			return false, infoErr
 		}
@@ -79,7 +78,7 @@ echo "hello"
 	done, doneErr := s.TestClient.WaitFor(doneFunc, 5*time.Second)
 	s.NoError(doneErr)
 	s.True(done)
-	info, _ := s.TestClient.GetExecutionState(fmt.Sprintf("%d", ahe.Execution.ID))
+	info, _ := s.TestClient.GetExecutionState(ahe.Execution.ID)
 	s.Equal("SUCCEEDED", info.ExecutionState)
 }
 
@@ -90,7 +89,7 @@ func (s *AdHocIntegrationTestSuite) TestAdHocScriptURL() {
 	}
 	doneFunc := func() (bool, error) {
 		time.Sleep(500 * time.Millisecond)
-		info, infoErr := s.TestClient.GetExecutionState(fmt.Sprintf("%d", ahe.Execution.ID))
+		info, infoErr := s.TestClient.GetExecutionState(ahe.Execution.ID)
 		if infoErr != nil {
 			return false, infoErr
 		}
@@ -99,7 +98,7 @@ func (s *AdHocIntegrationTestSuite) TestAdHocScriptURL() {
 	done, doneErr := s.TestClient.WaitFor(doneFunc, 5*time.Second)
 	s.NoError(doneErr)
 	s.True(done)
-	info, _ := s.TestClient.GetExecutionState(fmt.Sprintf("%d", ahe.Execution.ID))
+	info, _ := s.TestClient.GetExecutionState(ahe.Execution.ID)
 	s.Equal("SUCCEEDED", info.ExecutionState)
 }
 

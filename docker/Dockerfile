@@ -14,6 +14,7 @@ ADD admin.aclpolicy /etc/rundeck/admin.aclpolicy
 ADD apitoken.aclpolicy /etc/rundeck/apitoken.aclpolicy
 ADD realm.properties /etc/rundeck/realm.properties
 ADD token.properties /etc/rundeck/token.properties
+RUN sed -ie "s/-Dserver.http.port/-Dfile.encoding=UTF-8 -Dserver.http.port/g" /etc/rundeck/profile
 RUN echo "rundeck.tokens.file=/etc/rundeck/token.properties" >> /etc/rundeck/framework.properties
 #ADD rundeckdb.mv.db /var/lib/rundeck/data/rundeckdb.mv.db
 #RUN chown rundeck:rundeck /var/lib/rundeck/data/rundeckdb.mv.db

@@ -1,0 +1,12 @@
+{
+    "abort": {
+      "status": "failed",
+      "reason": "Job is not running"
+    },
+    "execution": {
+      "id": "565",
+      "status": "succeeded",
+      "href": "http://localhost:4440/api/21/execution/565",
+      "permalink": "http://localhost:4440/project/testproject/execution/show/565"
+    }
+  }

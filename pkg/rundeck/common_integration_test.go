@@ -25,6 +25,7 @@ var testJobDefinition = `
   id: 8c3176bf-e553-4086-b7b7-38e19974cd89
   loglevel: INFO
   name: testjob
+  multipleExecutions: true
   nodeFilterEditable: false
   nodefilters:
     dispatch:

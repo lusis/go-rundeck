@@ -139,5 +139,6 @@ func (c *Client) DeleteToken(token string) error {
 		return err
 	}
 	url := fmt.Sprintf("token/%s", token)
-	return c.httpDelete(url, requestJSON(), requestExpects(204))
+	_, err := c.httpDelete(url, requestJSON(), requestExpects(204))
+	return err
 }

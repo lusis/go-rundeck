@@ -148,10 +148,10 @@ func (rc *Client) httpPut(path string, opts ...httpclient.RequestOption) ([]byte
 	return resp.Body, err
 }
 
-func (rc *Client) httpDelete(path string, opts ...httpclient.RequestOption) error {
+func (rc *Client) httpDelete(path string, opts ...httpclient.RequestOption) ([]byte, error) {
 	authOpt, authErr := rc.authWrap()
 	if authErr != nil {
-		return authErr
+		return nil, authErr
 	}
 	opts = append(opts, authOpt...)
 	opts = append(opts, httpclient.ExpectStatus(204))
@@ -159,20 +159,20 @@ func (rc *Client) httpDelete(path string, opts ...httpclient.RequestOption) erro
 	if err != nil {
 		if resp != nil {
 			if resp.Status == 404 {
-				return ErrMissingResource
+				return nil, ErrMissingResource
 			}
 			if resp.Body != nil {
 				e := &responses.ErrorResponse{}
 				je := json.Unmarshal(resp.Body, e)
 				if je != nil {
-					return err
+					return nil, err
 				}
-				return errors.New(e.Message)
+				return nil, errors.New(e.Message)
 			}
 		}
-		return err
+		return nil, err
 	}
-	return nil
+	return resp.Body, nil
 }
 
 func (rc *Client) authWrap() ([]httpclient.RequestOption, error) {
