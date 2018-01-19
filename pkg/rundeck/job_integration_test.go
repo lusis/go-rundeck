@@ -1,7 +1,9 @@
 package rundeck_test
 
 import (
+	"bytes"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -11,37 +13,67 @@ import (
 
 type JobIntegrationTestSuite struct {
 	suite.Suite
-	TestProject *rundeck.Project
-	TestClient  *rundeck.Client
-	TestJobID   string
+	TestClient      *rundeck.Client
+	CreatedProjects []rundeck.Project
+	sync.Mutex
 }
 
-func (s *JobIntegrationTestSuite) SetupSuite() {
-	client := testNewTokenAuthClient()
-	projectName := testGenerateRandomName("testproject")
+func (s *JobIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Project, rundeck.JobMetaData) {
+	projectName := testGenerateRandomName(s.T().Name())
 	props := map[string]string{
 		"project.description": projectName,
 	}
 	for k, v := range testDefaultProjectProperties {
 		props[k] = v
 	}
-	project, createErr := client.CreateProject(projectName, props)
+	if slow {
+		// make these slow nodes
+		props["resources.source.1.config.delay"] = "10"
+		props["resources.source.1.config.count"] = "100"
+	}
+	project, createErr := s.TestClient.CreateProject(projectName, props)
 	if createErr != nil {
 		s.T().Fatalf("Unable to create test project: %s", createErr.Error())
 	}
-	s.TestProject = project
+	s.Lock()
+	s.CreatedProjects = append(s.CreatedProjects, *project)
+	s.Unlock()
+	jobbytes, joberr := testJobFromTemplate(projectName+"-job", "job for "+projectName)
+	if joberr != nil {
+		s.T().Fatalf("cannot create a job import from template. cannot continue: %s", joberr.Error())
+	}
+	importJob, importErr := s.TestClient.ImportJob(project.Name,
+		bytes.NewReader(jobbytes),
+		rundeck.ImportFormat("yaml"),
+		rundeck.ImportUUID("remove"))
+	if importErr != nil {
+		s.T().Fatalf("job did not import. cannot continue: %s", importErr.Error())
+	}
+	j, jerr := s.TestClient.GetJobMetaData(importJob.Succeeded[0].ID)
+	if jerr != nil {
+		s.T().Fatalf("unable to get job meta data for imported job. cannot continue: %s", jerr.Error())
+	}
+	return *project, *j
+}
+
+func (s *JobIntegrationTestSuite) SetupSuite() {
+	client := testNewTokenAuthClient()
+	s.CreatedProjects = []rundeck.Project{}
 	s.TestClient = client
 }
 
 func (s *JobIntegrationTestSuite) TearDownSuite() {
-	e := s.TestClient.DeleteProject(s.TestProject.Name)
-	if e != nil {
-		s.T().Errorf("unable to clean up test project: %s", e.Error())
+	for _, p := range s.CreatedProjects {
+		e := s.TestClient.DeleteProject(p.Name)
+		if e != nil {
+			s.T().Logf("unable to clean up test project: %s", e.Error())
+		}
 	}
 }
 
 func (s *JobIntegrationTestSuite) TestImportJob() {
-	importJob, importErr := s.TestClient.ImportJob(s.TestProject.Name,
+	project, _ := s.testCreateProject(false)
+	importJob, importErr := s.TestClient.ImportJob(project.Name,
 		strings.NewReader(testJobDefinition),
 		rundeck.ImportFormat("yaml"),
 		rundeck.ImportUUID("remove"))
@@ -52,11 +84,11 @@ func (s *JobIntegrationTestSuite) TestImportJob() {
 	s.Len(importJob.Failed, 0)
 	s.Len(importJob.Skipped, 0)
 	s.Len(importJob.Succeeded, 1)
-	s.TestJobID = importJob.Succeeded[0].ID
 }
 
 func (s *JobIntegrationTestSuite) TestRunJob() {
-	runJob, runErr := s.TestClient.RunJob(s.TestJobID)
+	_, job := s.testCreateProject(false)
+	runJob, runErr := s.TestClient.RunJob(job.ID)
 	if runErr != nil {
 		s.T().Fatalf("job did not run. cannot continue: %s", runErr.Error())
 	}
@@ -75,6 +107,16 @@ func (s *JobIntegrationTestSuite) TestRunJob() {
 	s.Equal("SUCCEEDED", info.ExecutionState)
 }
 
+func (s *JobIntegrationTestSuite) TestFindJobByName() {
+	project, job := s.testCreateProject(false)
+	res, err := s.TestClient.FindJobByName(job.Name)
+	if err != nil {
+		s.T().Fatalf("Cannot find job. Cannot continue: %s", err.Error())
+	}
+	s.Len(res, 1)
+	s.Equal(project.Name, res[0].Project)
+
+}
 func TestIntegrationJobSuite(t *testing.T) {
 	if testRundeckRunning() {
 		suite.Run(t, &JobIntegrationTestSuite{})

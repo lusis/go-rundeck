@@ -326,3 +326,46 @@ func TestExportJobHTTPError(t *testing.T) {
 	assert.Error(t, oErr)
 	assert.Nil(t, obj)
 }
+
+func TestDeleteAllExecutionsForJob(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.BulkDeleteExecutionsResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	obj, oErr := client.DeleteAllExecutionsForJob("abcdefg")
+	assert.NoError(t, oErr)
+	assert.NotNil(t, obj)
+}
+
+func TestDeleteAllExecutionsForJobHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.BulkDeleteExecutionsResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	obj, oErr := client.DeleteAllExecutionsForJob("abcdefg")
+	assert.Error(t, oErr)
+	assert.Nil(t, obj)
+}
+
+func TestDeleteAllExecutionsForJobJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	if cErr != nil {
+		t.Fatalf(cErr.Error())
+	}
+	obj, oErr := client.DeleteAllExecutionsForJob("abcdefg")
+	assert.Error(t, oErr)
+	assert.Nil(t, obj)
+}

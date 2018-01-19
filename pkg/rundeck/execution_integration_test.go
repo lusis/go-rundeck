@@ -3,6 +3,7 @@ package rundeck_test
 import (
 	"fmt"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -14,6 +15,7 @@ type ExecutionIntegrationTestSuite struct {
 	suite.Suite
 	TestClient      *rundeck.Client
 	CreatedProjects []rundeck.Project
+	sync.Mutex
 }
 
 func (s *ExecutionIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Project, rundeck.JobImportResult) {
@@ -33,7 +35,9 @@ func (s *ExecutionIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Pr
 	if createErr != nil {
 		s.T().Fatalf("Unable to create test project: %s", createErr.Error())
 	}
+	s.Lock()
 	s.CreatedProjects = append(s.CreatedProjects, *project)
+	s.Unlock()
 	importJob, importErr := s.TestClient.ImportJob(project.Name,
 		strings.NewReader(testJobDefinition),
 		rundeck.ImportFormat("yaml"),
@@ -43,6 +47,7 @@ func (s *ExecutionIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Pr
 	}
 	return *project, *importJob
 }
+
 func (s *ExecutionIntegrationTestSuite) SetupSuite() {
 	client := testNewTokenAuthClient()
 	s.TestClient = client

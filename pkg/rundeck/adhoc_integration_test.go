@@ -1,7 +1,9 @@
 package rundeck_test
 
 import (
+	"bytes"
 	"strings"
+	"sync"
 	"testing"
 	"time"
 
@@ -11,36 +13,67 @@ import (
 
 type AdHocIntegrationTestSuite struct {
 	suite.Suite
-	TestProject *rundeck.Project
-	TestClient  *rundeck.Client
+	CreatedProjects []rundeck.Project
+	TestClient      *rundeck.Client
+	sync.Mutex
 }
 
-func (s *AdHocIntegrationTestSuite) SetupSuite() {
-	client := testNewTokenAuthClient()
-	projectName := testGenerateRandomName("adhoc")
+func (s *AdHocIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Project, rundeck.JobMetaData) {
+	projectName := testGenerateRandomName(s.T().Name())
 	props := map[string]string{
 		"project.description": projectName,
 	}
 	for k, v := range testDefaultProjectProperties {
 		props[k] = v
 	}
-	project, createErr := client.CreateProject(projectName, props)
+	if slow {
+		// make these slow nodes
+		props["resources.source.1.config.delay"] = "10"
+		props["resources.source.1.config.count"] = "100"
+	}
+	project, createErr := s.TestClient.CreateProject(projectName, props)
 	if createErr != nil {
 		s.T().Fatalf("Unable to create test project: %s", createErr.Error())
 	}
-	s.TestProject = project
+	s.Lock()
+	s.CreatedProjects = append(s.CreatedProjects, *project)
+	s.Unlock()
+	jobbytes, joberr := testJobFromTemplate(projectName+"-job", "job for "+projectName)
+	if joberr != nil {
+		s.T().Fatalf("cannot create a job import from template. cannot continue: %s", joberr.Error())
+	}
+	importJob, importErr := s.TestClient.ImportJob(project.Name,
+		bytes.NewReader(jobbytes),
+		rundeck.ImportFormat("yaml"),
+		rundeck.ImportUUID("remove"))
+	if importErr != nil {
+		s.T().Fatalf("job did not import. cannot continue: %s", importErr.Error())
+	}
+	j, jerr := s.TestClient.GetJobMetaData(importJob.Succeeded[0].ID)
+	if jerr != nil {
+		s.T().Fatalf("unable to get job meta data for imported job. cannot continue: %s", jerr.Error())
+	}
+	return *project, *j
+}
+
+func (s *AdHocIntegrationTestSuite) SetupSuite() {
+	client := testNewTokenAuthClient()
+	s.CreatedProjects = []rundeck.Project{}
 	s.TestClient = client
 }
 
 func (s *AdHocIntegrationTestSuite) TearDownSuite() {
-	e := s.TestClient.DeleteProject(s.TestProject.Name)
-	if e != nil {
-		s.T().Errorf("unable to clean up test project: %s", e.Error())
+	for _, p := range s.CreatedProjects {
+		e := s.TestClient.DeleteProject(p.Name)
+		if e != nil {
+			s.T().Logf("unable to clean up test project: %s", e.Error())
+		}
 	}
 }
 
 func (s *AdHocIntegrationTestSuite) TestAdHocCommand() {
-	ahe, aheErr := s.TestClient.RunAdHocCommand(s.TestProject.Name, "ps -ef", rundeck.CmdThreadCount(3))
+	project, _ := s.testCreateProject(false)
+	ahe, aheErr := s.TestClient.RunAdHocCommand(project.Name, "ps -ef", rundeck.CmdThreadCount(3))
 	if aheErr != nil {
 		s.T().Fatalf("unable to run adhoc command. cannot continue: %s", aheErr.Error())
 	}
@@ -60,10 +93,11 @@ func (s *AdHocIntegrationTestSuite) TestAdHocCommand() {
 }
 
 func (s *AdHocIntegrationTestSuite) TestAdHocScript() {
+	project, _ := s.testCreateProject(false)
 	testScript := `#!/bin/bash
 echo "hello"
 	`
-	ahe, aheErr := s.TestClient.RunAdHocScript(s.TestProject.Name, strings.NewReader(testScript))
+	ahe, aheErr := s.TestClient.RunAdHocScript(project.Name, strings.NewReader(testScript))
 	if aheErr != nil {
 		s.T().Fatalf("unable to run adhoc script. cannot continue: %s", aheErr.Error())
 	}
@@ -83,7 +117,8 @@ echo "hello"
 }
 
 func (s *AdHocIntegrationTestSuite) TestAdHocScriptURL() {
-	ahe, aheErr := s.TestClient.RunAdHocScriptFromURL(s.TestProject.Name, testAdHocScriptURL)
+	project, _ := s.testCreateProject(false)
+	ahe, aheErr := s.TestClient.RunAdHocScriptFromURL(project.Name, testAdHocScriptURL)
 	if aheErr != nil {
 		s.T().Fatalf("unable to run adhoc script. cannot continue: %s", aheErr.Error())
 	}
