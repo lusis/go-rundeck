@@ -2,4 +2,5 @@
 xmlfiles/
 bin/
 debug.test
+debug
 .vscode

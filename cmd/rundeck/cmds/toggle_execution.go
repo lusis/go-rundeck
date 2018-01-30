@@ -2,6 +2,7 @@ package cmds
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/lusis/go-rundeck/pkg/cli"
 	"github.com/spf13/cobra"
@@ -21,14 +22,22 @@ func toggleExecutionFunc(cmd *cobra.Command, args []string) error {
 
 func disableExecutionFunc(cmd *cobra.Command, args []string) error {
 	id := args[0]
-	_, err := cli.Client.DisableExecution(id)
+	i, iErr := strconv.Atoi(id)
+	if iErr != nil {
+		return iErr
+	}
+	_, err := cli.Client.DisableExecution(i)
 	return err
 
 }
 
 func enableExecutionFunc(cmd *cobra.Command, args []string) error {
 	id := args[0]
-	_, err := cli.Client.EnableExecution(id)
+	i, iErr := strconv.Atoi(id)
+	if iErr != nil {
+		return iErr
+	}
+	_, err := cli.Client.EnableExecution(i)
 	return err
 
 }

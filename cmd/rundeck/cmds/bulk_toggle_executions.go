@@ -5,9 +5,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-
 	"github.com/lusis/go-rundeck/pkg/cli"
+	rundeck "github.com/lusis/go-rundeck/pkg/rundeck"
 	"github.com/spf13/cobra"
 )
 
@@ -16,20 +15,20 @@ var (
 )
 
 func bulkToggleExecutionsFunc(cmd *cobra.Command, args []string) error {
-	res := &responses.BulkToggleResponse{}
+	res := rundeck.BulkToggleResponse{}
 	switch args[0] {
 	case enable:
 		data, err := cli.Client.BulkEnableExecution(bulkToggleExecutionIDs...)
 		if err != nil {
 			return err
 		}
-		res = data
+		res = *data
 	case disable:
 		data, err := cli.Client.BulkDisableExecution(bulkToggleExecutionIDs...)
 		if err != nil {
 			return err
 		}
-		res = data
+		res = *data
 	}
 
 	cli.OutputFormatter.SetHeaders([]string{

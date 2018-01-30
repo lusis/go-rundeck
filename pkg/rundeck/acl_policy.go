@@ -11,7 +11,9 @@ import (
 )
 
 // ACLPolicies represents ACL Policies
-type ACLPolicies responses.ACLResponse
+type ACLPolicies struct {
+	responses.ACLResponse
+}
 
 // ListSystemACLPolicies gets the system ACL Policies
 // http://rundeck.org/docs/api/index.html#list-system-acl-policies
@@ -108,7 +110,8 @@ func (c *Client) DeleteSystemACLPolicy(name string) error {
 	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
-	return c.httpDelete("system/acl/"+name+".aclpolicy", requestJSON(), requestExpects(204))
+	_, err := c.httpDelete("system/acl/"+name+".aclpolicy", requestJSON(), requestExpects(204))
+	return err
 }
 
 // ListProjectACLPolicies gets a project ACL Policies
@@ -148,7 +151,8 @@ func (c *Client) DeleteProjectACLPolicy(projectName, policyName string) error {
 	if err := c.checkRequiredAPIVersion(responses.ACLResponse{}); err != nil {
 		return err
 	}
-	return c.httpDelete("project/"+projectName+"/acl/"+policyName+".aclpolicy", requestJSON(), requestExpects(204))
+	_, err := c.httpDelete("project/"+projectName+"/acl/"+policyName+".aclpolicy", requestJSON(), requestExpects(204))
+	return err
 }
 
 // CreateProjectACLPolicy creates a project ACL Policy

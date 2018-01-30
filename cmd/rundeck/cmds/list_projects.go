@@ -16,7 +16,8 @@ func listProjectsFunc(cmd *cobra.Command, args []string) error {
 		"Description",
 		"URL",
 	})
-	for _, d := range *data {
+
+	for _, d := range data {
 		if rowErr := cli.OutputFormatter.AddRow([]string{
 			d.Name,
 			d.Description,

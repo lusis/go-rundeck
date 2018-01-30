@@ -22,7 +22,7 @@ func (a ResourceCollectionResponse) deprecated() bool { return false }
 const ResourceResponseTestFile = "resource.json"
 
 // ResourceResponse is a single resource in a response
-type ResourceResponse map[string]*ResourceDetailResponse
+type ResourceResponse map[string]ResourceDetailResponse
 
 func (a ResourceResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a ResourceResponse) maxVersion() int  { return CurrentVersion }
@@ -39,9 +39,9 @@ type ResourceDetailResponse struct {
 	SSHKeyStoragePath string                                `json:"ssh-key-storage-path,omitempty"`
 	UserName          string                                `json:"username"`
 	Description       string                                `json:"description,omitempty"`
-	HostName          string                                `json:"hostname,omitempty"`
-	FileCopier        string                                `json:"file-copier,omitempty"`
-	NodeExectutor     string                                `json:"node-executor,omitempty"`
+	HostName          string                                `json:"hostname"`
+	FileCopier        string                                `json:"file-copier"`
+	NodeExectutor     string                                `json:"node-executor"`
 	RemoteURL         string                                `json:"remoteUrl,omitempty"`
 	EditURL           string                                `json:"editUrl,omitempty"`
 	CustomProperties  *ArtbitraryResourcePropertiesResponse `json:",-"`

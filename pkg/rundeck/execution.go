@@ -9,19 +9,29 @@ import (
 )
 
 // Execution represents a job execution
-type Execution responses.ExecutionResponse
+type Execution struct {
+	responses.ExecutionResponse
+}
 
 // ExecutionState represents a job execution state
-type ExecutionState responses.ExecutionStateResponse
+type ExecutionState struct {
+	responses.ExecutionStateResponse
+}
+
+// AbortedExecution represents the results of aborting an execution
+type AbortedExecution struct {
+	responses.AbortExecutionResponse
+}
 
 // GetExecutionInfo returns the details of a job execution
 // http://rundeck.org/docs/api/index.html#execution-info
-func (c *Client) GetExecutionInfo(executionID string) (*Execution, error) {
+func (c *Client) GetExecutionInfo(executionID int) (*Execution, error) {
 	if err := c.checkRequiredAPIVersion(responses.ExecutionResponse{}); err != nil {
 		return nil, err
 	}
 	exec := &Execution{}
-	res, err := c.httpGet("execution/"+executionID, requestJSON(), requestExpects(200))
+	u := fmt.Sprintf("execution/%d", executionID)
+	res, err := c.httpGet(u, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
@@ -33,12 +43,13 @@ func (c *Client) GetExecutionInfo(executionID string) (*Execution, error) {
 
 // GetExecutionState returns the state of an execution
 // http://rundeck.org/docs/api/index.html#execution-state
-func (c *Client) GetExecutionState(executionID string) (*ExecutionState, error) {
+func (c *Client) GetExecutionState(executionID int) (*ExecutionState, error) {
 	if err := c.checkRequiredAPIVersion(responses.ExecutionStateResponse{}); err != nil {
 		return nil, err
 	}
 	data := &ExecutionState{}
-	res, err := c.httpGet("execution/"+executionID+"/state", requestJSON(), requestExpects(200))
+	u := fmt.Sprintf("execution/%d/state", executionID)
+	res, err := c.httpGet(u, requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
@@ -50,30 +61,34 @@ func (c *Client) GetExecutionState(executionID string) (*ExecutionState, error) 
 
 // GetExecutionOutput returns the output of an execution
 // http://rundeck.org/docs/api/index.html#execution-output
-func (c *Client) GetExecutionOutput(executionID string) ([]byte, error) {
+func (c *Client) GetExecutionOutput(executionID int) ([]byte, error) {
 	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
 		return nil, err
 	}
-	return c.httpGet("execution/"+executionID+"/output", accept("text/plain"), requestExpects(200))
+	u := fmt.Sprintf("execution/%d/output", executionID)
+	return c.httpGet(u, accept("text/plain"), requestExpects(200))
 }
 
 // DeleteExecution deletes an execution
 // http://rundeck.org/docs/api/index.html#delete-an-execution
-func (c *Client) DeleteExecution(id string) error {
+func (c *Client) DeleteExecution(executionID int) error {
 	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
 		return err
 	}
-	return c.httpDelete("execution/"+id, requestJSON(), requestExpects(204))
+	u := fmt.Sprintf("execution/%d", executionID)
+	_, err := c.httpDelete(u, requestJSON(), requestExpects(204))
+	return err
 }
 
 // DisableExecution disables an execution
 // http://rundeck.org/docs/api/index.html#disable-executions-for-a-job
-func (c *Client) DisableExecution(id string) (bool, error) {
+func (c *Client) DisableExecution(executionID int) (bool, error) {
 	if err := c.checkRequiredAPIVersion(responses.ToggleResponse{}); err != nil {
 		return false, err
 	}
 	t := &responses.ToggleResponse{}
-	res, err := c.httpPost("job/"+id+"/execution/disable", requestJSON(), requestExpects(200))
+	u := fmt.Sprintf("job/%d/execution/disable", executionID)
+	res, err := c.httpPost(u, requestJSON(), requestExpects(200))
 	if err != nil {
 		return false, err
 	}
@@ -85,12 +100,13 @@ func (c *Client) DisableExecution(id string) (bool, error) {
 
 // EnableExecution enables an execution
 // http://rundeck.org/docs/api/index.html#enable-executions-for-a-job
-func (c *Client) EnableExecution(id string) (bool, error) {
+func (c *Client) EnableExecution(executionID int) (bool, error) {
 	if err := c.checkRequiredAPIVersion(responses.ToggleResponse{}); err != nil {
 		return false, err
 	}
 	t := &responses.ToggleResponse{}
-	res, err := c.httpPost("job/"+id+"/execution/enable", requestExpects(200), requestJSON())
+	u := fmt.Sprintf("job/%d/execution/enable", executionID)
+	res, err := c.httpPost(u, requestExpects(200), requestJSON())
 	if err != nil {
 		return false, err
 	}
@@ -109,11 +125,41 @@ func (c *Client) ListInputFilesForExecution() error {
 	return fmt.Errorf("not yet implemented")
 }
 
+// AbortExecutionOption is a function option type for AbortExection options
+type AbortExecutionOption func(m *map[string]string) error
+
+// AbortExecutionAsUser sets the user for the abort execution call
+func AbortExecutionAsUser(runAsUser string) AbortExecutionOption {
+	return func(m *map[string]string) error {
+		(*m)["runAsUser"] = runAsUser
+		return nil
+	}
+}
+
 // AbortExecution lists input files used for an execution
 // http://rundeck.org/docs/api/index.html#aborting-executions
-func (c *Client) AbortExecution() error {
+func (c *Client) AbortExecution(executionID int, opts ...AbortExecutionOption) (*AbortedExecution, error) {
 	if err := c.checkRequiredAPIVersion(responses.AbortExecutionResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+
+	data := AbortedExecution{}
+	jobOpts := &map[string]string{}
+	for _, opt := range opts {
+		if err := opt(jobOpts); err != nil {
+			return nil, &OptionError{msg: multierror.Append(errOption, err).Error()}
+		}
+	}
+	u := fmt.Sprintf("execution/%d/abort", executionID)
+	if val, ok := (*jobOpts)["runAsUser"]; ok {
+		u = fmt.Sprintf("%s?asUser=%s", u, val)
+	}
+	res, err := c.httpGet(u, requestJSON(), requestExpects(200))
+	if err != nil {
+		return nil, err
+	}
+	if jsonErr := json.Unmarshal(res, &data); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return &data, nil
 }

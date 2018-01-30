@@ -14,13 +14,17 @@ import (
 )
 
 // Job represents a rundeck job
-type Job responses.JobResponse
+type Job struct {
+	responses.JobResponse
+}
 
 // JobList is a list of rundeck jobs
-type JobList responses.JobsResponse
+type JobList []Job
 
 // JobMetaData is the result of getting a job's metadata
-type JobMetaData responses.JobMetaDataResponse
+type JobMetaData struct {
+	responses.JobMetaDataResponse
+}
 
 // JobOption represents a job option
 type JobOption struct {
@@ -131,7 +135,8 @@ func (c *Client) DeleteJob(id string) error {
 	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
 		return err
 	}
-	return c.httpDelete("job/"+id, httpclient.ExpectStatus(204))
+	_, err := c.httpDelete("job/"+id, httpclient.ExpectStatus(204))
+	return err
 
 }
 
@@ -184,18 +189,18 @@ func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
 
 // ListJobs lists the jobs for a project
 // http://rundeck.org/docs/api/index.html#listing-jobs
-func (c *Client) ListJobs(projectID string) (*JobList, error) {
+func (c *Client) ListJobs(projectID string) (JobList, error) {
+	data := JobList{}
 	if err := c.checkRequiredAPIVersion(responses.JobsResponse{}); err != nil {
-		return nil, err
+		return data, err
 	}
-	data := &JobList{}
 	url := fmt.Sprintf("project/%s/jobs", projectID)
 	res, err := c.httpGet(url, requestJSON(), requestExpects(200))
 	if err != nil {
-		return nil, err
+		return data, err
 	}
 	if err := json.Unmarshal(res, &data); err != nil {
-		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
+		return data, &UnmarshalError{msg: multierror.Append(errDecoding, err).Error()}
 	}
 	return data, nil
 }
@@ -220,11 +225,23 @@ func (c *Client) GetExecutionsForJob(jobid string) error {
 
 // DeleteAllExecutionsForJob deletes all executions for a job
 // http://rundeck.org/docs/api/index.html#delete-all-executions-for-a-job
-func (c *Client) DeleteAllExecutionsForJob(jobid string) error {
+func (c *Client) DeleteAllExecutionsForJob(jobid string) (*DeletedExecutions, error) {
 	if err := c.checkRequiredAPIVersion(responses.BulkDeleteExecutionsResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+	data := &DeletedExecutions{}
+
+	u := fmt.Sprintf("job/%s/executions", jobid)
+	res, err := c.httpDelete(u,
+		accept("application/json"),
+		requestExpects(200))
+	if err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(res, data); err != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errEncoding, err).Error()}
+	}
+	return data, nil
 }
 
 // UploadFileForJobOption uploads a file for a job 'file' option type

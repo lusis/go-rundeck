@@ -1,7 +1,7 @@
 package responses
 
 // JobsResponse is a collection of JobResponse
-type JobsResponse []*JobResponse
+type JobsResponse []JobResponse
 
 func (a JobsResponse) minVersion() int  { return 17 }
 func (a JobsResponse) maxVersion() int  { return CurrentVersion }

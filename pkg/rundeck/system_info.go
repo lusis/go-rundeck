@@ -8,7 +8,9 @@ import (
 )
 
 // SystemInfo represents the rundeck server system info output
-type SystemInfo responses.SystemInfoResponse
+type SystemInfo struct {
+	responses.SystemInfoResponse
+}
 
 // GetSystemInfo gets system information from the rundeck server
 // http://rundeck.org/docs/api/index.html#system-info

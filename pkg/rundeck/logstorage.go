@@ -8,10 +8,14 @@ import (
 )
 
 // LogStorage represents log storage
-type LogStorage responses.LogStorageResponse
+type LogStorage struct {
+	responses.LogStorageResponse
+}
 
 // IncompleteLogStorage represents IncompleteLogStorage
-type IncompleteLogStorage responses.IncompleteLogStorageResponse
+type IncompleteLogStorage struct {
+	responses.IncompleteLogStorageResponse
+}
 
 // GetLogStorageInfo gets the logstorage
 // http://rundeck.org/docs/api/index.html#log-storage-info

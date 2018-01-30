@@ -6,22 +6,25 @@ import (
 	"errors"
 
 	multierror "github.com/hashicorp/go-multierror"
+	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck/responses"
 )
 
 // User represents a user in rundeck
-type User responses.UserProfileResponse
+type User struct {
+	responses.UserProfileResponse
+}
 
 // Users represents a collection of users
-type Users responses.ListUsersResponse
+type Users []User
 
 // ListUsers returns all rundeck users
 // http://rundeck.org/docs/api/index.html#list-users
-func (c *Client) ListUsers() (*Users, error) {
+func (c *Client) ListUsers() (Users, error) {
 	if err := c.checkRequiredAPIVersion(responses.ListUsersResponse{}); err != nil {
 		return nil, err
 	}
-	users := &Users{}
+	users := Users{}
 
 	res, err := c.httpGet("user/list", requestJSON(), requestExpects(200))
 	if err != nil {
@@ -81,11 +84,10 @@ func (c *Client) ModifyUserProfile(u *User) (*User, error) {
 		return nil, errors.New("must provide login and at least one field to update")
 	}
 	updatePath := "user/info"
-	if u.Login != currentUser.Login {
-		// we're not updating ourself so we need to append the login to the path
-		updatePath = updatePath + "/" + u.Login
+	if currentUser.Login != u.Login {
+		updatePath = "user/info/" + u.Login
 	}
-	newUser := &User{
+	newUser := requests.UserInfo{
 		FirstName: u.FirstName,
 		LastName:  u.LastName,
 		Email:     u.Email,
@@ -94,7 +96,7 @@ func (c *Client) ModifyUserProfile(u *User) (*User, error) {
 	if postDataErr != nil {
 		return nil, postDataErr
 	}
-	res, resErr := c.httpPost(updatePath, withBody(bytes.NewReader(postData)), requestJSON())
+	res, resErr := c.httpPost(updatePath, withBody(bytes.NewReader(postData)), requestJSON(), requestExpects(200))
 	if resErr != nil {
 		return nil, resErr
 	}

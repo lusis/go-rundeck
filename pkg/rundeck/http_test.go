@@ -23,7 +23,7 @@ func TestHTTP404(t *testing.T) {
 		assert.Error(t, err, n+" should return an error")
 		assert.IsType(t, ErrMissingResource, err, n+" should return ErrMissingResource")
 	}
-	err := client.httpDelete("/f", requestExpects(204))
+	_, err := client.httpDelete("/f", requestExpects(204))
 	assert.Error(t, err, "delete should return an error")
 	assert.IsType(t, ErrMissingResource, err, "delete should return ErrMissingResource")
 }
@@ -47,7 +47,7 @@ func TestRDErrorResponse(t *testing.T) {
 		assert.Error(t, reserr, n+" should return an error")
 		assert.Equal(t, "something blew up", reserr.Error())
 	}
-	reserr := client.httpDelete("/f", requestExpects(204))
+	_, reserr := client.httpDelete("/f", requestExpects(204))
 	assert.Error(t, reserr, "delete should return an error")
 	assert.Equal(t, "something blew up", reserr.Error())
 }

@@ -87,6 +87,21 @@ func TestJobImportJSONError(t *testing.T) {
 	assert.Nil(t, res)
 }
 
+func TestJobImportVersionError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.ImportedJobResponseTestFile)
+	if err != nil {
+		t.Fatalf(err.Error())
+	}
+
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	client.Config.APIVersion = "1"
+
+	defer server.Close()
+	res, resErr := client.ImportJob("testproject", bytes.NewReader(jsonfile), ImportFormat("yaml"))
+	assert.Error(t, resErr)
+	assert.Nil(t, res)
+}
+
 func TestJobImportOptionError(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.ImportedJobResponseTestFile)
 	if err != nil {

@@ -259,6 +259,9 @@ type AbortExecutionResponse struct {
 	} `json:"execution"`
 }
 
+// AbortExecutionResponseTestFile is test data for aborting an execution
+const AbortExecutionResponseTestFile = "execution_aborted.json"
+
 func (a AbortExecutionResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a AbortExecutionResponse) maxVersion() int  { return CurrentVersion }
 func (a AbortExecutionResponse) deprecated() bool { return false }

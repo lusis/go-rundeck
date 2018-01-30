@@ -11,6 +11,7 @@
 // enable_scm_plugin_import.json
 // error.json
 // execution.json
+// execution_aborted.json
 // execution_adhoc.json
 // execution_input_files.json
 // execution_state.json
@@ -348,6 +349,26 @@ func executionJson() (*asset, error) {
 	}
 
 	info := bindataFileInfo{name: "execution.json", size: 894, mode: os.FileMode(420), modTime: time.Unix(1515301640, 0)}
+	a := &asset{bytes: bytes, info: info}
+	return a, nil
+}
+
+var _execution_abortedJson = []byte("\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\x74\x8f\x41\x4e\xc4\x30\x0c\x45\xf7\x3d\x85\xe5\x35\x52\x00\xb5\x2c\x72\x04\x6e\x91\xa6\x2e\x09\x84\x38\x8a\x1d\x81\x84\x7a\x77\xd4\x56\x6d\x67\x16\xb3\xb3\xf5\xbf\xdf\x93\xff\x3a\x00\x00\x74\x23\x57\x45\x0b\xfb\x0a\x80\xa2\x4e\x9b\xa0\x05\x9c\x5d\x4c\x34\xe1\xd3\x91\x54\x72\xc2\x79\x4d\xde\x79\x84\x28\x90\x59\xa1\xb6\x9c\x63\xfe\xc0\xad\xb4\xec\x5d\xa4\x5f\xf2\x4d\xe3\x56\x3e\xc1\x71\x5a\x4f\x87\xb7\xe1\x22\x5e\x2e\x69\xde\x13\x4d\xb7\xba\x50\x69\x5e\xa3\xa0\x5a\xac\x31\x89\xbd\x4b\x81\x45\x6d\xdf\xf7\xcf\xc6\x95\x68\x5e\x5f\xcc\x69\x32\x77\xe0\x42\xf5\xdb\xa5\x98\xbf\x1e\x03\x4a\xe5\x4f\xf2\x6a\x94\x44\x8f\xf9\xa2\x49\xe0\x9f\x0d\xb9\xff\xd5\x01\x2c\xff\x01\x00\x00\xff\xff\x5f\xcc\xf5\xa9\x31\x01\x00\x00")
+
+func execution_abortedJsonBytes() ([]byte, error) {
+	return bindataRead(
+		_execution_abortedJson,
+		"execution_aborted.json",
+	)
+}
+
+func execution_abortedJson() (*asset, error) {
+	bytes, err := execution_abortedJsonBytes()
+	if err != nil {
+		return nil, err
+	}
+
+	info := bindataFileInfo{name: "execution_aborted.json", size: 305, mode: os.FileMode(420), modTime: time.Unix(1516247798, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1427,7 +1448,7 @@ func projectAclpolicy() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "project.aclpolicy", size: 309, mode: os.FileMode(420), modTime: time.Unix(1515532560, 0)}
+	info := bindataFileInfo{name: "project.aclpolicy", size: 309, mode: os.FileMode(420), modTime: time.Unix(1515533994, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
@@ -1495,6 +1516,7 @@ var _bindata = map[string]func() (*asset, error){
 	"enable_scm_plugin_import.json": enable_scm_plugin_importJson,
 	"error.json": errorJson,
 	"execution.json": executionJson,
+	"execution_aborted.json": execution_abortedJson,
 	"execution_adhoc.json": execution_adhocJson,
 	"execution_input_files.json": execution_input_filesJson,
 	"execution_state.json": execution_stateJson,
@@ -1602,6 +1624,7 @@ var _bintree = &bintree{nil, map[string]*bintree{
 	"enable_scm_plugin_import.json": &bintree{enable_scm_plugin_importJson, map[string]*bintree{}},
 	"error.json": &bintree{errorJson, map[string]*bintree{}},
 	"execution.json": &bintree{executionJson, map[string]*bintree{}},
+	"execution_aborted.json": &bintree{execution_abortedJson, map[string]*bintree{}},
 	"execution_adhoc.json": &bintree{execution_adhocJson, map[string]*bintree{}},
 	"execution_input_files.json": &bintree{execution_input_filesJson, map[string]*bintree{}},
 	"execution_output.txt": &bintree{execution_outputTxt, map[string]*bintree{}},

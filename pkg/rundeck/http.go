@@ -71,16 +71,18 @@ func (rc *Client) httpGet(path string, opts ...httpclient.RequestOption) ([]byte
 	authOpt = append(authOpt, opts...)
 	resp, err := httpclient.Get(rc.makeAPIPath(path), authOpt...)
 	if err != nil {
-		if resp.Status == 404 {
-			return nil, ErrMissingResource
-		}
-		if resp.Body != nil {
-			e := &responses.ErrorResponse{}
-			je := json.Unmarshal(resp.Body, e)
-			if je != nil {
-				return nil, err
+		if resp != nil {
+			if resp.Status == 404 {
+				return nil, ErrMissingResource
 			}
-			return nil, errors.New(e.Message)
+			if resp.Body != nil {
+				e := &responses.ErrorResponse{}
+				je := json.Unmarshal(resp.Body, e)
+				if je != nil {
+					return nil, err
+				}
+				return nil, errors.New(e.Message)
+			}
 		}
 		return nil, err
 	}
@@ -95,19 +97,21 @@ func (rc *Client) httpPost(path string, opts ...httpclient.RequestOption) ([]byt
 	opts = append(opts, authOpt...)
 	resp, err := httpclient.Post(rc.makeAPIPath(path), opts...)
 	if err != nil {
-		if resp.Status == 409 {
-			return nil, ErrResourceConflict
-		}
-		if resp.Status == 404 {
-			return nil, ErrMissingResource
-		}
-		if resp.Body != nil {
-			e := &responses.ErrorResponse{}
-			je := json.Unmarshal(resp.Body, e)
-			if je != nil {
-				return nil, err
+		if resp != nil {
+			if resp.Status == 409 {
+				return nil, ErrResourceConflict
 			}
-			return nil, errors.New(e.Message)
+			if resp.Status == 404 {
+				return nil, ErrMissingResource
+			}
+			if resp.Body != nil {
+				e := &responses.ErrorResponse{}
+				je := json.Unmarshal(resp.Body, e)
+				if je != nil {
+					return nil, err
+				}
+				return nil, errors.New(e.Message)
+			}
 		}
 		return nil, err
 	}
@@ -120,50 +124,55 @@ func (rc *Client) httpPut(path string, opts ...httpclient.RequestOption) ([]byte
 		return nil, authErr
 	}
 	opts = append(opts, authOpt...)
-	resp, err := httpclient.Put(rc.makeAPIPath(path), opts...)
+	p := rc.makeAPIPath(path)
+	resp, err := httpclient.Put(p, opts...)
 	if err != nil {
-		if resp.Status == 409 {
-			return nil, ErrResourceConflict
-		}
-		if resp.Status == 404 {
-			return nil, ErrMissingResource
-		}
-		if resp.Body != nil {
-			e := &responses.ErrorResponse{}
-			je := json.Unmarshal(resp.Body, e)
-			if je != nil {
-				return nil, err
+		if resp != nil {
+			if resp.Status == 409 {
+				return nil, ErrResourceConflict
 			}
-			return nil, errors.New(e.Message)
+			if resp.Status == 404 {
+				return nil, ErrMissingResource
+			}
+			if resp.Body != nil {
+				e := &responses.ErrorResponse{}
+				je := json.Unmarshal(resp.Body, e)
+				if je != nil {
+					return nil, err
+				}
+				return nil, errors.New(e.Message)
+			}
 		}
 	}
 
 	return resp.Body, err
 }
 
-func (rc *Client) httpDelete(path string, opts ...httpclient.RequestOption) error {
+func (rc *Client) httpDelete(path string, opts ...httpclient.RequestOption) ([]byte, error) {
 	authOpt, authErr := rc.authWrap()
 	if authErr != nil {
-		return authErr
+		return nil, authErr
 	}
 	opts = append(opts, authOpt...)
 	opts = append(opts, httpclient.ExpectStatus(204))
 	resp, err := httpclient.Delete(rc.makeAPIPath(path), opts...)
 	if err != nil {
-		if resp.Status == 404 {
-			return ErrMissingResource
-		}
-		if resp.Body != nil {
-			e := &responses.ErrorResponse{}
-			je := json.Unmarshal(resp.Body, e)
-			if je != nil {
-				return err
+		if resp != nil {
+			if resp.Status == 404 {
+				return nil, ErrMissingResource
 			}
-			return errors.New(e.Message)
+			if resp.Body != nil {
+				e := &responses.ErrorResponse{}
+				je := json.Unmarshal(resp.Body, e)
+				if je != nil {
+					return nil, err
+				}
+				return nil, errors.New(e.Message)
+			}
 		}
-		return err
+		return nil, err
 	}
-	return nil
+	return resp.Body, nil
 }
 
 func (rc *Client) authWrap() ([]httpclient.RequestOption, error) {

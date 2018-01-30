@@ -18,7 +18,7 @@ const UserProfileResponseTestFile = "user.json"
 
 // ListUsersResponse is a collection of `UserInfo`
 // http://rundeck.org/docs/api/index.html#list-users
-type ListUsersResponse []*UserProfileResponse
+type ListUsersResponse []UserProfileResponse
 
 // ListUsersResponseTestFile is test data for a UsersInfoResponse
 const ListUsersResponseTestFile = "users.json"

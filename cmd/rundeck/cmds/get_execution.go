@@ -2,6 +2,7 @@ package cmds
 
 import (
 	"fmt"
+	"strconv"
 
 	cli "github.com/lusis/go-rundeck/pkg/cli"
 	"github.com/spf13/cobra"
@@ -9,7 +10,11 @@ import (
 
 func getExecutionFunc(cmd *cobra.Command, args []string) error {
 	id := args[0]
-	data, err := cli.Client.GetExecutionInfo(id)
+	eID, eIDerr := strconv.Atoi(id)
+	if eIDerr != nil {
+		return eIDerr
+	}
+	data, err := cli.Client.GetExecutionInfo(eID)
 	if err != nil {
 		return err
 	}

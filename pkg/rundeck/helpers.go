@@ -6,6 +6,8 @@ Functions in this package are not part of the standard rundeck API but are usefu
 */
 import (
 	"errors"
+	"fmt"
+	"time"
 
 	multierror "github.com/hashicorp/go-multierror"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck/responses"
@@ -13,25 +15,25 @@ import (
 )
 
 // FindJobByName runs a job by name
-func (c *Client) FindJobByName(name string) ([]*JobMetaData, error) {
+func (c *Client) FindJobByName(name string) ([]JobMetaData, error) {
 	projects, pErr := c.ListProjects()
 	if pErr != nil {
 		return nil, pErr
 	}
 
-	var results []*JobMetaData
-	for _, project := range *projects {
+	var results []JobMetaData
+	for _, project := range projects {
 		jobs, err := c.ListJobs(project.Name)
 		if err != nil {
 			return nil, err
 		}
-		for _, d := range *jobs {
+		for _, d := range jobs {
 			if d.Name == name {
 				job, joblistErr := c.GetJobInfo(d.ID)
 				if joblistErr != nil {
 					return nil, joblistErr
 				}
-				results = append(results, job)
+				results = append(results, *job)
 			}
 		}
 	}
@@ -94,4 +96,39 @@ func (c *Client) GetRequiredOpts(j string) (map[string]string, error) {
 		}
 	}
 	return u, nil
+}
+
+// WaitingJob is a type for determining if work is done
+type WaitingJob struct {
+	Done  bool
+	Error error
+}
+
+// WaitFor runs the provided func up to max wait time until it is done
+func (c *Client) WaitFor(f func() (bool, error), max time.Duration) (bool, error) {
+	waitChan := make(chan (WaitingJob))
+	go func() {
+		for {
+			isDone, doneErr := f()
+			if doneErr != nil {
+				waitChan <- WaitingJob{Done: false, Error: doneErr}
+			}
+			if isDone {
+				waitChan <- WaitingJob{Done: true, Error: doneErr}
+			}
+		}
+	}()
+	done := false
+	var err error
+	select {
+	case m := <-waitChan:
+		done = m.Done
+		err = m.Error
+		break
+	case <-time.After(max):
+		done = false
+		err = fmt.Errorf("timeout waiting for job to be done")
+		break
+	}
+	return done, err
 }
