@@ -142,7 +142,7 @@ func (s *ExecutionIntegrationTestSuite) TestBulkDeleteExecutions() {
 			}
 			return info.Completed, nil
 		}
-		_, doneErr := s.TestClient.WaitFor(doneFunc, 2*time.Second)
+		_, doneErr := s.TestClient.WaitFor(doneFunc, 10*time.Second)
 		if doneErr != nil {
 			s.T().Fatalf("job could not be checked. cannot continue: %s", doneErr.Error())
 		}
