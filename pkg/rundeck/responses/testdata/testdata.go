@@ -368,7 +368,7 @@ func execution_abortedJson() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "execution_aborted.json", size: 305, mode: os.FileMode(420), modTime: time.Unix(1516247798, 0)}
+	info := bindataFileInfo{name: "execution_aborted.json", size: 305, mode: os.FileMode(420), modTime: time.Unix(1517340874, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
