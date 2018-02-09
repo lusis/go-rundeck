@@ -94,30 +94,6 @@ func (c *Client) GetExecutionOutputWithOffset(executionID int, offset int) (*Exe
 	return t, nil
 }
 
-/*
-// FollowExecutionOutput returns the output of an execution but follows it to completion
-// http://rundeck.org/docs/api/index.html#execution-output
-func (c *Client) FollowExecutionOutput(executionID int, w *io.Writer) error {
-	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
-		return err
-	}
-
-	t := &responses.ExecutionOutputResponse{}
-
-	res, err := c.GetExecutionOutputWithOffset(executionID, 0)
-	if err != nil {
-		return err
-	}
-	if jsonErr := json.Unmarshal(res, t); jsonErr != nil {
-		return &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
-	}
-	w.Write([]byte(t.Entries))
-	if !t.Completed {
-
-	}
-}
-*/
-
 // DeleteExecution deletes an execution
 // http://rundeck.org/docs/api/index.html#delete-an-execution
 func (c *Client) DeleteExecution(executionID int) error {
