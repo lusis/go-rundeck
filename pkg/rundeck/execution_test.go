@@ -121,7 +121,7 @@ func TestGetExecutionInvalidStatus(t *testing.T) {
 	assert.Nil(t, obj)
 }
 func TestGetExecutionOutput(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("execution_output.txt")
+	jsonfile, err := testdata.GetBytes("execution_output.json")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
