@@ -150,3 +150,20 @@ func TestAdHocExecutionResponse(t *testing.T) {
 	assert.NoError(t, dErr)
 	assert.Implements(t, (*VersionedResponse)(nil), obj)
 }
+
+func TestExecutionOutputResponse(t *testing.T) {
+	obj := &ExecutionOutputResponse{}
+	data, dataErr := testdata.GetBytes(ExecutionOutputResponseTestFile)
+	if dataErr != nil {
+		t.Fatalf(dataErr.Error())
+	}
+	placeholder := make(map[string]interface{})
+	_ = json.Unmarshal(data, &placeholder)
+	config := newMSDecoderConfig()
+	config.Result = obj
+	decoder, newErr := mapstructure.NewDecoder(config)
+	assert.NoError(t, newErr)
+	dErr := decoder.Decode(placeholder)
+	assert.NoError(t, dErr)
+	assert.Implements(t, (*VersionedResponse)(nil), obj)
+}

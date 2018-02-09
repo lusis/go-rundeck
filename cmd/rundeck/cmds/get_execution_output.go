@@ -18,7 +18,9 @@ func getExecutionOutputFunc(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(string(data))
+	for _, entry := range data.Entries {
+		fmt.Println(entry.Log)
+	}
 	return nil
 }
 

@@ -3,6 +3,7 @@ package rundeck
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 
 	multierror "github.com/hashicorp/go-multierror"
 	responses "github.com/lusis/go-rundeck/pkg/rundeck/responses"
@@ -21,6 +22,11 @@ type ExecutionState struct {
 // AbortedExecution represents the results of aborting an execution
 type AbortedExecution struct {
 	responses.AbortExecutionResponse
+}
+
+// ExecutionOutput represents the output of an execution
+type ExecutionOutput struct {
+	responses.ExecutionOutputResponse
 }
 
 // GetExecutionInfo returns the details of a job execution
@@ -61,12 +67,31 @@ func (c *Client) GetExecutionState(executionID int) (*ExecutionState, error) {
 
 // GetExecutionOutput returns the output of an execution
 // http://rundeck.org/docs/api/index.html#execution-output
-func (c *Client) GetExecutionOutput(executionID int) ([]byte, error) {
+func (c *Client) GetExecutionOutput(executionID int) (*ExecutionOutput, error) {
 	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
 		return nil, err
 	}
+	return c.GetExecutionOutputWithOffset(executionID, 0)
+}
+
+// GetExecutionOutputWithOffset gets the output of an execution at the given offset
+func (c *Client) GetExecutionOutputWithOffset(executionID int, offset int) (*ExecutionOutput, error) {
+	if err := c.checkRequiredAPIVersion(responses.GenericVersionedResponse{}); err != nil {
+		return nil, err
+	}
+	t := &ExecutionOutput{}
+	params := map[string]string{
+		"offset": strconv.Itoa(offset),
+	}
 	u := fmt.Sprintf("execution/%d/output", executionID)
-	return c.httpGet(u, accept("text/plain"), requestExpects(200))
+	res, err := c.httpGet(u, requestJSON(), requestExpects(200), queryParams(params))
+	if err != nil {
+		return nil, err
+	}
+	if jsonErr := json.Unmarshal(res, t); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return t, nil
 }
 
 // DeleteExecution deletes an execution
