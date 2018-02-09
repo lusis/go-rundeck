@@ -11,5 +11,6 @@ func executionCommands() *cobra.Command {
 	cmd.AddCommand(deleteExecutionCommand())
 	cmd.AddCommand(toggleExecutionCommand())
 	cmd.AddCommand(getExecutionOutputCommand())
+	cmd.AddCommand(tailExecutionOutputCommand())
 	return cmd
 }

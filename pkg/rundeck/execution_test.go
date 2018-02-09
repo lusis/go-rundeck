@@ -134,7 +134,7 @@ func TestGetExecutionOutput(t *testing.T) {
 
 	obj, oerr := client.GetExecutionOutput(1)
 	assert.NoError(t, oerr)
-	assert.NotEqual(t, "", string(obj))
+	assert.NotNil(t, obj)
 }
 
 func TestDeleteExecution(t *testing.T) {

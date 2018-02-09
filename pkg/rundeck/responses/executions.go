@@ -265,3 +265,37 @@ const AbortExecutionResponseTestFile = "execution_aborted.json"
 func (a AbortExecutionResponse) minVersion() int  { return AbsoluteMinimumVersion }
 func (a AbortExecutionResponse) maxVersion() int  { return CurrentVersion }
 func (a AbortExecutionResponse) deprecated() bool { return false }
+
+// ExecutionOutputResponse is the response for getting execution output
+type ExecutionOutputResponse struct {
+	ID             string  `json:"id"`
+	Offset         string  `json:"offset"`
+	Completed      bool    `json:"completed"`
+	ExecCompleted  bool    `json:"execCompleted"`
+	HasFailedNodes bool    `json:"hasFailedNodes"`
+	ExecState      string  `json:"execState"`
+	LastModified   string  `json:"lastModified"`
+	ExecDuration   int     `json:"execDuration"`
+	PercentLoaded  float64 `json:"percentLoaded"`
+	TotalSize      int     `json:"totalSize"`
+	RetryBackoff   int     `json:"retryBackoff"`
+	ClusterExec    bool    `json:"clusterExec"`
+	ServerNodeUUID string  `json:"serverNodeUUID"`
+	Compacted      bool    `json:"compacted"`
+	Entries        []struct {
+		Time         string    `json:"time"`
+		AbsoluteTime *JSONTime `json:"absolute_time"`
+		Log          string    `json:"log"`
+		Level        string    `json:"level"`
+		User         string    `json:"user"`
+		StepCTX      string    `json:"stepctx"`
+		Node         string    `json:"node"`
+	} `json:"entries"`
+}
+
+// ExecutionOutputResponseTestFile is test data for getting an output execution response
+const ExecutionOutputResponseTestFile = "execution_output.json"
+
+func (a ExecutionOutputResponse) minVersion() int  { return 21 }
+func (a ExecutionOutputResponse) maxVersion() int  { return CurrentVersion }
+func (a ExecutionOutputResponse) deprecated() bool { return false }
