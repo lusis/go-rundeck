@@ -244,3 +244,36 @@ func (s *SCMIntegrationTestSuite) TestSCMActionProjectExport() {
 	s.True(action.Success)
 	s.Len(action.ValidationErrors, 0)
 }
+
+func (s *SCMIntegrationTestSuite) TestSCMActionProjectFailure() {
+	project, _ := s.testCreateProject(false)
+	scmparams := map[string]string{
+		"committerName":  "John E. Vincent",
+		"committerEmail": "lusis.org+github.com@gmail.com",
+	}
+	res, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
+	s.Nil(res)
+	s.Error(resErr)
+}
+
+func (s *SCMIntegrationTestSuite) TestSCMActionProjectDisableEnable() {
+	project, _ := s.testCreateProject(false)
+	scmparams := map[string]string{
+		"committerName":         "John E. Vincent",
+		"committerEmail":        "lusis.org+github.com@gmail.com",
+		"url":                   "/home/rundeck-export.git/",
+		"format":                "yaml",
+		"dir":                   fmt.Sprintf("/var/rundeck/projects/%s/scm", project.Name),
+		"pathTemplate":          "${job.group}${job.name}-${job.id}.${config.format}",
+		"branch":                "master",
+		"strictHostKeyChecking": "no",
+	}
+	_, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
+	if resErr != nil {
+		s.T().Fatalf("could not setup export plugin. cannot continue: %s", resErr)
+	}
+	dErr := s.TestClient.DisableSCMPluginForProject(project.Name, "export", "git-export")
+	s.NoError(dErr)
+	eErr := s.TestClient.EnableSCMPluginForProject(project.Name, "export", "git-export")
+	s.NoError(eErr)
+}

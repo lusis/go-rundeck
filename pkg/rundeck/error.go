@@ -49,3 +49,13 @@ type AuthError struct {
 func (e *AuthError) Error() string {
 	return e.msg
 }
+
+// SCMValidationError is a custom error type for scm validation errors
+type SCMValidationError struct {
+	msg string
+}
+
+// Error returns the error message
+func (e *SCMValidationError) Error() string {
+	return e.msg
+}

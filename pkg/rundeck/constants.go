@@ -35,7 +35,8 @@ var (
 	// ErrResourceConflict is the error type for 409 responses
 	ErrResourceConflict = errors.New("resource already exists on the rundeck server")
 
-	errDecoding = errors.New("Could not parse response from the Rundeck server")
-	errEncoding = errors.New("could not encode payload for rundeck server")
-	errOption   = errors.New("Passed option returned an error")
+	errDecoding   = errors.New("Could not parse response from the Rundeck server")
+	errEncoding   = errors.New("could not encode payload for rundeck server")
+	errOption     = errors.New("Passed option returned an error")
+	errValidation = errors.New("Error validating input")
 )

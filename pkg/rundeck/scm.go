@@ -43,6 +43,7 @@ type SCMPluginInputFields struct {
 
 // ListSCMPlugins list the available plugins for the specified integration
 // http://rundeck.org/docs/api/index.html#list-scm-plugins
+// One minor customization we do here is to return both import and export in this for a nicer bit of sugar
 func (c *Client) ListSCMPlugins(projectName string) (*SCMPlugins, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return nil, err
@@ -112,25 +113,66 @@ func (c *Client) SetupSCMPluginForProject(project, integration, pluginType strin
 	if jsonErr := json.Unmarshal(res, results); jsonErr != nil {
 		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
 	}
-	return results, nil
+	if results.Success {
+		return results, nil
+	}
+	var errs = []error{}
+	for k, v := range results.ValidationErrors {
+		errs = append(errs, fmt.Errorf("%s - %s", k, v))
+	}
+	return nil, &SCMValidationError{msg: multierror.Append(errValidation, errs...).Error()}
 }
 
 // EnableSCMPluginForProject enables a plugin for a project
 // http://rundeck.org/docs/api/index.html#enable-scm-plugin-for-a-project
-func (c *Client) EnableSCMPluginForProject() error {
+func (c *Client) EnableSCMPluginForProject(project, integration, pluginType string) error {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("project/%s/scm/%s/plugin/%s/enable",
+		project, integration, pluginType)
+	res, err := c.httpPost(u, withBody(nil), requestJSON(), requestExpects(200), requestExpects(400))
+	if err != nil {
+		return err
+	}
+	results := &SCMPluginForProject{}
+	if jsonErr := json.Unmarshal(res, results); jsonErr != nil {
+		return &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	if results.Success {
+		return nil
+	}
+	var errs = []error{}
+	for k, v := range results.ValidationErrors {
+		errs = append(errs, fmt.Errorf("%s - %s", k, v))
+	}
+	return &SCMValidationError{msg: multierror.Append(errValidation, errs...).Error()}
 }
 
 // DisableSCMPluginForProject disables a plugin for a project
 // http://rundeck.org/docs/api/index.html#enable-scm-plugin-for-a-project
-func (c *Client) DisableSCMPluginForProject() error {
+func (c *Client) DisableSCMPluginForProject(project, integration, pluginType string) error {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("project/%s/scm/%s/plugin/%s/disable",
+		project, integration, pluginType)
+	res, err := c.httpPost(u, withBody(nil), requestJSON(), requestExpects(200), requestExpects(400))
+	if err != nil {
+		return err
+	}
+	results := &SCMPluginForProject{}
+	if jsonErr := json.Unmarshal(res, results); jsonErr != nil {
+		return &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	if results.Success {
+		return nil
+	}
+	var errs = []error{}
+	for k, v := range results.ValidationErrors {
+		errs = append(errs, fmt.Errorf("%s - %s", k, v))
+	}
+	return &SCMValidationError{msg: multierror.Append(errValidation, errs...).Error()}
 }
 
 // GetProjectSCMStatus Get the SCM plugin status and available actions for the project.
