@@ -382,7 +382,7 @@ func (c *Client) GetJobSCMActionInputFields(jobid, integration, action string) (
 }
 
 // PerformJobSCMAction Perform the action for the SCM integration plugin, with a set of input parameters, selected Jobs, or Items, or Items to delete.
-// http://rundeck.org/docs/api/index.html#perform-project-scm-action
+// http://rundeck.org/docs/api/index.html#perform-job-scm-action
 func (c *Client) PerformJobSCMAction() error {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return err

@@ -249,3 +249,57 @@ func (s *SCMIntegrationTestSuite) TestSCMActionProjectDisableEnable() {
 	eErr := s.TestClient.EnableSCMPluginForProject(project.Name, "export", "git-export")
 	s.NoError(eErr)
 }
+
+func (s *SCMIntegrationTestSuite) TestSCMActionJobDiff() {
+	project, _ := s.testCreateProject(false)
+	scmparams := map[string]string{
+		"committerName":         "John E. Vincent",
+		"committerEmail":        "lusis.org+github.com@gmail.com",
+		"url":                   "/home/rundeck-export.git/",
+		"format":                "yaml",
+		"dir":                   fmt.Sprintf("/var/rundeck/projects/%s/scm", project.Name),
+		"pathTemplate":          "${job.group}${job.name}-${job.id}.${config.format}",
+		"branch":                "master",
+		"strictHostKeyChecking": "no",
+	}
+	_, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
+	require.NoError(s.T(), resErr)
+
+	plugins, pluginsErr := s.TestClient.ListSCMPlugins(project.Name)
+	require.NoError(s.T(), pluginsErr)
+	require.True(s.T(), plugins.Export[0].Enabled)
+
+	jobbytes, joberr := testJobFromTemplate(project.Name+"-job-2", "job for "+project.Name)
+	require.NoError(s.T(), joberr)
+	importedJob, importErr := s.TestClient.ImportJob(project.Name,
+		bytes.NewReader(jobbytes),
+		rundeck.ImportFormat("yaml"),
+		rundeck.ImportUUID("remove"))
+	require.NoError(s.T(), importErr)
+	doneFunc := func() (bool, error) {
+		time.Sleep(1 * time.Second)
+		info, infoErr := s.TestClient.GetProjectSCMStatus(project.Name, "export")
+		if infoErr != nil && infoErr.Error() == "Rundeck could not find the resource you requested" {
+			// just not ready yet
+			return false, nil
+		}
+		if infoErr != nil {
+			return false, infoErr
+		}
+		if info != nil {
+			if len(info.Actions) != 0 {
+				// we have pending actions, let's return
+				return true, nil
+			}
+		}
+		return false, nil
+	}
+	_, doneErr := s.TestClient.WaitFor(doneFunc, 15*time.Second)
+	require.NoError(s.T(), doneErr)
+
+	jobid := importedJob.Succeeded[0].ID
+	diff, diffErr := s.TestClient.GetJobSCMDiff(jobid, "export")
+	require.NoError(s.T(), diffErr)
+	require.NotEmpty(s.T(), diff.ID)
+	require.NotEmpty(s.T(), diff.Project)
+}
