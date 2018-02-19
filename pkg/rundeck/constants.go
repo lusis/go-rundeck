@@ -16,6 +16,16 @@ const minJSONSupportedAPIVersion = 14
 const (
 	basicAuthType = "basic"
 	tokenAuthType = "token"
+
+	/*
+		scmStateClean   = "CLEAN"          // nolint: deadcode
+		scmStateUnknown = "UNKNOWN"        // nolint: deadcode
+		scmStateRefresh = "REFRESH_NEEDED" // nolint: deadcode
+		scmStateImport  = "IMPORT_NEEDED"  // nolint: deadcode
+		scmStateDelete  = "DELETE_NEEDED"  // nolint: deadcode
+		scmStateExport  = "EXPORT_NEEDED"  // nolint: deadcode
+		scmStateCreate  = "CREATE_NEEDED"  // nolint: deadcode
+	*/
 )
 
 var (

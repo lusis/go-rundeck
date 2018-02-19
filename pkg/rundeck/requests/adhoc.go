@@ -46,7 +46,7 @@ type AdHocScriptRequest struct {
 	Script                string `json:"script"`
 	ArgString             string `json:"argString,omitempty"`
 	ScriptInterpreter     string `json:"scriptInterpreter,omitempty"`
-	InterpreterArgsQuoted bool   `json:"interpreterArgsQuoted, omitempty"`
+	InterpreterArgsQuoted bool   `json:"interpreterArgsQuoted,omitempty"`
 	FileExtension         string `json:"fileExtension,omitempty"`
 	AdHocCommonRequest
 }
@@ -71,7 +71,7 @@ type AdHocScriptURLRequest struct {
 	URL                   string `json:"url"`
 	ArgString             string `json:"argString,omitempty"`
 	ScriptInterpreter     string `json:"scriptInterpreter,omitempty"`
-	InterpreterArgsQuoted bool   `json:"interpreterArgsQuoted, omitempty"`
+	InterpreterArgsQuoted bool   `json:"interpreterArgsQuoted,omitempty"`
 	FileExtension         string `json:"fileExtension,omitempty"`
 	AdHocCommonRequest
 }

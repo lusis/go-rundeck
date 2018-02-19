@@ -90,7 +90,7 @@ func (s *SCMIntegrationTestSuite) TestGetSCMPluginInputFields() {
 	require.NoError(s.T(), resErr)
 	// We're going to spot check a few fields
 	for _, p := range res.Export {
-		fields, fieldsErr := s.TestClient.GetSCMPluginInputFields(project.Name, "export", p.Type)
+		fields, fieldsErr := s.TestClient.GetProjectSCMPluginInputFields(project.Name, "export", p.Type)
 		s.NoError(fieldsErr)
 		s.NotEmpty(fields.Integration)
 		s.NotEmpty(fields.Type)
@@ -100,7 +100,7 @@ func (s *SCMIntegrationTestSuite) TestGetSCMPluginInputFields() {
 		}
 	}
 	for _, p := range res.Import {
-		fields, fieldsErr := s.TestClient.GetSCMPluginInputFields(project.Name, "import", p.Type)
+		fields, fieldsErr := s.TestClient.GetProjectSCMPluginInputFields(project.Name, "import", p.Type)
 		s.NoError(fieldsErr)
 		s.NotEmpty(fields.Integration)
 		s.NotEmpty(fields.Type)

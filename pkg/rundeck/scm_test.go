@@ -63,7 +63,7 @@ func TestGetSCMPluginInputFields(t *testing.T) {
 	defer server.Close()
 	require.NoError(t, cErr)
 
-	s, serr := client.GetSCMPluginInputFields("testproject", "export", "git-export")
+	s, serr := client.GetProjectSCMPluginInputFields("testproject", "export", "git-export")
 	require.NoError(t, serr)
 	require.NotNil(t, s)
 }
@@ -76,7 +76,7 @@ func TestGetSCMPluginInputFieldsHTTPError(t *testing.T) {
 	defer server.Close()
 	require.NoError(t, cErr)
 
-	s, serr := client.GetSCMPluginInputFields("testproject", "export", "git-export")
+	s, serr := client.GetProjectSCMPluginInputFields("testproject", "export", "git-export")
 	require.Error(t, serr)
 	require.Nil(t, s)
 }
@@ -86,7 +86,7 @@ func TestGetSCMPluginInputFieldsJSONError(t *testing.T) {
 	defer server.Close()
 	require.NoError(t, cErr)
 
-	s, serr := client.GetSCMPluginInputFields("testproject", "export", "git-export")
+	s, serr := client.GetProjectSCMPluginInputFields("testproject", "export", "git-export")
 	require.Error(t, serr)
 	require.Nil(t, s)
 }
@@ -281,4 +281,96 @@ func TestGetProjectSCMConfig(t *testing.T) {
 	s, serr := client.GetProjectSCMConfig("testproject", "export")
 	require.NoError(t, serr)
 	require.NotNil(t, s)
+}
+
+func TestSCMJobStatus(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetJobSCMStatusResponseTestFileExport)
+	require.NoError(t, err)
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	s, err := client.GetJobSCMStatus("testjob", "export")
+	require.NoError(t, err)
+	require.NotNil(t, s)
+}
+
+func TestSCMJobStatusHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetJobSCMStatusResponseTestFileExport)
+	require.NoError(t, err)
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	s, err := client.GetJobSCMStatus("testjob", "export")
+	require.Error(t, err)
+	require.Nil(t, s)
+}
+
+func TestSCMJobStatusJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	s, err := client.GetJobSCMStatus("testjob", "export")
+	require.Error(t, err)
+	require.Nil(t, s)
+}
+
+func TestSCMJobDiff(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetJobSCMDiffResponseTestFileExport)
+	require.NoError(t, err)
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	s, err := client.GetJobSCMDiff("testjob", "export")
+	require.NoError(t, err)
+	require.NotNil(t, s)
+}
+
+func TestSCMJobDiffHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetJobSCMDiffResponseTestFileExport)
+	require.NoError(t, err)
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	s, err := client.GetJobSCMDiff("testjob", "export")
+	require.Error(t, err)
+	require.Nil(t, s)
+}
+
+func TestSCMJobDiffJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	s, err := client.GetJobSCMDiff("testjob", "export")
+	require.Error(t, err)
+	require.Nil(t, s)
+}
+
+func TestGetJobSCMActionInputFields(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	require.NoError(t, err)
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	require.NoError(t, cErr)
+
+	s, serr := client.GetJobSCMActionInputFields("testjob", "export", "foo")
+	require.NoError(t, serr)
+	require.NotNil(t, s)
+}
+
+func TestGetJobSCMActionInputFieldsHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	require.NoError(t, err)
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	require.NoError(t, cErr)
+
+	s, serr := client.GetJobSCMActionInputFields("testjob", "export", "foo")
+	require.Error(t, serr)
+	require.Nil(t, s)
+}
+
+func TestGetJobSCMActionInputFieldsJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte("jsonfile"), "application/json", 200)
+	defer server.Close()
+	require.NoError(t, cErr)
+
+	s, serr := client.GetJobSCMActionInputFields("testjob", "export", "foo")
+	require.Error(t, serr)
+	require.Nil(t, s)
 }

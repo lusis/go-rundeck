@@ -12,7 +12,7 @@ func getSCMPluginInputFieldsFunc(cmd *cobra.Command, args []string) error {
 	projectName := args[0]
 	integration := args[1]
 	pluginType := args[2]
-	data, err := cli.Client.GetSCMPluginInputFields(projectName, integration, pluginType)
+	data, err := cli.Client.GetProjectSCMPluginInputFields(projectName, integration, pluginType)
 	if err != nil {
 		return err
 	}
