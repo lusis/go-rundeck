@@ -25,6 +25,7 @@ func RootCommand() {
 		tokenCommand(),
 		tokensCommands(),
 		httpCommand(),
+		scmCommands(),
 		logStorageCommand())
 	_ = cmd.Execute()
 }

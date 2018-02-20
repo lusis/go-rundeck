@@ -32,5 +32,6 @@ func projectCommands() *cobra.Command {
 	cmd.AddCommand(getProjectConfigCommand())
 	cmd.AddCommand(exportProjectCommand())
 	cmd.AddCommand(projectPoliciesCommands())
+	cmd.AddCommand(scmCommands())
 	return cmd
 }

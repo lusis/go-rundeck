@@ -15,8 +15,8 @@ type SCMPluginForProject struct {
 	responses.SCMPluginForProjectResponse
 }
 
-// ProjectSCMActionInputFields represents project scm action input fields
-type ProjectSCMActionInputFields struct {
+// SCMActionInputFields represents project scm action input fields
+type SCMActionInputFields struct {
 	responses.GetSCMActionInputFieldsResponse
 }
 
@@ -25,8 +25,8 @@ type ProjectSCMConfig struct {
 	responses.GetProjectSCMConfigResponse
 }
 
-// ProjectSCMStatus represents a project's scm status
-type ProjectSCMStatus struct {
+// SCMProjectStatus represents a project's scm status
+type SCMProjectStatus struct {
 	responses.GetProjectSCMStatusResponse
 }
 
@@ -41,8 +41,19 @@ type SCMPluginInputFields struct {
 	responses.GetSCMPluginInputFieldsResponse
 }
 
+// SCMJobStatus represents a job's scm status
+type SCMJobStatus struct {
+	responses.GetJobSCMStatusResponse
+}
+
+// SCMJobDiff represent's a job's scm diff
+type SCMJobDiff struct {
+	responses.GetJobSCMDiffResponse
+}
+
 // ListSCMPlugins list the available plugins for the specified integration
 // http://rundeck.org/docs/api/index.html#list-scm-plugins
+// One minor customization we do here is to return both import and export in this for a nicer bit of sugar
 func (c *Client) ListSCMPlugins(projectName string) (*SCMPlugins, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return nil, err
@@ -71,9 +82,9 @@ func (c *Client) ListSCMPlugins(projectName string) (*SCMPlugins, error) {
 	return plugins, nil
 }
 
-// GetSCMPluginInputFields List the input fields for a specific plugin.
+// GetProjectSCMPluginInputFields List the input fields for a specific plugin.
 // http://rundeck.org/docs/api/index.html#get-scm-plugin-input-fields
-func (c *Client) GetSCMPluginInputFields(projectName, integration, pluginType string) (*SCMPluginInputFields, error) {
+func (c *Client) GetProjectSCMPluginInputFields(projectName, integration, pluginType string) (*SCMPluginInputFields, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return nil, err
 	}
@@ -112,36 +123,77 @@ func (c *Client) SetupSCMPluginForProject(project, integration, pluginType strin
 	if jsonErr := json.Unmarshal(res, results); jsonErr != nil {
 		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
 	}
-	return results, nil
+	if results.Success {
+		return results, nil
+	}
+	var errs = []error{}
+	for k, v := range results.ValidationErrors {
+		errs = append(errs, fmt.Errorf("%s - %s", k, v))
+	}
+	return nil, &SCMValidationError{msg: multierror.Append(errValidation, errs...).Error()}
 }
 
 // EnableSCMPluginForProject enables a plugin for a project
 // http://rundeck.org/docs/api/index.html#enable-scm-plugin-for-a-project
-func (c *Client) EnableSCMPluginForProject() error {
+func (c *Client) EnableSCMPluginForProject(project, integration, pluginType string) error {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("project/%s/scm/%s/plugin/%s/enable",
+		project, integration, pluginType)
+	res, err := c.httpPost(u, withBody(nil), requestJSON(), requestExpects(200), requestExpects(400))
+	if err != nil {
+		return err
+	}
+	results := &SCMPluginForProject{}
+	if jsonErr := json.Unmarshal(res, results); jsonErr != nil {
+		return &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	if results.Success {
+		return nil
+	}
+	var errs = []error{}
+	for k, v := range results.ValidationErrors {
+		errs = append(errs, fmt.Errorf("%s - %s", k, v))
+	}
+	return &SCMValidationError{msg: multierror.Append(errValidation, errs...).Error()}
 }
 
 // DisableSCMPluginForProject disables a plugin for a project
 // http://rundeck.org/docs/api/index.html#enable-scm-plugin-for-a-project
-func (c *Client) DisableSCMPluginForProject() error {
+func (c *Client) DisableSCMPluginForProject(project, integration, pluginType string) error {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("project/%s/scm/%s/plugin/%s/disable",
+		project, integration, pluginType)
+	res, err := c.httpPost(u, withBody(nil), requestJSON(), requestExpects(200), requestExpects(400))
+	if err != nil {
+		return err
+	}
+	results := &SCMPluginForProject{}
+	if jsonErr := json.Unmarshal(res, results); jsonErr != nil {
+		return &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	if results.Success {
+		return nil
+	}
+	var errs = []error{}
+	for k, v := range results.ValidationErrors {
+		errs = append(errs, fmt.Errorf("%s - %s", k, v))
+	}
+	return &SCMValidationError{msg: multierror.Append(errValidation, errs...).Error()}
 }
 
 // GetProjectSCMStatus Get the SCM plugin status and available actions for the project.
 // http://rundeck.org/docs/api/index.html#get-project-scm-status
-func (c *Client) GetProjectSCMStatus(project, integration string) (*ProjectSCMStatus, error) {
+func (c *Client) GetProjectSCMStatus(project, integration string) (*SCMProjectStatus, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return nil, err
 	}
 	// project/[PROJECT]/scm/[INTEGRATION]/status
 	u := fmt.Sprintf("project/%s/scm/%s/status", project, integration)
-	results := &ProjectSCMStatus{}
+	results := &SCMProjectStatus{}
 	res, resErr := c.httpGet(u, requestExpects(200), accept("application/json"))
 	if resErr != nil {
 		return nil, resErr
@@ -172,13 +224,13 @@ func (c *Client) GetProjectSCMConfig(projectName, integration string) (*ProjectS
 
 // GetProjectSCMActionInputFields Get the input fields and selectable items for a specific action.
 // http://rundeck.org/docs/api/index.html#get-project-scm-action-input-fields
-func (c *Client) GetProjectSCMActionInputFields(project, integration, action string) (*ProjectSCMActionInputFields, error) {
+func (c *Client) GetProjectSCMActionInputFields(project, integration, action string) (*SCMActionInputFields, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return nil, err
 	}
 	// project/[PROJECT]/scm/[INTEGRATION]/action/[ACTION_ID]/input
 	u := fmt.Sprintf("project/%s/scm/%s/action/%s/input", project, integration, action)
-	resp := &ProjectSCMActionInputFields{}
+	resp := &SCMActionInputFields{}
 	res, resErr := c.httpGet(u, accept("application/json"), requestExpects(200))
 	if resErr != nil {
 		return nil, resErr
@@ -276,33 +328,61 @@ func (c *Client) PerformProjectSCMAction(project, integration, action string, op
 
 // GetJobSCMStatus gets a job's scm status
 // http://rundeck.org/docs/api/index.html#get-job-scm-status
-func (c *Client) GetJobSCMStatus() error {
+func (c *Client) GetJobSCMStatus(jobid, integration string) (*SCMJobStatus, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("job/%s/scm/%s/status", jobid, integration)
+	results := &SCMJobStatus{}
+	res, resErr := c.httpGet(u, requestExpects(200), accept("application/json"))
+	if resErr != nil {
+		return nil, resErr
+	}
+	if jsonErr := json.Unmarshal(res, results); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return results, nil
 }
 
 // GetJobSCMDiff Retrieve the file diff for the Job, if there are changes for the integration.
 // http://rundeck.org/docs/api/index.html#get-job-scm-diff
-func (c *Client) GetJobSCMDiff() error {
+func (c *Client) GetJobSCMDiff(jobid, integration string) (*SCMJobDiff, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+	u := fmt.Sprintf("job/%s/scm/%s/diff", jobid, integration)
+	results := &SCMJobDiff{}
+	res, resErr := c.httpGet(u, requestExpects(200), accept("application/json"))
+	if resErr != nil {
+		return nil, resErr
+	}
+	if jsonErr := json.Unmarshal(res, results); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return results, nil
 }
 
-// GetJobSCMActionInputFields Get the input fields and selectable items for a specific action for a job.
-// http://rundeck.org/docs/api/index.html#get-project-scm-action-input-fields
-func (c *Client) GetJobSCMActionInputFields() error {
+// GetJobSCMActionInputFields Get the input fields and selectable items for a specific action.
+// http://rundeck.org/docs/api/index.html#get-job-scm-action-input-fields
+func (c *Client) GetJobSCMActionInputFields(jobid, integration, action string) (*SCMActionInputFields, error) {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
-		return err
+		return nil, err
 	}
-	return fmt.Errorf("not yet implemented")
+	// /api/15/job/[ID]/scm/[INTEGRATION]/action/[ACTION_ID]/input
+	u := fmt.Sprintf("job/%s/scm/%s/action/%s/input", jobid, integration, action)
+	resp := &SCMActionInputFields{}
+	res, resErr := c.httpGet(u, accept("application/json"), requestExpects(200))
+	if resErr != nil {
+		return nil, resErr
+	}
+	if jsonErr := json.Unmarshal(res, resp); jsonErr != nil {
+		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	return resp, nil
 }
 
 // PerformJobSCMAction Perform the action for the SCM integration plugin, with a set of input parameters, selected Jobs, or Items, or Items to delete.
-// http://rundeck.org/docs/api/index.html#perform-project-scm-action
+// http://rundeck.org/docs/api/index.html#perform-job-scm-action
 func (c *Client) PerformJobSCMAction() error {
 	if err := c.checkRequiredAPIVersion(responses.SCMResponse{}); err != nil {
 		return err

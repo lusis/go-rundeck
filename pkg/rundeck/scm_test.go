@@ -6,7 +6,7 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestListSCMPlugins(t *testing.T) {
@@ -26,248 +26,195 @@ func TestListSCMPlugins(t *testing.T) {
 	}
 
 	s, serr := client.ListSCMPlugins("testproject")
-	assert.NoError(t, serr)
-	assert.NotNil(t, s)
-	assert.Len(t, s.Import, 1)
-	assert.Len(t, s.Export, 1)
+	require.NoError(t, serr)
+	require.NotNil(t, s)
+	require.Len(t, s.Import, 1)
+	require.Len(t, s.Export, 1)
 }
 
 func TestListSCMPluginsHTTPError(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.ListSCMPluginsResponseImportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.ListSCMPlugins("testproject")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestListSCMPluginsJSONError(t *testing.T) {
 	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.ListSCMPlugins("testproject")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestGetSCMPluginInputFields(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
-	s, serr := client.GetSCMPluginInputFields("testproject", "export", "git-export")
-	assert.NoError(t, serr)
-	assert.NotNil(t, s)
+	s, serr := client.GetProjectSCMPluginInputFields("testproject", "export", "git-export")
+	require.NoError(t, serr)
+	require.NotNil(t, s)
 }
 
 func TestGetSCMPluginInputFieldsHTTPError(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
-	s, serr := client.GetSCMPluginInputFields("testproject", "export", "git-export")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	s, serr := client.GetProjectSCMPluginInputFields("testproject", "export", "git-export")
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestGetSCMPluginInputFieldsJSONError(t *testing.T) {
-
 	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
-	s, serr := client.GetSCMPluginInputFields("testproject", "export", "git-export")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	s, serr := client.GetProjectSCMPluginInputFields("testproject", "export", "git-export")
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestSetupSCMPluginForProject(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.SetupSCMPluginForProject("testproject", "export", "git-export", make(map[string]string))
-	assert.NoError(t, serr)
-	assert.NotNil(t, s)
+	require.NoError(t, serr)
+	require.NotNil(t, s)
 }
 
 func TestSetupSCMPluginForProjectHTTPError(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.SetupSCMPluginForProject("testproject", "export", "git-export", make(map[string]string))
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestSetupSCMPluginForProjectJSONError(t *testing.T) {
 	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.SetupSCMPluginForProject("testproject", "export", "git-export", make(map[string]string))
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestGetProjectSCMStatus(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.GetProjectSCMStatusResponseExportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.GetProjectSCMStatus("testproject", "export")
-	assert.NoError(t, serr)
-	assert.NotNil(t, s)
+	require.NoError(t, serr)
+	require.NotNil(t, s)
 }
 
 func TestGetProjectSCMStatusHTTPError(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.GetProjectSCMStatusResponseExportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.GetProjectSCMStatus("testproject", "export")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestGetProjectSCMStatusJSONError(t *testing.T) {
 	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.GetProjectSCMStatus("testproject", "export")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestGetProjectSCMActionInputFields(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.GetProjectSCMActionInputFields("testproject", "export", "foo")
-	assert.NoError(t, serr)
-	assert.NotNil(t, s)
+	require.NoError(t, serr)
+	require.NotNil(t, s)
 }
 
 func TestGetProjectSCMActionInputFieldsHTTPError(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.GetProjectSCMActionInputFields("testproject", "export", "foo")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestGetProjectSCMActionInputFieldsJSONError(t *testing.T) {
 	client, server, cErr := newTestRundeckClient([]byte("jsonfile"), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.GetProjectSCMActionInputFields("testproject", "export", "foo")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestPerformProjectSCMAction(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.PerformProjectSCMAction("testproject", "export", "foo")
-	assert.NoError(t, serr)
-	assert.NotNil(t, s)
+	require.NoError(t, serr)
+	require.NotNil(t, s)
 }
 
 func TestPerformProjectSCMActionOptions(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	opts := []SCMActionOption{
 		SCMActionDeleted("a", "b"),
@@ -277,20 +224,16 @@ func TestPerformProjectSCMActionOptions(t *testing.T) {
 	}
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.PerformProjectSCMAction("testproject", "export", "foo", opts...)
-	assert.NoError(t, serr)
-	assert.NotNil(t, s)
+	require.NoError(t, serr)
+	require.NotNil(t, s)
 }
 
 func TestPerformProjectSCMActionOptionError(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	myopt := func() SCMActionOption {
 		return func(a *SCMAction) error {
@@ -299,30 +242,24 @@ func TestPerformProjectSCMActionOptionError(t *testing.T) {
 	}
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.PerformProjectSCMAction("testproject", "export", "foo", myopt())
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestPerformProjectSCMActionHTTPError(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, cErr)
 
 	s, serr := client.PerformProjectSCMAction("testproject", "export", "foo")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestPerformProjectSCMActionJSONError(t *testing.T) {
@@ -331,19 +268,109 @@ func TestPerformProjectSCMActionJSONError(t *testing.T) {
 	defer server.Close()
 
 	s, serr := client.PerformProjectSCMAction("testproject", "export", "foo")
-	assert.Error(t, serr)
-	assert.Nil(t, s)
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
 
 func TestGetProjectSCMConfig(t *testing.T) {
 	jsonfile, err := testdata.GetBytes(responses.GetProjectSCMConfigResponseImportTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 
 	s, serr := client.GetProjectSCMConfig("testproject", "export")
-	assert.NoError(t, serr)
-	assert.NotNil(t, s)
+	require.NoError(t, serr)
+	require.NotNil(t, s)
+}
+
+func TestSCMJobStatus(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetJobSCMStatusResponseTestFileExport)
+	require.NoError(t, err)
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	s, err := client.GetJobSCMStatus("testjob", "export")
+	require.NoError(t, err)
+	require.NotNil(t, s)
+}
+
+func TestSCMJobStatusHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetJobSCMStatusResponseTestFileExport)
+	require.NoError(t, err)
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	s, err := client.GetJobSCMStatus("testjob", "export")
+	require.Error(t, err)
+	require.Nil(t, s)
+}
+
+func TestSCMJobStatusJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	s, err := client.GetJobSCMStatus("testjob", "export")
+	require.Error(t, err)
+	require.Nil(t, s)
+}
+
+func TestSCMJobDiff(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetJobSCMDiffResponseTestFileExport)
+	require.NoError(t, err)
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	s, err := client.GetJobSCMDiff("testjob", "export")
+	require.NoError(t, err)
+	require.NotNil(t, s)
+}
+
+func TestSCMJobDiffHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetJobSCMDiffResponseTestFileExport)
+	require.NoError(t, err)
+	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	s, err := client.GetJobSCMDiff("testjob", "export")
+	require.Error(t, err)
+	require.Nil(t, s)
+}
+
+func TestSCMJobDiffJSONError(t *testing.T) {
+	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
+	defer server.Close()
+	s, err := client.GetJobSCMDiff("testjob", "export")
+	require.Error(t, err)
+	require.Nil(t, s)
+}
+
+func TestGetJobSCMActionInputFields(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	require.NoError(t, err)
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	defer server.Close()
+	require.NoError(t, cErr)
+
+	s, serr := client.GetJobSCMActionInputFields("testjob", "export", "foo")
+	require.NoError(t, serr)
+	require.NotNil(t, s)
+}
+
+func TestGetJobSCMActionInputFieldsHTTPError(t *testing.T) {
+	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	require.NoError(t, err)
+
+	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
+	defer server.Close()
+	require.NoError(t, cErr)
+
+	s, serr := client.GetJobSCMActionInputFields("testjob", "export", "foo")
+	require.Error(t, serr)
+	require.Nil(t, s)
+}
+
+func TestGetJobSCMActionInputFieldsJSONError(t *testing.T) {
+	client, server, cErr := newTestRundeckClient([]byte("jsonfile"), "application/json", 200)
+	defer server.Close()
+	require.NoError(t, cErr)
+
+	s, serr := client.GetJobSCMActionInputFields("testjob", "export", "foo")
+	require.Error(t, serr)
+	require.Nil(t, s)
 }
