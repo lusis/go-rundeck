@@ -4,3 +4,5 @@ bin/
 debug.test
 debug
 .vscode
+# I develop on windows sometimes yall
+*.exe 
