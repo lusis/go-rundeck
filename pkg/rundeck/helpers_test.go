@@ -10,8 +10,8 @@ import (
 func newTestRundeckClient(content []byte, contentType string, statusCode int) (*Client, *httptest.Server, error) {
 
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(statusCode)
 		w.Header().Set("Content-Type", contentType)
+		w.WriteHeader(statusCode)
 		fmt.Fprintf(w, string(content))
 	}))
 

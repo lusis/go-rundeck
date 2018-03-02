@@ -13,7 +13,8 @@ test:
 #ifneq ($(TRAVIS_BUILD_DIR),)
 #	@script/travis-integration
 #endif
-	@script/test
+	@script/lint
+	@script/coverage
 
 bindata:
 	@go get -u github.com/jteeuwen/go-bindata/...
