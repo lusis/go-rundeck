@@ -9,11 +9,11 @@ import (
 	"time"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 // These are the preconfigured settings with the docker image built in this repo
-var testIntegrationURL = "http://localhost:4440"
+var testIntegrationURL = "http://127.0.0.1:4440"
 var testIntegrationUsername = "admin"
 var testIntegrationPassword = "admin"
 var testIntegrationToken = "yays72hw87aK2AfxWifTSdcMcY81GL1p"
@@ -236,10 +236,10 @@ func TestIntegrationBasicAuth(t *testing.T) {
 		t.Skip("rundeck not running for integration tests")
 	}
 	client, err := rundeck.NewBasicAuthClient(testIntegrationUsername, testIntegrationPassword, testIntegrationURL)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	info, infoErr := client.GetSystemInfo()
-	assert.NoError(t, infoErr)
-	assert.NotNil(t, info)
+	require.NoError(t, infoErr)
+	require.NotNil(t, info)
 }
 
 func TestIntegrationTokenAuth(t *testing.T) {
@@ -247,10 +247,10 @@ func TestIntegrationTokenAuth(t *testing.T) {
 		t.Skip("rundeck not running for integration tests")
 	}
 	client, err := rundeck.NewTokenAuthClient(testIntegrationToken, testIntegrationURL)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	info, infoErr := client.GetSystemInfo()
-	assert.NoError(t, infoErr)
-	assert.NotNil(t, info)
+	require.NoError(t, infoErr)
+	require.NotNil(t, info)
 }
 
 func TestIntegrationInvalidBasicAuth(t *testing.T) {
@@ -259,6 +259,6 @@ func TestIntegrationInvalidBasicAuth(t *testing.T) {
 	}
 	client, _ := rundeck.NewBasicAuthClient("bob", "bob", testIntegrationURL)
 	info, infoErr := client.GetSystemInfo()
-	assert.Error(t, infoErr)
-	assert.Nil(t, info)
+	require.Error(t, infoErr)
+	require.Nil(t, info)
 }

@@ -40,7 +40,7 @@ func TestNewClientSkipVerify(t *testing.T) {
 func TestNewClientCustomHTTPClient(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, string("Custom transport used"))
+		fmt.Fprintf(w, string("Custom transport used")) //nolint: errcheck
 	}))
 
 	transport := http.Transport{

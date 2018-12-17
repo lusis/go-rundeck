@@ -12,7 +12,7 @@ func newTestRundeckClient(content []byte, contentType string, statusCode int) (*
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(statusCode)
 		w.Header().Set("Content-Type", contentType)
-		fmt.Fprintf(w, string(content))
+		fmt.Fprintf(w, string(content)) // nolint: errcheck
 	}))
 
 	transport := http.Transport{
