@@ -139,6 +139,8 @@ func (s *SCMIntegrationTestSuite) TestSetupSCMPluginImport() {
 		"pathTemplate":          "${job.group}${job.name}-${job.id}.${config.format}",
 		"branch":                "master",
 		"strictHostKeyChecking": "no",
+		"useFilePattern":        "true",
+		"filePattern":           ".*yaml",
 	}
 	res, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "import", "git-import", params)
 	require.NoError(s.T(), resErr)
