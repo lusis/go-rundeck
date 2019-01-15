@@ -19,6 +19,9 @@ var OutputFormat string
 // OutputFormatter is the configured OutputFormatter
 var OutputFormatter outputter.Outputter
 
+// TimeFormat is the rundeck time format
+var TimeFormat string = rundeck.RDTime
+
 func preRunFunc(cmd *cobra.Command, args []string) error {
 	client, err := rundeck.NewClientFromEnv()
 	Client = client

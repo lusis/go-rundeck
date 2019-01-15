@@ -33,8 +33,7 @@ stop-test-container:
 binaries: $(BINLIST)
 
 $(BINLIST):
-	@echo $@
-	@go install ./$@
+	CGO_ENABLED=0 go install ./$@
 
 clean:
 	@rm -rf bin/

@@ -15,6 +15,7 @@ func listCommands() *cobra.Command {
 		Use:   "list",
 		Short: "list various things from the rundeck server",
 	}
+	cmd.AddCommand(listUsersCommand())
 	cmd.AddCommand(getJobsCommand())
 	cmd.AddCommand(listProjectsCommand())
 	cmd.AddCommand(listProjectExecutionsCommand())
