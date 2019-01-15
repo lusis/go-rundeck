@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"time"
 
 	multierror "github.com/hashicorp/go-multierror"
 	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
@@ -12,7 +13,14 @@ import (
 
 // User represents a user in rundeck
 type User struct {
-	responses.UserProfileResponse
+	Login     string
+	FirstName string
+	LastName  string
+	Email     string
+	Created   time.Time
+	Updated   time.Time
+	LastJob   time.Time
+	Tokens    int
 }
 
 // Users represents a collection of users
@@ -25,13 +33,28 @@ func (c *Client) ListUsers() (Users, error) {
 		return nil, err
 	}
 	users := Users{}
-
+	listusers := responses.ListUsersResponse{}
 	res, err := c.httpGet("user/list", requestJSON(), requestExpects(200))
 	if err != nil {
 		return nil, err
 	}
-	if jsonErr := json.Unmarshal(res, &users); jsonErr != nil {
+	if jsonErr := json.Unmarshal(res, &listusers); jsonErr != nil {
 		return nil, &UnmarshalError{msg: multierror.Append(errDecoding, jsonErr).Error()}
+	}
+	for _, u := range listusers {
+		nu := User{Login: u.Login, FirstName: u.FirstName, LastName: u.LastName, Email: u.Email}
+		// from api v21 to v27, new columns were added
+		// we need to handle that here
+		if u.Created != nil {
+			nu.Created = u.Created.Time
+		}
+		if u.Updated != nil {
+			nu.Updated = u.Updated.Time
+		}
+		if u.LastJob != nil {
+			nu.LastJob = u.LastJob.Time
+		}
+		users = append(users, nu)
 	}
 	return users, nil
 }

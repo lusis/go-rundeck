@@ -2,6 +2,9 @@ package rundeck
 
 import "errors"
 
+// RDTime is the rundeck time format
+const RDTime = "2006-01-02T15:04:05Z"
+
 // defaultNodeFilter is the default filter to use when things require a node filter string
 const defaultNodeFilter = "name: .*"
 

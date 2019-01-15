@@ -56,6 +56,12 @@ func defaultHTTPClient(verifySSL bool) (*http.Client, error) {
 	return client, nil
 }
 
+func (c *Client) setInsecure() {
+	c.Config.VerifySSL = false
+	transport := c.HTTPClient.Transport.(*http.Transport)
+	transport.TLSClientConfig.InsecureSkipVerify = true
+}
+
 // NewClient creates a new client from the provided `ClientConfig`
 func NewClient(config *ClientConfig) (*Client, error) {
 	if config.HTTPClient == nil {
@@ -112,6 +118,9 @@ func clientConfigFrom(from string) (*ClientConfig, error) {
 		config.Username = os.Getenv("RUNDECK_USERNAME")
 		config.Password = os.Getenv("RUNDECK_PASSWORD")
 	}
+	if os.Getenv("RUNDECK_INSECURE") != "" {
+		config.VerifySSL = false
+	}
 	return config, nil
 }
 
@@ -121,7 +130,11 @@ func NewClientFromEnv() (*Client, error) {
 	if configErr != nil {
 		return nil, configErr
 	}
-	return NewClient(config)
+	client, err := NewClient(config)
+	if !client.Config.VerifySSL {
+		client.setInsecure()
+	}
+	return client, err
 }
 
 // NewBasicAuthClient returns a new client configured for basic auth using default settings
