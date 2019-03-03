@@ -13,14 +13,15 @@ import (
 
 // ClientConfig represents a client configuration
 type ClientConfig struct {
-	BaseURL    string
-	Token      string
-	VerifySSL  bool
-	Username   string
-	Password   string
-	AuthMethod string
-	APIVersion string
-	HTTPClient *http.Client
+	BaseURL      string
+	Token        string
+	VerifySSL    bool
+	Username     string
+	Password     string
+	AuthMethod   string
+	APIVersion   string
+	HTTPClient   *http.Client
+	OverridePath bool
 }
 
 // Client represents a rundeck client
@@ -35,9 +36,10 @@ func defaultClientConfig() (*ClientConfig, error) {
 		return nil, err
 	}
 	return &ClientConfig{
-		VerifySSL:  true,
-		APIVersion: MaxRundeckVersion,
-		HTTPClient: c,
+		VerifySSL:    true,
+		APIVersion:   MaxRundeckVersion,
+		HTTPClient:   c,
+		OverridePath: false,
 	}, nil
 }
 

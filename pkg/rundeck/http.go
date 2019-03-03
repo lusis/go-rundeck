@@ -45,7 +45,12 @@ func requestExpects(code int) httpclient.RequestOption {
 }
 
 func (rc *Client) makeAPIPath(path string) string {
-	return rc.Config.BaseURL + "/api/" + rc.Config.APIVersion + "/" + path
+	if rc.Config.OverridePath {
+		return rc.Config.BaseURL + path
+	} else {
+		return rc.Config.BaseURL + "/api/" + rc.Config.APIVersion + "/" + path
+	}
+
 }
 
 // This is our custom redirect policy for tracking if we get redirected to to the error pages
