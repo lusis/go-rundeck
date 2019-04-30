@@ -1,6 +1,6 @@
 # go-rundeck
 
-[![Build Status](https://travis-ci.org/lusis/go-rundeck.svg?branch=master)](https://travis-ci.org/lusis/go-rundeck)
+[![Build Status](https://img.shields.io/circleci/project/github/lusis/go-rundeck/master.svg?style=for-the-badge)](https://circleci.com/gh/lusis/go-rundeck)
 Go library and utilities for interacting with [Rundeck](http://rundeck.org).
 
 ## ** Potentially breaking changes coming soon **

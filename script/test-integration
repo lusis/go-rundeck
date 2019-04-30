@@ -5,7 +5,7 @@ source script/env
 
 CODEDIR=$(pwd)
 TESTCOMMAND="go test -v ./pkg/rundeck -run ^TestIntegration"
-CI=${CI:''}
+CI=${CI:-''}
 if [ -n "$CI" ]; then
     docker run \
     -e GOCACHE=/tmp \
