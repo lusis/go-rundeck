@@ -1,5 +1,8 @@
 #!/bin/bash
-go test -v ./pkg/cli ./cmd/... ./pkg/rundeck/responses ./pkg/rundeck/requests ./pkg/httpclient ./pkg/rundeck
-#go test -v ./pkg/cli ./pkg/rundeck ./pkg/httpclient ./pkg/rundeck/responses ./pkg/rundeck/requests ./pkg/rundeck.v19 ./src/rundeck.v12 ./src/rundeck.v13 ./src/rundeck.v17 ./src/rundeck.v18
+set -Eeuo pipefail
+# shellcheck disable=SC1091
+source script/env
+
+go test --race -v ./pkg/cli ./cmd/... ./pkg/rundeck/responses ./pkg/rundeck/requests ./pkg/httpclient ./pkg/rundeck
 
 

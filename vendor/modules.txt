@@ -1,0 +1,32 @@
+# github.com/davecgh/go-spew v1.1.0
+github.com/davecgh/go-spew/spew
+# github.com/hashicorp/errwrap v0.0.0-20141028054710-7554cd9344ce
+github.com/hashicorp/errwrap
+# github.com/hashicorp/go-multierror v0.0.0-20171204182908-b7773ae21874
+github.com/hashicorp/go-multierror
+# github.com/inconshreveable/mousetrap v1.0.0
+github.com/inconshreveable/mousetrap
+# github.com/lusis/outputter v0.0.0-20171130132426-5a3b464a163f
+github.com/lusis/outputter
+# github.com/mattn/go-runewidth v0.0.2
+github.com/mattn/go-runewidth
+# github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e
+github.com/mitchellh/mapstructure
+# github.com/olekukonko/tablewriter v0.0.0-20171203151007-65fec0d89a57
+github.com/olekukonko/tablewriter
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
+# github.com/spf13/cobra v0.0.1
+github.com/spf13/cobra
+# github.com/spf13/pflag v1.0.0
+github.com/spf13/pflag
+# github.com/stretchr/testify v1.1.4
+github.com/stretchr/testify/require
+github.com/stretchr/testify/assert
+github.com/stretchr/testify/suite
+# golang.org/x/net v0.0.0-20171212005608-d866cfc389ce
+golang.org/x/net/publicsuffix
+# gopkg.in/jmcvetta/napping.v2 v2.1.1
+gopkg.in/jmcvetta/napping.v2
+# gopkg.in/yaml.v2 v2.0.0-20171116090243-287cf08546ab
+gopkg.in/yaml.v2

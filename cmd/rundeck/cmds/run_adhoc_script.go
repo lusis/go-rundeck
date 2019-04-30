@@ -18,16 +18,16 @@ func runAdHocScriptFunc(cmd *cobra.Command, args []string) error {
 		rundeck.ScriptArgsQuoted(adHocArgsQuoted),
 		rundeck.ScriptInterpreter(adHocScriptInterpreter),
 	}
-	if &adHocAsUser != nil {
+	if len(adHocAsUser) > 0 {
 		options = append(options, rundeck.ScriptRunAs(adHocAsUser))
 	}
-	if &adHocArgString != nil {
+	if len(adHocArgString) > 0 {
 		options = append(options, rundeck.ScriptArgString(adHocArgString))
 	}
-	if &adHocFileExtension != nil {
+	if len(adHocFileExtension) > 0 {
 		options = append(options, rundeck.ScriptFileExtension(adHocFileExtension))
 	}
-	if &adHocFilter != nil {
+	if len(adHocFilter) > 0 {
 		options = append(options, rundeck.ScriptNodeFilters(adHocFilter)) // nolint: ineffassign
 	}
 	scriptData, scriptErr := os.Open(script)

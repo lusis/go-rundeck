@@ -1,4 +1,7 @@
 #!/bin/bash
-go get github.com/axw/gocov/gocov
+set -Eeuo pipefail
 
-gocov test ./cmd/... ./pkg/rundeck/responses ./pkg/rundeck/requests ./pkg/httpclient ./pkg/cli ./pkg/rundeck | gocov report
+CI=${CI:''}
+[ -n "$CI" ] && go get github.com/axw/gocov/gocov
+
+gocov test ./cmd/... ./pkg/... | gocov report
