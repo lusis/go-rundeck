@@ -3,6 +3,14 @@ set -Eeuo pipefail
 # shellcheck disable=SC1091
 source script/env
 
-go test -v ./pkg/rundeck -run ^TestIntegration
+CODEDIR=$(pwd)
+TESTCOMMAND="go test -v ./pkg/rundeck -run ^TestIntegration"
+CI=${CI:''}
+if [ -n "$CI" ]; then
+    docker run -w /src -v "${CODEDIR}":/src --rm -i -t circleci/golang:1.12.4 go test -v -c -o rundeck.test ./pkg/rundeck
+    ./rundeck.test -test.failfast -test.v 
+else
+    ${TESTCOMMAND}
+fi
 
 
