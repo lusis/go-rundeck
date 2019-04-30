@@ -1,19 +1,11 @@
 BINARIES := $(shell find cmd/ -maxdepth 1 -type d -name 'rundeck*' -exec sh -c 'echo $(basename {})' \;)
 BINLIST := $(subst src/,,$(BINARIES))
 RUNDECK_DEB_VERSION := 3.0.9.20181127-1.201811291844
-
-ifeq ($(TRAVIS_BUILD_DIR),)
-	GOPATH := $(GOPATH)
-else
-	GOPATH := $(GOPATH):$(TRAVIS_BUILD_DIR)
-endif
+#RUNDECK_DEB_VERSION := 3.0.9
 
 all: clean bindata test $(BINLIST)
 
 test:
-#ifneq ($(TRAVIS_BUILD_DIR),)
-#	@script/travis-integration
-#endif
 	@script/test
 
 bindata:

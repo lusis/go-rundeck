@@ -16,10 +16,10 @@ func runAdHocCmdFunc(cmd *cobra.Command, args []string) error {
 		rundeck.CmdThreadCount(adHocNodeThreadCount),
 		rundeck.CmdKeepGoing(adHocNodeKeepGoing),
 	}
-	if &adHocAsUser != nil {
+	if len(adHocAsUser) > 0 {
 		options = append(options, rundeck.CmdRunAs(adHocAsUser))
 	}
-	if &adHocFilter != nil {
+	if len(adHocFilter) > 0 {
 		options = append(options, rundeck.CmdNodeFilters(adHocFilter)) // nolint: ineffassign
 	}
 	res, err := cli.Client.RunAdHocCommand(projectID, strings.Join(command, " "), options...)

@@ -69,13 +69,15 @@ func runJobFunc(cmd *cobra.Command, args []string) error {
 		"Project",
 	})
 
-	var description string
-	var name string
-	if &data.Job != nil {
+	var description = nodescription
+	var name = adhoc
+	if len(data.Job.Name) > 0 {
 		name = data.Job.Name
+	}
+	if len(data.Job.Description) > 0 {
 		description = data.Job.Description
-	} else {
-		name = adhoc
+	}
+	if len(data.Description) > 0 {
 		description = data.Description
 	}
 	if rowErr := cli.OutputFormatter.AddRow([]string{

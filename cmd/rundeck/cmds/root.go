@@ -7,6 +7,7 @@ import (
 const enable = "enable"
 const disable = "disable"
 const adhoc = "<adhoc>"
+const nodescription = "<no description>"
 
 // RootCommand is the root of all commands
 func RootCommand() {

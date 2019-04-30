@@ -17,16 +17,16 @@ func runAdHocURLFunc(cmd *cobra.Command, args []string) error {
 		rundeck.ScriptURLArgsQuoted(adHocArgsQuoted),
 		rundeck.ScriptURLInterpreter(adHocScriptInterpreter),
 	}
-	if &adHocAsUser != nil {
+	if len(adHocAsUser) > 0 {
 		options = append(options, rundeck.ScriptURLRunAs(adHocAsUser))
 	}
-	if &adHocArgString != nil {
+	if len(adHocArgString) > 0 {
 		options = append(options, rundeck.ScriptURLArgString(adHocArgString))
 	}
-	if &adHocFileExtension != nil {
+	if len(adHocFileExtension) > 0 {
 		options = append(options, rundeck.ScriptURLFileExtension(adHocFileExtension))
 	}
-	if &adHocFilter != nil {
+	if len(adHocFilter) > 0 {
 		options = append(options, rundeck.ScriptURLNodeFilters(adHocFilter)) // nolint: ineffassign
 	}
 

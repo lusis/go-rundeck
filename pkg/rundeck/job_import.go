@@ -66,10 +66,10 @@ func (c *Client) ImportJob(project string, data io.Reader, opt ...JobImportOptio
 
 	opts := make(map[string]string)
 	opts["format"] = importDef.Format
-	if &importDef.DupeOption != nil {
+	if len(importDef.DupeOption) > 0 {
 		opts["dupeOption"] = importDef.DupeOption
 	}
-	if &importDef.UUIDOption != nil {
+	if len(importDef.UUIDOption) > 0 {
 		opts["uuidOption"] = importDef.UUIDOption
 	}
 

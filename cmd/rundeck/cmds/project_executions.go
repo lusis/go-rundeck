@@ -84,15 +84,18 @@ func getProjectExecutionsFunc(cmd *cobra.Command, args []string) error {
 		"Project",
 	})
 	for _, d := range data.Executions {
-		var description string
-		var name string
-		if &d.Job != nil {
+		var description = nodescription
+		var name = adhoc
+		if len(d.Job.Name) > 0 {
 			name = d.Job.Name
+		}
+		if len(d.Job.Description) > 0 {
 			description = d.Job.Description
-		} else {
-			name = adhoc
+		}
+		if len(d.Description) > 0 {
 			description = d.Description
 		}
+
 		dateEnded := ""
 		if d.DateEnded.Date != nil {
 			dateEnded = d.DateEnded.Date.String()
@@ -132,13 +135,15 @@ func getRunningProjectExectionsFunc(cmd *cobra.Command, args []string) error {
 		"Project",
 	})
 	for _, d := range data.Executions {
-		var description string
-		var name string
-		if &d.Job != nil {
+		var description = nodescription
+		var name = adhoc
+		if len(d.Job.Name) > 0 {
 			name = d.Job.Name
+		}
+		if len(d.Job.Description) > 0 {
 			description = d.Job.Description
-		} else {
-			name = adhoc
+		}
+		if len(d.Description) > 0 {
 			description = d.Description
 		}
 		if rowErr := cli.OutputFormatter.AddRow([]string{

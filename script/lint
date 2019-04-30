@@ -1,22 +1,14 @@
-#!/bin/sh
-go get -u github.com/alecthomas/gometalinter
-gometalinter --install > /dev/null
+#!/bin/bash
+set -Eeuo pipefail
 
+LINTVER="1.16.0"
+LINTCMD="golangci-lint"
 
-gometalinter \
-    --vendor \
-    --disable-all \
-    --enable=vet \
-    --enable=vetshadow \
-    --enable=golint \
-    --enable=ineffassign \
-    --enable=goconst \
-    --enable=goimports \
-    --enable=deadcode \
-    --enable=gosimple \
-    --enable=errcheck \
-    --tests \
-    --deadline=30s \
-    --exclude=/usr/local/go/src/ \
-    --skip=pkg/rundeck/responses/testdata \
-    ./pkg/... ./cmd/...
+CI=${CI:''}
+if [ -n "${CI}" ]; then
+    curl -LO https://github.com/golangci/golangci-lint/releases/download/v${LINTVER}/golangci-lint-${LINTVER}-linux-amd64.tar.gz
+    tar -zxvf golangci-lint-${LINTVER}-linux-amd64.tar.gz
+    LINTCMD="./golangci-lint-1.16.0-linux-amd64/golangci-lint"
+fi
+
+${LINTCMD} run

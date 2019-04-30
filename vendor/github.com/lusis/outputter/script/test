@@ -1,3 +1,0 @@
-#!/bin/bash
-go get github.com/jstemmer/go-junit-report > /dev/null
-go test -v .

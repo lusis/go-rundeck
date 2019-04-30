@@ -172,11 +172,11 @@ func (c *Client) RunJob(id string, opts ...RunJobOption) (*Execution, error) {
 			return nil, &OptionError{msg: multierror.Append(errOption, err).Error()}
 		}
 	}
-	body := bytes.NewReader([]byte("{}"))
-	if jobOpts != nil {
-		req, _ := json.Marshal(jobOpts)
-		body = bytes.NewReader(req)
+	req, err := json.Marshal(jobOpts)
+	if err != nil {
+		return nil, &MarshalError{msg: multierror.Append(errEncoding, err).Error()}
 	}
+	body := bytes.NewReader(req)
 	res, pErr := c.httpPost("job/"+id+"/run", withBody(body), requestJSON(), requestExpects(200))
 	if pErr != nil {
 		return nil, pErr

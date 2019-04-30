@@ -1,0 +1,16 @@
+run:
+  tests: false
+  skip-dirs:
+    - src
+    - pkg/rundeck.v19
+linters:
+  disable-all: true
+  enable:
+  - deadcode
+  - errcheck
+  - goconst
+  - goimports
+  - golint
+  - gosimple
+  - govet
+  - ineffassign
