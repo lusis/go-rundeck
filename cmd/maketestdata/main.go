@@ -15,7 +15,7 @@ func main() {
 	for _, dir := range directories {
 		testdata := http.Dir(filepath.Join(cwd, "pkg", "rundeck", dir, "testdata"))
 		if err := vfsgen.Generate(testdata, vfsgen.Options{
-			Filename:     "pkg/rundeck/"+dir+"/testdata.go",
+			Filename:     "pkg/rundeck/" + dir + "/testdata.go",
 			PackageName:  dir,
 			VariableName: "assets",
 		}); err != nil {
