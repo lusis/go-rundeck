@@ -4,13 +4,12 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetLogStorage(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.LogStorageResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.LogStorageResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -39,7 +38,7 @@ func TestGetLogStorageHTTPError(t *testing.T) {
 }
 
 func TestGetIncompleteLogStorage(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.IncompleteLogStorageResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.IncompleteLogStorageResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

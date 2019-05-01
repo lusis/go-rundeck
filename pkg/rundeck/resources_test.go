@@ -4,13 +4,12 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetResources(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ResourceCollectionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ResourceCollectionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -49,7 +48,7 @@ func TestGetResourcesInvalidStatusCode(t *testing.T) {
 }
 
 func TestGetResource(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ResourceResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ResourceResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

@@ -8,13 +8,12 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetProject(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectInfoResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectInfoResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -35,7 +34,7 @@ func TestGetProject(t *testing.T) {
 }
 
 func TestGetProjectHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectInfoResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectInfoResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -63,7 +62,7 @@ func TestGetProjectDecodeError(t *testing.T) {
 }
 
 func TestListProjects(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ListProjectsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListProjectsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -127,7 +126,7 @@ func TestDeleteProjectNotFound(t *testing.T) {
 }
 
 func TestCreateProject(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectInfoResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectInfoResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -145,7 +144,7 @@ func TestCreateProject(t *testing.T) {
 }
 
 func TestCreateProjectHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectInfoResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectInfoResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -166,7 +165,7 @@ func TestCreateProjectJSONError(t *testing.T) {
 }
 
 func TestGetProjectConfiguration(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectConfigResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectConfigResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -188,7 +187,7 @@ func TestGetProjectConfigurationJSONError(t *testing.T) {
 }
 
 func TestGetProjectConfigurationHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectConfigResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectConfigResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -251,7 +250,7 @@ func TestGetProjectArchiveExportOptionError(t *testing.T) {
 }
 
 func TestGetProjectArchiveExportAsync(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectArchiveExportAsyncResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -264,7 +263,7 @@ func TestGetProjectArchiveExportAsync(t *testing.T) {
 }
 
 func TestGetProjectArchiveExportAsyncOptions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectArchiveExportAsyncResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -283,7 +282,7 @@ func TestGetProjectArchiveExportAsyncOptions(t *testing.T) {
 }
 
 func TestGetProjectArchiveExportAsyncOptionError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectArchiveExportAsyncResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -306,7 +305,7 @@ func TestGetProjectArchiveExportAsyncOptionError(t *testing.T) {
 }
 
 func TestGetProjectArchiveExportAsyncHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectArchiveExportAsyncResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -327,7 +326,7 @@ func TestGetProjectArchiveExportAsyncJSONError(t *testing.T) {
 }
 
 func TestGetProjectArchiveExportAsyncStatus(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectArchiveExportAsyncResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -340,7 +339,7 @@ func TestGetProjectArchiveExportAsyncStatus(t *testing.T) {
 }
 
 func TestGetProjectArchiveExportAsyncStatusHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectArchiveExportAsyncResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectArchiveExportAsyncResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -379,7 +378,7 @@ func TestGetProjectArchiveExportAsyncDownloadHTTPError(t *testing.T) {
 }
 
 func TestGetProjectArchiveImport(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectImportArchiveResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectImportArchiveResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -392,7 +391,7 @@ func TestGetProjectArchiveImport(t *testing.T) {
 }
 
 func TestGetProjectArchiveImportOptions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectImportArchiveResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectImportArchiveResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -411,7 +410,7 @@ func TestGetProjectArchiveImportOptions(t *testing.T) {
 }
 
 func TestGetProjectArchiveImportOptionError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ProjectImportArchiveResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ProjectImportArchiveResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

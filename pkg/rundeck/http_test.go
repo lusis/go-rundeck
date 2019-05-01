@@ -5,7 +5,6 @@ import (
 
 	httpclient "github.com/lusis/go-rundeck/pkg/httpclient"
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -29,7 +28,7 @@ func TestHTTP404(t *testing.T) {
 }
 
 func TestRDErrorResponse(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ErrorResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ErrorResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/stretchr/testify/require"
 )
 
@@ -14,7 +13,7 @@ func TestListSCMPlugins(t *testing.T) {
 	// for this test the Import and Export sections will be the same due
 	// to the fact that both requests serve the same data
 	// however this is fine for this test
-	jsonfile, err := testdata.GetBytes(responses.ListSCMPluginsResponseImportTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListSCMPluginsResponseImportTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -33,7 +32,7 @@ func TestListSCMPlugins(t *testing.T) {
 }
 
 func TestListSCMPluginsHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ListSCMPluginsResponseImportTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListSCMPluginsResponseImportTestFile)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
@@ -56,7 +55,7 @@ func TestListSCMPluginsJSONError(t *testing.T) {
 }
 
 func TestGetSCMPluginInputFields(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	jsonfile, err := responses.GetTestData(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
@@ -69,7 +68,7 @@ func TestGetSCMPluginInputFields(t *testing.T) {
 }
 
 func TestGetSCMPluginInputFieldsHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	jsonfile, err := responses.GetTestData(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
@@ -92,7 +91,7 @@ func TestGetSCMPluginInputFieldsJSONError(t *testing.T) {
 }
 
 func TestSetupSCMPluginForProject(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
+	jsonfile, err := responses.GetTestData(responses.SCMPluginForProjectResponseEnableExportTestFile)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
@@ -105,7 +104,7 @@ func TestSetupSCMPluginForProject(t *testing.T) {
 }
 
 func TestSetupSCMPluginForProjectHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
+	jsonfile, err := responses.GetTestData(responses.SCMPluginForProjectResponseEnableExportTestFile)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
@@ -128,7 +127,7 @@ func TestSetupSCMPluginForProjectJSONError(t *testing.T) {
 }
 
 func TestGetProjectSCMStatus(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetProjectSCMStatusResponseExportTestFile)
+	jsonfile, err := responses.GetTestData(responses.GetProjectSCMStatusResponseExportTestFile)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
@@ -141,7 +140,7 @@ func TestGetProjectSCMStatus(t *testing.T) {
 }
 
 func TestGetProjectSCMStatusHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetProjectSCMStatusResponseExportTestFile)
+	jsonfile, err := responses.GetTestData(responses.GetProjectSCMStatusResponseExportTestFile)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
@@ -164,7 +163,7 @@ func TestGetProjectSCMStatusJSONError(t *testing.T) {
 }
 
 func TestGetProjectSCMActionInputFields(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	jsonfile, err := responses.GetTestData(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
@@ -177,7 +176,7 @@ func TestGetProjectSCMActionInputFields(t *testing.T) {
 }
 
 func TestGetProjectSCMActionInputFieldsHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	jsonfile, err := responses.GetTestData(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
@@ -200,7 +199,7 @@ func TestGetProjectSCMActionInputFieldsJSONError(t *testing.T) {
 }
 
 func TestPerformProjectSCMAction(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
+	jsonfile, err := responses.GetTestData(responses.SCMPluginForProjectResponseEnableExportTestFile)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
@@ -213,7 +212,7 @@ func TestPerformProjectSCMAction(t *testing.T) {
 }
 
 func TestPerformProjectSCMActionOptions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
+	jsonfile, err := responses.GetTestData(responses.SCMPluginForProjectResponseEnableExportTestFile)
 	require.NoError(t, err)
 
 	opts := []SCMActionOption{
@@ -232,7 +231,7 @@ func TestPerformProjectSCMActionOptions(t *testing.T) {
 }
 
 func TestPerformProjectSCMActionOptionError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
+	jsonfile, err := responses.GetTestData(responses.SCMPluginForProjectResponseEnableExportTestFile)
 	require.NoError(t, err)
 
 	myopt := func() SCMActionOption {
@@ -250,7 +249,7 @@ func TestPerformProjectSCMActionOptionError(t *testing.T) {
 }
 
 func TestPerformProjectSCMActionHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.SCMPluginForProjectResponseEnableExportTestFile)
+	jsonfile, err := responses.GetTestData(responses.SCMPluginForProjectResponseEnableExportTestFile)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
@@ -273,7 +272,7 @@ func TestPerformProjectSCMActionJSONError(t *testing.T) {
 }
 
 func TestGetProjectSCMConfig(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetProjectSCMConfigResponseImportTestFile)
+	jsonfile, err := responses.GetTestData(responses.GetProjectSCMConfigResponseImportTestFile)
 	require.NoError(t, err)
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
@@ -284,7 +283,7 @@ func TestGetProjectSCMConfig(t *testing.T) {
 }
 
 func TestSCMJobStatus(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetJobSCMStatusResponseTestFileExport)
+	jsonfile, err := responses.GetTestData(responses.GetJobSCMStatusResponseTestFileExport)
 	require.NoError(t, err)
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
@@ -294,7 +293,7 @@ func TestSCMJobStatus(t *testing.T) {
 }
 
 func TestSCMJobStatusHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetJobSCMStatusResponseTestFileExport)
+	jsonfile, err := responses.GetTestData(responses.GetJobSCMStatusResponseTestFileExport)
 	require.NoError(t, err)
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
@@ -312,7 +311,7 @@ func TestSCMJobStatusJSONError(t *testing.T) {
 }
 
 func TestSCMJobDiff(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetJobSCMDiffResponseTestFileExport)
+	jsonfile, err := responses.GetTestData(responses.GetJobSCMDiffResponseTestFileExport)
 	require.NoError(t, err)
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
@@ -322,7 +321,7 @@ func TestSCMJobDiff(t *testing.T) {
 }
 
 func TestSCMJobDiffHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetJobSCMDiffResponseTestFileExport)
+	jsonfile, err := responses.GetTestData(responses.GetJobSCMDiffResponseTestFileExport)
 	require.NoError(t, err)
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
@@ -340,7 +339,7 @@ func TestSCMJobDiffJSONError(t *testing.T) {
 }
 
 func TestGetJobSCMActionInputFields(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	jsonfile, err := responses.GetTestData(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
@@ -353,7 +352,7 @@ func TestGetJobSCMActionInputFields(t *testing.T) {
 }
 
 func TestGetJobSCMActionInputFieldsHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
+	jsonfile, err := responses.GetTestData(responses.GetSCMActionInputFieldsResponseTestFileJobExport)
 	require.NoError(t, err)
 
 	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)

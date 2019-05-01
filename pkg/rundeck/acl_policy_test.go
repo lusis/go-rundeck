@@ -5,13 +5,12 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListSystemAclPolicies(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ACLResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ACLResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -59,7 +58,7 @@ func TestListSystemAclPoliciesJSONError(t *testing.T) {
 }
 
 func TestGetSystemAclPolicy(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -76,7 +75,7 @@ func TestGetSystemAclPolicy(t *testing.T) {
 }
 
 func TestGetSystemAclPolicyHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -93,7 +92,7 @@ func TestGetSystemAclPolicyHTTPError(t *testing.T) {
 }
 
 func TestCreateSystemACLPolicy(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -109,7 +108,7 @@ func TestCreateSystemACLPolicy(t *testing.T) {
 }
 
 func TestCreateSystemACLPolicyConflict(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -126,7 +125,7 @@ func TestCreateSystemACLPolicyConflict(t *testing.T) {
 }
 
 func TestCreateSystemACLPolicyValidationErrors(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.FailedACLValidationResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.FailedACLValidationResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -143,7 +142,7 @@ func TestCreateSystemACLPolicyValidationErrors(t *testing.T) {
 }
 
 func TestUpdateSystemACLPolicy(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -159,7 +158,7 @@ func TestUpdateSystemACLPolicy(t *testing.T) {
 }
 
 func TestUpdateSystemACLPolicyConflict(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -176,7 +175,7 @@ func TestUpdateSystemACLPolicyConflict(t *testing.T) {
 }
 
 func TestUpdateSystemACLPolicyValidationErrors(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.FailedACLValidationResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.FailedACLValidationResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -207,7 +206,7 @@ func TestDeleteSystemACLPolicyHTTPError(t *testing.T) {
 }
 
 func TestListProjectAclPolicies(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ACLResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ACLResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -255,7 +254,7 @@ func TestListProjectAclPoliciesJSONError(t *testing.T) {
 }
 
 func TestGetProjectAclPolicy(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -272,7 +271,7 @@ func TestGetProjectAclPolicy(t *testing.T) {
 }
 
 func TestGetProjectAclPolicyHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -303,7 +302,7 @@ func TestDeleteProjectACLPolicyHTTPError(t *testing.T) {
 }
 
 func TestCreateProjectACLPolicy(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -319,7 +318,7 @@ func TestCreateProjectACLPolicy(t *testing.T) {
 }
 
 func TestCreateProjectACLPolicyConflict(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -336,7 +335,7 @@ func TestCreateProjectACLPolicyConflict(t *testing.T) {
 }
 
 func TestCreateProjectACLPolicyValidationErrors(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.FailedACLValidationResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.FailedACLValidationResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -353,7 +352,7 @@ func TestCreateProjectACLPolicyValidationErrors(t *testing.T) {
 }
 
 func TestUpdateProjectACLPolicy(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -369,7 +368,7 @@ func TestUpdateProjectACLPolicy(t *testing.T) {
 }
 
 func TestUpdateProjectACLPolicyConflict(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("foo.aclpolicy")
+	jsonfile, err := responses.GetTestData("foo.aclpolicy")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -386,7 +385,7 @@ func TestUpdateProjectACLPolicyConflict(t *testing.T) {
 }
 
 func TestUpdateProjectACLPolicyValidationErrors(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.FailedACLValidationResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.FailedACLValidationResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

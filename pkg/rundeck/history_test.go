@@ -4,13 +4,12 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetHistory(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.HistoryResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.HistoryResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -26,7 +25,7 @@ func TestGetHistory(t *testing.T) {
 }
 
 func TestGetHistoryNotFound(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.HistoryResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.HistoryResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -53,7 +52,7 @@ func TestGetHistoryDecodeError(t *testing.T) {
 }
 
 func TestGetHistoryOptions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.HistoryResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.HistoryResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
