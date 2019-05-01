@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestUserInfoResponse(t *testing.T) {
 	obj := &UserProfileResponse{}
-	data, dataErr := testdata.GetBytes(UserProfileResponseTestFile)
+	data, dataErr := getAssetBytes(UserProfileResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -28,7 +27,7 @@ func TestUserInfoResponse(t *testing.T) {
 
 func TestUsersInfoResponse(t *testing.T) {
 	obj := &ListUsersResponse{}
-	data, dataErr := testdata.GetBytes(ListUsersResponseTestFile)
+	data, dataErr := getAssetBytes(ListUsersResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

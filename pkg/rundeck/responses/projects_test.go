@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListProjectsResponse(t *testing.T) {
 	obj := &ListProjectsResponse{}
-	data, dataErr := testdata.GetBytes(ListProjectsResponseTestFile)
+	data, dataErr := getAssetBytes(ListProjectsResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -28,7 +27,7 @@ func TestListProjectsResponse(t *testing.T) {
 
 func TestProjectInfoResponse(t *testing.T) {
 	obj := &ProjectInfoResponse{}
-	data, dataErr := testdata.GetBytes(ProjectInfoResponseTestFile)
+	data, dataErr := getAssetBytes(ProjectInfoResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -45,7 +44,7 @@ func TestProjectInfoResponse(t *testing.T) {
 
 func TestProjectConfigItemResponse(t *testing.T) {
 	obj := &ProjectConfigItemResponse{}
-	data, dataErr := testdata.GetBytes(ProjectConfigItemResponseTestFile)
+	data, dataErr := getAssetBytes(ProjectConfigItemResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -62,7 +61,7 @@ func TestProjectConfigItemResponse(t *testing.T) {
 
 func TestProjectArchiveExportAsyncResponse(t *testing.T) {
 	obj := &ProjectArchiveExportAsyncResponse{}
-	data, dataErr := testdata.GetBytes(ProjectArchiveExportAsyncResponseTestFile)
+	data, dataErr := getAssetBytes(ProjectArchiveExportAsyncResponseTestFile)
 	if dataErr != nil {
 		t.Error(dataErr.Error())
 		t.FailNow()
@@ -80,7 +79,7 @@ func TestProjectArchiveExportAsyncResponse(t *testing.T) {
 
 func TestProjectImportArchiveResponse(t *testing.T) {
 	obj := &ProjectImportArchiveResponse{}
-	data, dataErr := testdata.GetBytes(ProjectImportArchiveResponseTestFile)
+	data, dataErr := getAssetBytes(ProjectImportArchiveResponseTestFile)
 	if dataErr != nil {
 		t.Error(dataErr.Error())
 		t.FailNow()
@@ -98,7 +97,7 @@ func TestProjectImportArchiveResponse(t *testing.T) {
 
 func TestProjectArchiveImportFailedResponse(t *testing.T) {
 	obj := &ProjectImportArchiveResponse{}
-	data, dataErr := testdata.GetBytes("project_archive_import_failed.json")
+	data, dataErr := getAssetBytes("project_archive_import_failed.json")
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

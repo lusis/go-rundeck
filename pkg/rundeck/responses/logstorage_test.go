@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestLogStorageResponse(t *testing.T) {
 	obj := &LogStorageResponse{}
-	data, dataErr := testdata.GetBytes(LogStorageResponseTestFile)
+	data, dataErr := getAssetBytes(LogStorageResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -28,7 +27,7 @@ func TestLogStorageResponse(t *testing.T) {
 
 func TestIncompleteLogStorageResponse(t *testing.T) {
 	obj := &IncompleteLogStorageResponse{}
-	data, dataErr := testdata.GetBytes(IncompleteLogStorageResponseTestFile)
+	data, dataErr := getAssetBytes(IncompleteLogStorageResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

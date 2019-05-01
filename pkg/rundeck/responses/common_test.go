@@ -2,6 +2,7 @@ package responses
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -24,4 +25,12 @@ func TestUnmarshalNil(t *testing.T) {
 	obj := &testTS{}
 	err := json.Unmarshal([]byte(str), &obj)
 	assert.NoError(t, err)
+}
+
+func getAssetBytes(fileName string) ([]byte, error) {
+	data, err := assets.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	return ioutil.ReadAll(data)
 }

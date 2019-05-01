@@ -11,7 +11,7 @@ const defaultNodeFilter = "name: .*"
 // MaxRundeckVersion is the maximum version of the api this library supports
 // can be overridden
 // TODO: make this a min/max option and validate
-const MaxRundeckVersion = "27"
+const MaxRundeckVersion = "31"
 
 // minimum version of rundeck api version that supports json
 const minJSONSupportedAPIVersion = 14

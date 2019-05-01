@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTokenResponse(t *testing.T) {
 	obj := &TokenResponse{}
-	data, dataErr := testdata.GetBytes(TokenResponseTestFile)
+	data, dataErr := getAssetBytes(TokenResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

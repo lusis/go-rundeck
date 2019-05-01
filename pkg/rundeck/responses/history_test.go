@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestHistoryResponse(t *testing.T) {
 	obj := &HistoryResponse{}
-	data, dataErr := testdata.GetBytes(HistoryResponseTestFile)
+	data, dataErr := getAssetBytes(HistoryResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

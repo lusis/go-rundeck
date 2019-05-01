@@ -16,11 +16,14 @@ require (
 	github.com/mitchellh/mapstructure v0.0.0-20171017171808-06020f85339e
 	github.com/olekukonko/tablewriter v0.0.0-20171203151007-65fec0d89a57 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/shurcooL/httpfs v0.0.0-20181222201310-74dc9339e414 // indirect
+	github.com/shurcooL/vfsgen v0.0.0-20181202132449-6a9ea43bcacd
 	github.com/spf13/cobra v0.0.1
 	github.com/spf13/pflag v1.0.0 // indirect
 	github.com/stretchr/testify v1.1.4
 	golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
 	golang.org/x/sys v0.0.0-20190412213103-97732733099d // indirect
+	golang.org/x/tools v0.0.0-20190430194229-2d28432af7a5 // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
 	gopkg.in/yaml.v2 v2.0.0-20171116090243-287cf08546ab
 )

@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestBulkToggleResponse(t *testing.T) {
 	obj := &BulkToggleResponse{}
-	data, dataErr := testdata.GetBytes(BulkToggleResponseTestFile)
+	data, dataErr := getAssetBytes(BulkToggleResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

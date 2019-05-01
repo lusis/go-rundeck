@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListKeysResourceResponse(t *testing.T) {
 	obj := &ListKeysResourceResponse{}
-	data, dataErr := testdata.GetBytes(ListKeysResourceResponseTestFile)
+	data, dataErr := getAssetBytes(ListKeysResourceResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -28,7 +27,7 @@ func TestListKeysResourceResponse(t *testing.T) {
 
 func TestListKeysResponse(t *testing.T) {
 	obj := &ListKeysResponse{}
-	data, dataErr := testdata.GetBytes(ListKeysResponseTestFile)
+	data, dataErr := getAssetBytes(ListKeysResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

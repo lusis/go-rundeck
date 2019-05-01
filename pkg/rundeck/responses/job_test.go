@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestJobsResponse(t *testing.T) {
 	obj := &JobsResponse{}
-	data, dataErr := testdata.GetBytes(JobsResponseTestFile)
+	data, dataErr := getAssetBytes(JobsResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -28,7 +27,7 @@ func TestJobsResponse(t *testing.T) {
 
 func TestJobMetaDataResponse(t *testing.T) {
 	obj := &JobMetaDataResponse{}
-	data, dataErr := testdata.GetBytes(JobMetaDataResponseTestFile)
+	data, dataErr := getAssetBytes(JobMetaDataResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -45,7 +44,7 @@ func TestJobMetaDataResponse(t *testing.T) {
 
 func TestImportedJobResponse(t *testing.T) {
 	obj := &ImportedJobResponse{}
-	data, dataErr := testdata.GetBytes(ImportedJobResponseTestFile)
+	data, dataErr := getAssetBytes(ImportedJobResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -62,7 +61,7 @@ func TestImportedJobResponse(t *testing.T) {
 
 func TestBulkDeleteJobResponse(t *testing.T) {
 	obj := &BulkDeleteJobResponse{}
-	data, dataErr := testdata.GetBytes(BulkDeleteJobResponseTestFile)
+	data, dataErr := getAssetBytes(BulkDeleteJobResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -79,7 +78,7 @@ func TestBulkDeleteJobResponse(t *testing.T) {
 
 func TestJobOptionFileUploadResponse(t *testing.T) {
 	obj := &JobOptionFileUploadResponse{}
-	data, dataErr := testdata.GetBytes(JobOptionFileUploadResponseTestFile)
+	data, dataErr := getAssetBytes(JobOptionFileUploadResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -96,7 +95,7 @@ func TestJobOptionFileUploadResponse(t *testing.T) {
 
 func TestUploadedJobInputFilesResponse(t *testing.T) {
 	obj := &UploadedJobInputFilesResponse{}
-	data, dataErr := testdata.GetBytes(UploadedJobInputFilesResponseTestFile)
+	data, dataErr := getAssetBytes(UploadedJobInputFilesResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
