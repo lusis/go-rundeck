@@ -8,8 +8,6 @@ github.com/hashicorp/go-multierror v0.0.0-20171204182908-b7773ae21874 h1:em+tTnz
 github.com/hashicorp/go-multierror v0.0.0-20171204182908-b7773ae21874/go.mod h1:JMRHfdO9jKNzS/+BTlxCjKNQHg/jZAft8U7LloJvN7I=
 github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NHg9XEKhtSvM=
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
-github.com/jmcvetta/randutil v0.0.0-20150817122601-2bb1b664bcff h1:6NvhExg4omUC9NfA+l4Oq3ibNNeJUdiAF3iBVB0PlDk=
-github.com/jmcvetta/randutil v0.0.0-20150817122601-2bb1b664bcff/go.mod h1:ddfPX8Z28YMjiqoaJhNBzWHapTHXejnB5cDCUWDwriw=
 github.com/kr/pretty v0.1.0 h1:L/CwN0zerZDmRFUapSPitk6f+Q3+0za1rQkzVuMiMFI=
 github.com/kr/pretty v0.1.0/go.mod h1:dAy3ld7l9f0ibDNOQOHHMYYIIbhfbHSm3C4ZsoJORNo=
 github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
@@ -47,7 +45,5 @@ golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 h1:qIbj1fsPNlZgppZ+VLlY7N33q108Sa+fhmuc+sWQYwY=
 gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
-gopkg.in/jmcvetta/napping.v2 v2.1.1 h1:2i3XbZbqz8QstQkF7z6n4JR6IjlL/1OxlrQNHkxf6kU=
-gopkg.in/jmcvetta/napping.v2 v2.1.1/go.mod h1:qAT9FVVw4YYea3PJcMbRJ4BKcACjH84gJYTy3CpGI9c=
 gopkg.in/yaml.v2 v2.0.0-20171116090243-287cf08546ab h1:yZ6iByf7GKeJ3gsd1Dr/xaj1DyJ//wxKX1Cdh8LhoAw=
 gopkg.in/yaml.v2 v2.0.0-20171116090243-287cf08546ab/go.mod h1:JAlM8MvJe8wmxCU4Bli9HhUf9+ttbYbLASfIpnQbh74=

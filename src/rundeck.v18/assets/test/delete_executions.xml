@@ -1,9 +1,0 @@
-<deleteExecutions requestCount='4' allsuccessful='false'>
-  <successful count='0' />
-  <failed count='4'>
-    <execution id='131' message='Unauthorized: Delete execution 131' />
-    <execution id='109' message='Not found: 109' />
-    <execution id='81' message='Not found: 81' />
-    <execution id='74' message='Not found: 74' />
-  </failed>
-</deleteExecutions>

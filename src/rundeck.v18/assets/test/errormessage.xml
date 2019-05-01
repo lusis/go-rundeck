@@ -1,6 +1,0 @@
-<result error="true" apiversion="12">
-    <error>
-        <message>It didn't work</message>
-        <message>It really didn't work</message>
-    </error>
-</result>
