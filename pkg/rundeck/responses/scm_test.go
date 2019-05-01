@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListSCMPluginsResponseImport(t *testing.T) {
 	obj := &ListSCMPluginsResponse{}
-	data, dataErr := testdata.GetBytes(ListSCMPluginsResponseImportTestFile)
+	data, dataErr := getAssetBytes(ListSCMPluginsResponseImportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -29,7 +28,7 @@ func TestListSCMPluginsResponseImport(t *testing.T) {
 
 func TestListSCMPluginsResponseExport(t *testing.T) {
 	obj := &ListSCMPluginsResponse{}
-	data, dataErr := testdata.GetBytes(ListSCMPluginsResponseExportTestFile)
+	data, dataErr := getAssetBytes(ListSCMPluginsResponseExportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -51,7 +50,7 @@ func TestSCMPluginResponse(t *testing.T) {
 
 func TestGetSCMPluginInputFieldsResponseImport(t *testing.T) {
 	obj := &GetSCMPluginInputFieldsResponse{}
-	data, dataErr := testdata.GetBytes(GetSCMPluginInputFieldsResponseImportTestData)
+	data, dataErr := getAssetBytes(GetSCMPluginInputFieldsResponseImportTestData)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -68,7 +67,7 @@ func TestGetSCMPluginInputFieldsResponseImport(t *testing.T) {
 
 func TestGetSCMPluginInputFieldsResponseExport(t *testing.T) {
 	obj := &GetSCMPluginInputFieldsResponse{}
-	data, dataErr := testdata.GetBytes(GetSCMPluginInputFieldsResponseExportTestData)
+	data, dataErr := getAssetBytes(GetSCMPluginInputFieldsResponseExportTestData)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -86,7 +85,7 @@ func TestGetSCMPluginInputFieldsResponseExport(t *testing.T) {
 
 func TestSCMPluginForProjectResponseEnableImport(t *testing.T) {
 	obj := &SCMPluginForProjectResponse{}
-	data, dataErr := testdata.GetBytes(SCMPluginForProjectResponseEnableImportTestFile)
+	data, dataErr := getAssetBytes(SCMPluginForProjectResponseEnableImportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -104,7 +103,7 @@ func TestSCMPluginForProjectResponseEnableImport(t *testing.T) {
 
 func TestSCMPluginForProjectResponseDisableImport(t *testing.T) {
 	obj := &SCMPluginForProjectResponse{}
-	data, dataErr := testdata.GetBytes(SCMPluginForProjectResponseDisableImportTestFile)
+	data, dataErr := getAssetBytes(SCMPluginForProjectResponseDisableImportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -122,7 +121,7 @@ func TestSCMPluginForProjectResponseDisableImport(t *testing.T) {
 
 func TestSCMPluginForProjectResponseEnableExport(t *testing.T) {
 	obj := &SCMPluginForProjectResponse{}
-	data, dataErr := testdata.GetBytes(SCMPluginForProjectResponseEnableExportTestFile)
+	data, dataErr := getAssetBytes(SCMPluginForProjectResponseEnableExportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -140,7 +139,7 @@ func TestSCMPluginForProjectResponseEnableExport(t *testing.T) {
 
 func TestSCMPluginForProjectResponseDisableExport(t *testing.T) {
 	obj := &SCMPluginForProjectResponse{}
-	data, dataErr := testdata.GetBytes(SCMPluginForProjectResponseDisableExportTestFile)
+	data, dataErr := getAssetBytes(SCMPluginForProjectResponseDisableExportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -158,7 +157,7 @@ func TestSCMPluginForProjectResponseDisableExport(t *testing.T) {
 
 func TestGetProjectSCMStatusResponseImport(t *testing.T) {
 	obj := &GetProjectSCMStatusResponse{}
-	data, dataErr := testdata.GetBytes(GetProjectSCMStatusResponseImportTestFile)
+	data, dataErr := getAssetBytes(GetProjectSCMStatusResponseImportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -176,7 +175,7 @@ func TestGetProjectSCMStatusResponseImport(t *testing.T) {
 
 func TestGetProjectSCMStatusResponseExport(t *testing.T) {
 	obj := &GetProjectSCMStatusResponse{}
-	data, dataErr := testdata.GetBytes(GetProjectSCMStatusResponseExportTestFile)
+	data, dataErr := getAssetBytes(GetProjectSCMStatusResponseExportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -194,7 +193,7 @@ func TestGetProjectSCMStatusResponseExport(t *testing.T) {
 
 func TestGetProjectSCMConfigResponseImport(t *testing.T) {
 	obj := &GetProjectSCMConfigResponse{}
-	data, dataErr := testdata.GetBytes(GetProjectSCMConfigResponseImportTestFile)
+	data, dataErr := getAssetBytes(GetProjectSCMConfigResponseImportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -212,7 +211,7 @@ func TestGetProjectSCMConfigResponseImport(t *testing.T) {
 
 func TestGetProjectSCMConfigResponseExport(t *testing.T) {
 	obj := &GetProjectSCMConfigResponse{}
-	data, dataErr := testdata.GetBytes(GetProjectSCMConfigResponseExportTestFile)
+	data, dataErr := getAssetBytes(GetProjectSCMConfigResponseExportTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -230,7 +229,7 @@ func TestGetProjectSCMConfigResponseExport(t *testing.T) {
 
 func TestGetSCMActionInputFieldsResponseProjectImport(t *testing.T) {
 	obj := &GetSCMActionInputFieldsResponse{}
-	data, dataErr := testdata.GetBytes(GetSCMActionInputFieldsResponseTestFileProjectImport)
+	data, dataErr := getAssetBytes(GetSCMActionInputFieldsResponseTestFileProjectImport)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -247,7 +246,7 @@ func TestGetSCMActionInputFieldsResponseProjectImport(t *testing.T) {
 
 func TestGetSCMActionInputFieldsResponseProjectExport(t *testing.T) {
 	obj := &GetSCMActionInputFieldsResponse{}
-	data, dataErr := testdata.GetBytes(GetSCMActionInputFieldsResponseTestFileProjectExport)
+	data, dataErr := getAssetBytes(GetSCMActionInputFieldsResponseTestFileProjectExport)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -264,7 +263,7 @@ func TestGetSCMActionInputFieldsResponseProjectExport(t *testing.T) {
 
 func TestGetSCMActionInputFieldsResponseJobImport(t *testing.T) {
 	obj := &GetSCMActionInputFieldsResponse{}
-	data, dataErr := testdata.GetBytes(GetSCMActionInputFieldsResponseTestFileJobImport)
+	data, dataErr := getAssetBytes(GetSCMActionInputFieldsResponseTestFileJobImport)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -281,7 +280,7 @@ func TestGetSCMActionInputFieldsResponseJobImport(t *testing.T) {
 
 func TestGetSCMActionInputFieldsResponseJobExport(t *testing.T) {
 	obj := &GetSCMActionInputFieldsResponse{}
-	data, dataErr := testdata.GetBytes(GetSCMActionInputFieldsResponseTestFileJobExport)
+	data, dataErr := getAssetBytes(GetSCMActionInputFieldsResponseTestFileJobExport)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -298,7 +297,7 @@ func TestGetSCMActionInputFieldsResponseJobExport(t *testing.T) {
 
 func TestGetJobSCMStatusResponseImport(t *testing.T) {
 	obj := &GetJobSCMStatusResponse{}
-	data, dataErr := testdata.GetBytes(GetJobSCMStatusResponseTestFileImport)
+	data, dataErr := getAssetBytes(GetJobSCMStatusResponseTestFileImport)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -315,7 +314,7 @@ func TestGetJobSCMStatusResponseImport(t *testing.T) {
 
 func TestGetJobSCMStatusResponseExport(t *testing.T) {
 	obj := &GetJobSCMStatusResponse{}
-	data, dataErr := testdata.GetBytes(GetJobSCMStatusResponseTestFileExport)
+	data, dataErr := getAssetBytes(GetJobSCMStatusResponseTestFileExport)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -332,7 +331,7 @@ func TestGetJobSCMStatusResponseExport(t *testing.T) {
 
 func TestGetJobSCMDiffResponseExport(t *testing.T) {
 	obj := &GetJobSCMDiffResponse{}
-	data, dataErr := testdata.GetBytes(GetJobSCMDiffResponseTestFileExport)
+	data, dataErr := getAssetBytes(GetJobSCMDiffResponseTestFileExport)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -349,7 +348,7 @@ func TestGetJobSCMDiffResponseExport(t *testing.T) {
 
 func TestGetJobSCMDiffResponseImport(t *testing.T) {
 	obj := &GetJobSCMDiffResponse{}
-	data, dataErr := testdata.GetBytes(GetJobSCMDiffResponseTestFileImport)
+	data, dataErr := getAssetBytes(GetJobSCMDiffResponseTestFileImport)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

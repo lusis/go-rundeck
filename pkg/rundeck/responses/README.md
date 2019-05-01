@@ -53,7 +53,7 @@ Example:
 ```go
 func TestHistoryResponse(t *testing.T) {
     obj := &HistoryResponse{}
-    data, dataErr := testdata.GetBytes(HistoryResponseTestFile)
+    data, dataErr := getAssetBytes(HistoryResponseTestFile)
     if dataErr != nil {
         t.Fatalf(dataErr.Error())
     }

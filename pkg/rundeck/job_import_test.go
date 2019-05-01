@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -17,7 +16,7 @@ func testFailedImportOption() JobImportOption {
 }
 
 func TestJobImport(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ImportedJobResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ImportedJobResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -30,7 +29,7 @@ func TestJobImport(t *testing.T) {
 }
 
 func TestJobImportOptions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ImportedJobResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ImportedJobResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -47,7 +46,7 @@ func TestJobImportOptions(t *testing.T) {
 }
 
 func TestJobImportInvalidFormat(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ImportedJobResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ImportedJobResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -60,7 +59,7 @@ func TestJobImportInvalidFormat(t *testing.T) {
 }
 
 func TestJobImportHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ImportedJobResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ImportedJobResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -74,7 +73,7 @@ func TestJobImportHTTPError(t *testing.T) {
 }
 
 func TestJobImportJSONError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ImportedJobResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ImportedJobResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -88,7 +87,7 @@ func TestJobImportJSONError(t *testing.T) {
 }
 
 func TestJobImportVersionError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ImportedJobResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ImportedJobResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -103,7 +102,7 @@ func TestJobImportVersionError(t *testing.T) {
 }
 
 func TestJobImportOptionError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ImportedJobResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ImportedJobResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

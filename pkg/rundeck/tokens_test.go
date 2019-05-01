@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -17,7 +16,7 @@ func testFailedTokenOption() TokenOption {
 }
 
 func TestGetTokens(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ListTokensResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListTokensResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -64,7 +63,7 @@ func TestGetTokensMissing(t *testing.T) {
 }
 
 func TestGetToken(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.TokenResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.TokenResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -85,7 +84,7 @@ func TestGetToken(t *testing.T) {
 }
 
 func TestGetTokenMissing(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.TokenResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.TokenResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -111,7 +110,7 @@ func TestGetTokenInvalidJSON(t *testing.T) {
 }
 
 func TestGetUserTokens(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ListTokensResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListTokensResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -176,7 +175,7 @@ func TestDeleteTokenNotFound(t *testing.T) {
 }
 
 func TestCreateToken(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.TokenResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.TokenResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -208,7 +207,7 @@ func TestCreateTokenJSONError(t *testing.T) {
 }
 
 func TestCreateTokenInvalidStatus(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.TokenResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.TokenResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -223,7 +222,7 @@ func TestCreateTokenInvalidStatus(t *testing.T) {
 }
 
 func TestCreateTokenWithOpts(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.TokenResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.TokenResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -245,7 +244,7 @@ func TestCreateTokenWithOpts(t *testing.T) {
 }
 
 func TestCreateTokenWithOptsError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.TokenResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.TokenResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}

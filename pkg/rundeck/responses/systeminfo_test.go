@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
@@ -12,7 +11,7 @@ import (
 func TestSystemInfoResponse(t *testing.T) {
 	obj := &SystemInfoResponse{}
 
-	data, dataErr := testdata.GetBytes(SystemInfoResponseTestFile)
+	data, dataErr := getAssetBytes(SystemInfoResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

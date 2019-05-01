@@ -7,7 +7,6 @@ import (
 
 	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -31,7 +30,7 @@ func testFailedAdHocScriptOption(e string) AdHocScriptOption {
 }
 
 func TestRunAdHoc(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -51,7 +50,7 @@ func TestRunAdHoc(t *testing.T) {
 }
 
 func TestRunAdHocWithOptions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -77,7 +76,7 @@ func TestRunAdHocWithOptions(t *testing.T) {
 }
 
 func TestRunAdHocWithFailingOption(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -117,7 +116,7 @@ func TestRunAdHocHTTPError(t *testing.T) {
 }
 
 func TestRunAdHocScript(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -137,7 +136,7 @@ func TestRunAdHocScript(t *testing.T) {
 }
 
 func TestRunAdHocScriptOptions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -167,7 +166,7 @@ func TestRunAdHocScriptOptions(t *testing.T) {
 }
 
 func TestRunAdHocScriptFailedOption(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -183,7 +182,7 @@ func TestRunAdHocScriptFailedOption(t *testing.T) {
 }
 
 func TestRunAdHocScriptHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -211,7 +210,7 @@ func TestRunAdHocScriptJSONError(t *testing.T) {
 }
 
 func TestRunAdHocScriptURL(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -231,7 +230,7 @@ func TestRunAdHocScriptURL(t *testing.T) {
 }
 
 func TestRunAdHocScriptURLOptions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -262,7 +261,7 @@ func TestRunAdHocScriptURLOptions(t *testing.T) {
 }
 
 func TestRunAdHocScriptURLOptionError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -278,7 +277,7 @@ func TestRunAdHocScriptURLOptionError(t *testing.T) {
 }
 
 func TestRunAdHocScriptFromURLHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AdHocExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

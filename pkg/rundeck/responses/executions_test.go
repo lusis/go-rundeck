@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestExecutionResponse(t *testing.T) {
 	obj := &ExecutionResponse{}
-	data, dataErr := testdata.GetBytes(ExecutionResponseTestFile)
+	data, dataErr := getAssetBytes(ExecutionResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -28,7 +27,7 @@ func TestExecutionResponse(t *testing.T) {
 
 func TestListRunningExecutionsResponse(t *testing.T) {
 	obj := &ListRunningExecutionsResponse{}
-	data, dataErr := testdata.GetBytes(ListRunningExecutionsResponseTestFile)
+	data, dataErr := getAssetBytes(ListRunningExecutionsResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -45,7 +44,7 @@ func TestListRunningExecutionsResponse(t *testing.T) {
 
 func TestExecutionInputFilesResponse(t *testing.T) {
 	obj := &ExecutionInputFilesResponse{}
-	data, dataErr := testdata.GetBytes(ExecutionInputFilesResponseTestFile)
+	data, dataErr := getAssetBytes(ExecutionInputFilesResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -62,7 +61,7 @@ func TestExecutionInputFilesResponse(t *testing.T) {
 
 func TestBulkDeleteExecutionsResponse(t *testing.T) {
 	obj := &BulkDeleteExecutionsResponse{}
-	data, dataErr := testdata.GetBytes(BulkDeleteExecutionsResponseTestFile)
+	data, dataErr := getAssetBytes(BulkDeleteExecutionsResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -79,7 +78,7 @@ func TestBulkDeleteExecutionsResponse(t *testing.T) {
 
 func TestExecutionStateResponse(t *testing.T) {
 	obj := &ExecutionStateResponse{}
-	data, dataErr := testdata.GetBytes(ExecutionStateResponseTestFile)
+	data, dataErr := getAssetBytes(ExecutionStateResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -99,7 +98,7 @@ func TestExecutionStateResponse(t *testing.T) {
 
 func TestExecutionStateExecutionStepResponse(t *testing.T) {
 	esr := &ExecutionStateResponse{}
-	data, dataErr := testdata.GetBytes(ExecutionStateResponseTestFile)
+	data, dataErr := getAssetBytes(ExecutionStateResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -118,7 +117,7 @@ func TestExecutionStateExecutionStepResponse(t *testing.T) {
 
 func TestExecutionStateWorkflowStepResponse(t *testing.T) {
 	esr := &ExecutionStateResponse{}
-	data, dataErr := testdata.GetBytes(ExecutionStateResponseTestFile)
+	data, dataErr := getAssetBytes(ExecutionStateResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -136,7 +135,7 @@ func TestExecutionStateWorkflowStepResponse(t *testing.T) {
 }
 func TestAdHocExecutionResponse(t *testing.T) {
 	obj := &AdHocExecutionResponse{}
-	data, dataErr := testdata.GetBytes(AdHocExecutionResponseTestFile)
+	data, dataErr := getAssetBytes(AdHocExecutionResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}
@@ -153,7 +152,7 @@ func TestAdHocExecutionResponse(t *testing.T) {
 
 func TestExecutionOutputResponse(t *testing.T) {
 	obj := &ExecutionOutputResponse{}
-	data, dataErr := testdata.GetBytes(ExecutionOutputResponseTestFile)
+	data, dataErr := getAssetBytes(ExecutionOutputResponseTestFile)
 	if dataErr != nil {
 		t.Fatalf(dataErr.Error())
 	}

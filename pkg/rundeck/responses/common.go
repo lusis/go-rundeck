@@ -2,6 +2,7 @@ package responses
 
 import (
 	"errors"
+	"io/ioutil"
 	"strings"
 	"time"
 )
@@ -29,4 +30,13 @@ func (t *JSONTime) UnmarshalJSON(data []byte) error {
 	}
 	t.Time = tempTime
 	return nil
+}
+
+// GetTestData returns the contents of testdata/fileName as a []byte
+func GetTestData(fileName string) ([]byte, error) {
+	data, err := assets.Open(fileName)
+	if err != nil {
+		return nil, err
+	}
+	return ioutil.ReadAll(data)
 }

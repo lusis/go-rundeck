@@ -12,7 +12,7 @@ type VersionedResponse interface {
 const AbsoluteMinimumVersion = 14
 
 // CurrentVersion is the current version of the API that this library is tested against
-const CurrentVersion = 27
+const CurrentVersion = 31
 
 // GetMinVersionFor gets the minimum api version required for a response
 func GetMinVersionFor(a VersionedResponse) int { return a.minVersion() }

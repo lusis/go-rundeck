@@ -7,7 +7,6 @@ import (
 
 	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	yaml "gopkg.in/yaml.v2"
 
 	"github.com/stretchr/testify/assert"
@@ -20,7 +19,7 @@ func testFailedJobOption() RunJobOption {
 }
 
 func TestGetJobMetaData(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.JobMetaDataResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.JobMetaDataResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -36,7 +35,7 @@ func TestGetJobMetaData(t *testing.T) {
 }
 
 func TestGetJobMetaDataHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.JobMetaDataResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.JobMetaDataResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -63,7 +62,7 @@ func TestGetJobMetaDataJSONError(t *testing.T) {
 }
 
 func TestGetJobDefinition(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("job_definition.yaml")
+	jsonfile, err := responses.GetTestData("job_definition.yaml")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -83,7 +82,7 @@ func TestGetJobDefinition(t *testing.T) {
 }
 
 func TestGetJobDefinitionHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("job_definition.yaml")
+	jsonfile, err := responses.GetTestData("job_definition.yaml")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -99,7 +98,7 @@ func TestGetJobDefinitionHTTPError(t *testing.T) {
 }
 
 func TestGetJobInfo(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.JobMetaDataResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.JobMetaDataResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -115,7 +114,7 @@ func TestGetJobInfo(t *testing.T) {
 }
 
 func TestListJobs(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.JobsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.JobsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -237,7 +236,7 @@ func TestGetRequiredOptsYAMLError(t *testing.T) {
 }
 
 func TestGetRequiredOpts(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("job_definition.yaml")
+	jsonfile, err := responses.GetTestData("job_definition.yaml")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -269,7 +268,7 @@ func TestGetJobOptsYAMLError(t *testing.T) {
 }
 
 func TestGetJobOpts(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("job_definition.yaml")
+	jsonfile, err := responses.GetTestData("job_definition.yaml")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -296,7 +295,7 @@ func TestExportJobInvalidFormat(t *testing.T) {
 }
 
 func TestExportJob(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("job_definition.yaml")
+	jsonfile, err := responses.GetTestData("job_definition.yaml")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -312,7 +311,7 @@ func TestExportJob(t *testing.T) {
 }
 
 func TestExportJobHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("job_definition.yaml")
+	jsonfile, err := responses.GetTestData("job_definition.yaml")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -328,7 +327,7 @@ func TestExportJobHTTPError(t *testing.T) {
 }
 
 func TestDeleteAllExecutionsForJob(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkDeleteExecutionsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkDeleteExecutionsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -344,7 +343,7 @@ func TestDeleteAllExecutionsForJob(t *testing.T) {
 }
 
 func TestDeleteAllExecutionsForJobHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkDeleteExecutionsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkDeleteExecutionsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

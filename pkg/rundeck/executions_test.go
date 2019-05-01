@@ -4,13 +4,12 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestListRunningExecutions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ListRunningExecutionsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListRunningExecutionsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -26,7 +25,7 @@ func TestListRunningExecutions(t *testing.T) {
 }
 
 func TestListRunningExecutionsHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ListRunningExecutionsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListRunningExecutionsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -47,7 +46,7 @@ func TestListRunningExecutionsJSONError(t *testing.T) {
 }
 
 func TestListProjectExecutions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ListRunningExecutionsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListRunningExecutionsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -63,7 +62,7 @@ func TestListProjectExecutions(t *testing.T) {
 }
 
 func TestListProjectExecutionsHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ListRunningExecutionsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListRunningExecutionsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -84,7 +83,7 @@ func TestListProjectExecutionsJSONError(t *testing.T) {
 }
 
 func TestDeleteExecutions(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkDeleteExecutionsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkDeleteExecutionsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -97,7 +96,7 @@ func TestDeleteExecutions(t *testing.T) {
 }
 
 func TestDeleteExecutionsHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkDeleteExecutionsResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkDeleteExecutionsResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -120,7 +119,7 @@ func TestDeleteExecutionsJSONError(t *testing.T) {
 func TestDeleteAllExecutionsForProject(t *testing.T) {}
 
 func TestBulkEnableExecution(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkToggleResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkToggleResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -133,7 +132,7 @@ func TestBulkEnableExecution(t *testing.T) {
 }
 
 func TestBulkEnableExecutionHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkToggleResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkToggleResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -154,7 +153,7 @@ func TestBulkEnableExecutionJSONError(t *testing.T) {
 }
 
 func TestBulkDisableExecution(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkToggleResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkToggleResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -167,7 +166,7 @@ func TestBulkDisableExecution(t *testing.T) {
 }
 
 func TestBulkDisableExecutionHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkToggleResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkToggleResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

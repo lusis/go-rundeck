@@ -4,14 +4,13 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/mitchellh/mapstructure"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestACLResponse(t *testing.T) {
 	obj := &ACLResponse{}
-	data, err := testdata.GetBytes(ACLResponseTestFile)
+	data, err := getAssetBytes(ACLResponseTestFile)
 	if err != nil {
 		t.Error(err.Error())
 		t.FailNow()
@@ -29,7 +28,7 @@ func TestACLResponse(t *testing.T) {
 
 func TestFailedACLValidationResponse(t *testing.T) {
 	obj := &FailedACLValidationResponse{}
-	data, err := testdata.GetBytes(FailedACLValidationResponseTestFile)
+	data, err := getAssetBytes(FailedACLValidationResponseTestFile)
 	if err != nil {
 		t.Error(err.Error())
 		t.FailNow()

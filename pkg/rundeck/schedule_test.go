@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +31,7 @@ func TestDisableSchedule(t *testing.T) {
 	assert.True(t, res)
 }
 func TestBulkEnableSchedule(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkToggleResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkToggleResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -45,7 +44,7 @@ func TestBulkEnableSchedule(t *testing.T) {
 }
 
 func TestBulkDisableSchedule(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.BulkToggleResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.BulkToggleResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

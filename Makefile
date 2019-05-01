@@ -1,6 +1,6 @@
 BINARIES := $(shell find cmd/ -maxdepth 1 -type d -name 'rundeck*' -exec sh -c 'echo $(basename {})' \;)
 BINLIST := $(subst src/,,$(BINARIES))
-RUNDECK_DEB_VERSION := 3.0.9.20181127-1.201811291844
+RUNDECK_DEB_VERSION := 3.0.21.20190424-1.201904242241
 #RUNDECK_DEB_VERSION := 3.0.9
 
 all: clean bindata test $(BINLIST)
@@ -9,8 +9,7 @@ test:
 	@script/test
 
 bindata:
-	@go get -u github.com/jteeuwen/go-bindata/...
-	@cd ./pkg/rundeck/responses/testdata;  go-bindata -pkg testdata -o testdata.go *.json *.yaml *.txt *.aclpolicy; cd -
+	@CGO_ENABLED=0 go run ./cmd/maketestdata/main.go
 
 build-test-container:
 	@cd docker; docker build --rm --build-arg RDECK_VER=$(RUNDECK_DEB_VERSION) -t go-rundeck-test:$(RUNDECK_DEB_VERSION) .; cd -

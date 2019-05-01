@@ -4,13 +4,12 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetUsers(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ListUsersResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ListUsersResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -48,7 +47,7 @@ func TestGetUsersInvalidStatus(t *testing.T) {
 }
 
 func TestGetUserInfo(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.UserProfileResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.UserProfileResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}
@@ -89,7 +88,7 @@ func TestGetUserInfoInvalidStatus(t *testing.T) {
 }
 
 func TestGetCurrentUserInfo(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.UserProfileResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.UserProfileResponseTestFile)
 	if err != nil {
 		t.Fatal(err.Error())
 	}

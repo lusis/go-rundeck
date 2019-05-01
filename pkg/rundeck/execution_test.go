@@ -5,13 +5,12 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetExecution(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -52,7 +51,7 @@ func TestGetExecution(t *testing.T) {
 }
 
 func TestGetExecutionInvalidStatusCode(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -81,7 +80,7 @@ func TestGetExecutionJSONError(t *testing.T) {
 }
 
 func TestGetExecutionState(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.ExecutionStateResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.ExecutionStateResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -121,7 +120,7 @@ func TestGetExecutionInvalidStatus(t *testing.T) {
 	assert.Nil(t, obj)
 }
 func TestGetExecutionOutput(t *testing.T) {
-	jsonfile, err := testdata.GetBytes("execution_output.json")
+	jsonfile, err := responses.GetTestData("execution_output.json")
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -221,7 +220,7 @@ func TestEnableExecutionHTTPError(t *testing.T) {
 }
 
 func TestAbortExecution(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AbortExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AbortExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -235,7 +234,7 @@ func TestAbortExecution(t *testing.T) {
 }
 
 func TestAbortExecutionAsUser(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AbortExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AbortExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -249,7 +248,7 @@ func TestAbortExecutionAsUser(t *testing.T) {
 }
 
 func TestAbortExecutionHTTPError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AbortExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AbortExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
@@ -263,7 +262,7 @@ func TestAbortExecutionHTTPError(t *testing.T) {
 }
 
 func TestAbortExecutionOptionError(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.AbortExecutionResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.AbortExecutionResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}

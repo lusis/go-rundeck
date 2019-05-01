@@ -5,12 +5,11 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/lusis/go-rundeck/pkg/rundeck/responses/testdata"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestGetSystemInfo(t *testing.T) {
-	jsonfile, err := testdata.GetBytes(responses.SystemInfoResponseTestFile)
+	jsonfile, err := responses.GetTestData(responses.SystemInfoResponseTestFile)
 	if err != nil {
 		t.Fatalf(err.Error())
 	}
