@@ -1,6 +1,0 @@
-<resource path="" type="directory" href="http://server/api/14/system/acl/">
-  <contents>
-    <resource path="name.aclpolicy" type="file" href="http://server/api/14/system/acl/name.aclpolicy" name="name.aclpolicy"/>
-    <resource path="foo.aclpolicy" type="file" href="http://server/api/14/system/acl/foo.aclpolicy" name="foo.aclpolicy"/>
-  </contents>
-</resource>

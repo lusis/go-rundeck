@@ -8,7 +8,6 @@ require (
 	github.com/hashicorp/errwrap v0.0.0-20141028054710-7554cd9344ce // indirect
 	github.com/hashicorp/go-multierror v0.0.0-20171204182908-b7773ae21874
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
-	github.com/jmcvetta/randutil v0.0.0-20150817122601-2bb1b664bcff // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/lusis/outputter v0.0.0-20171130132426-5a3b464a163f
 	github.com/mattn/go-colorable v0.1.1 // indirect
@@ -23,6 +22,5 @@ require (
 	golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3
 	golang.org/x/sys v0.0.0-20190412213103-97732733099d // indirect
 	gopkg.in/check.v1 v1.0.0-20180628173108-788fd7840127 // indirect
-	gopkg.in/jmcvetta/napping.v2 v2.1.1
 	gopkg.in/yaml.v2 v2.0.0-20171116090243-287cf08546ab
 )

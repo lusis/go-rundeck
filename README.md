@@ -4,32 +4,30 @@
 
 Go library and utilities for interacting with [Rundeck](http://rundeck.org).
 
-## ** Potentially breaking changes coming soon **
+## Legacy SHA
 
-If you are using this library without any sort of vendoring or dependency management, you need to start now.
+As promised, I've removed the older paths from the repo entirely. If you aren't using some sort of go dependency management, you should be.
 
-As of the v21 changes, I've started down a path that will allow me to handle api changes better:
+The state of the repo that had the old `src` and `pkg/rundeck.v19` paths are available at the following SHA:
 
-Starting with v21, there is no longer a versioned import path. It is now simply `github.com/lusis/go-rundeck/pkg/rundeck`
-As of the next release of the API, I will be removing ALL of the non-current rundeck API versioned import paths from `master`.
-This means if you are NOT vendoring and pinning to a specific SHA, your stuff will break.
+`08cdb7f7454e66fa3127e62cffc0ae7b05aa37c4`
 
-I've not finalized how I will be handling API changes but maintaining all the old versions in a single master has become very difficult.
+
+## Design
+The following is a small guide to the design of the project
 
 ### Isolation request and response from golang api
 
-I've separated requests and responses from the actual golang rundeck API. Those will potentially the only thing versioned going forward.
+Requests/responses to/from the rundeck api are distinct from the higher level library.
 
-There was a massive tangled mess where the rundeck golang types were too tightly coupled to the actual request and response from the Rundeck API.
-By breaking these out, it's really made things much more flexible AND testable.
 
-### Actual version support
+### Version support
 
-I've added min/max version support around funcs that perform API operations that can help with a more unified codebase.
-I tried very hard to specify the absolute minimum version a user could get away with but in some cases where there were breaking api changes,
-I chose to fight the battle another day and specified a bit higher minimum version constraint.
+Min/Max version support exists around funcs that perform API operations.
 
-I've also added environment variable support for specifying the version of the rundeck API you want to use. This can be used with the new unified `rundeck` binary
+I try *VERY* hard to specify the absolute minimum version a user can get away with but in some cases where there are breaking api changes.
+
+I've also added environment variable support for specifying the version of the rundeck API you want to use. This can be used with the unified `rundeck` binary.
 
 ### unified rundeck binary
 
@@ -53,7 +51,7 @@ Error: Requested API version (14) does not meet the requirements for this api ca
 ## Configuration
 
 - set `RUNDECK_URL` to the base url of your rundeck installation (i.e. `http://localhost:4000` or `https://my.rundeck.domain.com`)
-- set *EITHER* `RUNDECK_TOKEN` or `RUNDECK_USERNAME` and `RUNDECK_PASSWORD` (only if using `v13` api)
+- set *EITHER* `RUNDECK_TOKEN` or `RUNDECK_USERNAME` and `RUNDECK_PASSWORD`
 - if all three are set `RUNDECK_TOKEN` takes precendence
 - `RUNDECK_VERSION` can be used if you're running a lower version of the rundeck server api but nothing has changed in newer versions.
 
