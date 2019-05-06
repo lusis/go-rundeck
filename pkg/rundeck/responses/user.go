@@ -50,6 +50,6 @@ type AuthenticatedUserRoles struct {
 
 const AuthenticatedUserRolesTestFile = "get_authenticated_user_roles.json"
 
-func (u AuthenticatedUserRoles) minVersion() int { return 31 }
-func (u AuthenticatedUserRoles) maxVersion() int { return CurrentVersion }
+func (u AuthenticatedUserRoles) minVersion() int  { return 31 }
+func (u AuthenticatedUserRoles) maxVersion() int  { return CurrentVersion }
 func (u AuthenticatedUserRoles) deprecated() bool { return false }
