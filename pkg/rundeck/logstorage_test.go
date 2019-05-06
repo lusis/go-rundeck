@@ -5,7 +5,7 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetLogStorage(t *testing.T) {
@@ -17,24 +17,24 @@ func TestGetLogStorage(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetLogStorageInfo()
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestGetLogStorageJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetLogStorageInfo()
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestGetLogStorageHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 201)
 	defer server.Close()
 	obj, cErr := client.GetLogStorageInfo()
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestGetIncompleteLogStorage(t *testing.T) {
@@ -46,22 +46,22 @@ func TestGetIncompleteLogStorage(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetIncompleteLogStorage()
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestIncompleteGetLogStorageJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetIncompleteLogStorage()
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestIncompleteGetLogStorageHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 201)
 	defer server.Close()
 	obj, cErr := client.GetIncompleteLogStorage()
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }

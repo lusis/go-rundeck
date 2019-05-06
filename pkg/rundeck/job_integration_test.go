@@ -31,28 +31,20 @@ func (s *JobIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Project,
 		props["resources.source.1.config.delay"] = "10"
 		props["resources.source.1.config.count"] = "100"
 	}
-	project, createErr := s.TestClient.CreateProject(projectName, props)
-	if createErr != nil {
-		s.T().Fatalf("Unable to create test project: %s", createErr.Error())
-	}
+	project, err := s.TestClient.CreateProject(projectName, props)
+	s.Require().NoError(err)
 	s.Lock()
 	s.CreatedProjects = append(s.CreatedProjects, *project)
 	s.Unlock()
-	jobbytes, joberr := testJobFromTemplate(projectName+"-job", "job for "+projectName)
-	if joberr != nil {
-		s.T().Fatalf("cannot create a job import from template. cannot continue: %s", joberr.Error())
-	}
-	importJob, importErr := s.TestClient.ImportJob(project.Name,
+	jobbytes, err := testJobFromTemplate(projectName+"-job", "job for "+projectName)
+	s.Require().NoError(err)
+	importJob, err := s.TestClient.ImportJob(project.Name,
 		bytes.NewReader(jobbytes),
 		rundeck.ImportFormat("yaml"),
 		rundeck.ImportUUID("remove"))
-	if importErr != nil {
-		s.T().Fatalf("job did not import. cannot continue: %s", importErr.Error())
-	}
-	j, jerr := s.TestClient.GetJobMetaData(importJob.Succeeded[0].ID)
-	if jerr != nil {
-		s.T().Fatalf("unable to get job meta data for imported job. cannot continue: %s", jerr.Error())
-	}
+	s.Require().NoError(err)
+	j, err := s.TestClient.GetJobMetaData(importJob.Succeeded[0].ID)
+	s.Require().NoError(err)
 	return *project, *j
 }
 
@@ -73,25 +65,21 @@ func (s *JobIntegrationTestSuite) TearDownSuite() {
 
 func (s *JobIntegrationTestSuite) TestImportJob() {
 	project, _ := s.testCreateProject(false)
-	importJob, importErr := s.TestClient.ImportJob(project.Name,
+	importJob, err := s.TestClient.ImportJob(project.Name,
 		strings.NewReader(testJobDefinition),
 		rundeck.ImportFormat("yaml"),
 		rundeck.ImportUUID("remove"))
-	if importErr != nil {
-		s.T().Fatalf("job did not import. cannot continue: %s", importErr.Error())
-	}
-	s.NotNil(importJob)
-	s.Len(importJob.Failed, 0)
-	s.Len(importJob.Skipped, 0)
-	s.Len(importJob.Succeeded, 1)
+	s.Require().NoError(err)
+	s.Require().NotNil(importJob)
+	s.Require().Len(importJob.Failed, 0)
+	s.Require().Len(importJob.Skipped, 0)
+	s.Require().Len(importJob.Succeeded, 1)
 }
 
 func (s *JobIntegrationTestSuite) TestRunJob() {
 	_, job := s.testCreateProject(false)
-	runJob, runErr := s.TestClient.RunJob(job.ID)
-	if runErr != nil {
-		s.T().Fatalf("job did not run. cannot continue: %s", runErr.Error())
-	}
+	runJob, err := s.TestClient.RunJob(job.ID)
+	s.Require().NoError(err)
 	doneFunc := func() (bool, error) {
 		time.Sleep(500 * time.Millisecond)
 		info, infoErr := s.TestClient.GetExecutionState(runJob.ID)
@@ -100,27 +88,25 @@ func (s *JobIntegrationTestSuite) TestRunJob() {
 		}
 		return info.Completed, nil
 	}
-	done, doneErr := s.TestClient.WaitFor(doneFunc, 5*time.Second)
-	s.NoError(doneErr)
-	s.True(done)
+	done, err := s.TestClient.WaitFor(doneFunc, 5*time.Second)
+	s.Require().NoError(err)
+	s.Require().True(done)
 	info, _ := s.TestClient.GetExecutionState(runJob.ID)
-	s.Equal("SUCCEEDED", info.ExecutionState)
+	s.Require().Equal("SUCCEEDED", info.ExecutionState)
 }
 
 func (s *JobIntegrationTestSuite) TestFindJobByName() {
 	project, job := s.testCreateProject(false)
 	res, err := s.TestClient.FindJobByName(job.Name)
-	if err != nil {
-		s.T().Fatalf("Cannot find job. Cannot continue: %s", err.Error())
-	}
-	s.Len(res, 1)
-	s.Equal(project.Name, res[0].Project)
+	s.Require().NoError(err)
+	s.Require().Len(res, 1)
+	s.Require().Equal(project.Name, res[0].Project)
 
 }
 func TestIntegrationJobSuite(t *testing.T) {
-	if testRundeckRunning() {
-		suite.Run(t, &JobIntegrationTestSuite{})
-	} else {
-		t.Skip("rundeck isn't running for integration testing")
+	if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
 	}
+
+	suite.Run(t, &JobIntegrationTestSuite{})
 }

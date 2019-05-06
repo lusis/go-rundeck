@@ -5,41 +5,42 @@ import (
 	"testing"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestACLResponse(t *testing.T) {
-	obj := &ACLResponse{}
-	data, err := getAssetBytes(ACLResponseTestFile)
-	if err != nil {
-		t.Error(err.Error())
-		t.FailNow()
+func TestACLReponses(t *testing.T) {
+	testCases := []struct{
+		name string
+		placeholder interface{}
+		obj interface{}
+		testfile string
+	}{
+		{
+			name: "ACLResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &ACLResponse{},
+			testfile: ACLResponseTestFile,
+		},
+		{
+			name: "FailedACLValidationResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &FailedACLValidationResponse{},
+			testfile: FailedACLValidationResponseTestFile,
+		},
 	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestFailedACLValidationResponse(t *testing.T) {
-	obj := &FailedACLValidationResponse{}
-	data, err := getAssetBytes(FailedACLValidationResponseTestFile)
-	if err != nil {
-		t.Error(err.Error())
-		t.FailNow()
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			data, err := getAssetBytes(tc.testfile)
+			require.NoError(t, err)
+			err = json.Unmarshal(data, &tc.placeholder)
+			require.NoError(t, err)
+			config := newMSDecoderConfig()
+			config.Result = tc.obj
+			decoder, err := mapstructure.NewDecoder(config)
+			require.NoError(t, err)
+			err = decoder.Decode(tc.placeholder)
+			require.NoError(t, err)
+			require.Implements(t, (*VersionedResponse)(nil), tc.obj)
+		})
 	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
 }

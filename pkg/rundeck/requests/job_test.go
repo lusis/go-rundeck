@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestRunJobRequestMarshal(t *testing.T) {
@@ -23,7 +23,7 @@ func TestRunJobRequestMarshal(t *testing.T) {
 		},
 	}
 	res, err := json.Marshal(j)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 	expected := fmt.Sprintf(`{"argString":"-opt 1","loglevel":"DEBUG","asUser":"user1","filter":".*","runAtTime":"%s","options":{"opt2":"val2"}}`, timeVal)
-	assert.Equal(t, expected, string(res))
+	require.Equal(t, expected, string(res))
 }

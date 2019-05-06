@@ -5,7 +5,7 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestListRunningExecutions(t *testing.T) {
@@ -20,8 +20,8 @@ func TestListRunningExecutions(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListRunningExecutions("testproject")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestListRunningExecutionsHTTPError(t *testing.T) {
@@ -33,16 +33,16 @@ func TestListRunningExecutionsHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 404)
 	defer server.Close()
 	obj, cErr := client.ListRunningExecutions("testproject")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestListRunningExecutionsJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.ListRunningExecutions("testproject")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestListProjectExecutions(t *testing.T) {
@@ -57,8 +57,8 @@ func TestListProjectExecutions(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListProjectExecutions("testproject", nil)
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestListProjectExecutionsHTTPError(t *testing.T) {
@@ -70,16 +70,16 @@ func TestListProjectExecutionsHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 404)
 	defer server.Close()
 	obj, cErr := client.ListProjectExecutions("testproject", nil)
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestListProjectExecutionsJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.ListProjectExecutions("testproject", nil)
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestDeleteExecutions(t *testing.T) {
@@ -91,8 +91,8 @@ func TestDeleteExecutions(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.BulkDeleteExecutions(1, 2, 3)
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestDeleteExecutionsHTTPError(t *testing.T) {
@@ -104,16 +104,16 @@ func TestDeleteExecutionsHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
 	obj, cErr := client.BulkDeleteExecutions(1, 2, 3)
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestDeleteExecutionsJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.BulkDeleteExecutions(1, 2, 3)
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestDeleteAllExecutionsForProject(t *testing.T) {}
@@ -127,8 +127,8 @@ func TestBulkEnableExecution(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.BulkEnableExecution("a", "b", "c")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestBulkEnableExecutionHTTPError(t *testing.T) {
@@ -140,16 +140,16 @@ func TestBulkEnableExecutionHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
 	obj, cErr := client.BulkEnableExecution("a", "b", "c")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestBulkEnableExecutionJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.BulkEnableExecution("a", "b", "c")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestBulkDisableExecution(t *testing.T) {
@@ -161,8 +161,8 @@ func TestBulkDisableExecution(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.BulkDisableExecution("a", "b", "c")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestBulkDisableExecutionHTTPError(t *testing.T) {
@@ -174,14 +174,14 @@ func TestBulkDisableExecutionHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
 	obj, cErr := client.BulkDisableExecution("a", "b", "c")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestBulkDisableExecutionJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.BulkDisableExecution("a", "b", "c")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }

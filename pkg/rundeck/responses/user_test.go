@@ -5,39 +5,48 @@ import (
 	"testing"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestUserInfoResponse(t *testing.T) {
-	obj := &UserProfileResponse{}
-	data, dataErr := getAssetBytes(UserProfileResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
+func TestUserReponses(t *testing.T) {
+	testCases := []struct{
+		name string
+		placeholder interface{}
+		obj interface{}
+		testfile string
+	}{
+		{
+			name: "UserProfileResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &UserProfileResponse{},
+			testfile: UserProfileResponseTestFile,
+		},
+		{
+			name: "UsersInfoResponse",
+			placeholder: make([]map[string]interface{}, 1, 1),
+			obj: &ListUsersResponse{},
+			testfile: ListUsersResponseTestFile,
+		},
+		{
+			name: "AuthenticatedUserRolesResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &AuthenticatedUserRoles{},
+			testfile: AuthenticatedUserRolesTestFile,
+		},
 	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestUsersInfoResponse(t *testing.T) {
-	obj := &ListUsersResponse{}
-	data, dataErr := getAssetBytes(ListUsersResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			data, err := getAssetBytes(tc.testfile)
+			require.NoError(t, err)
+			err = json.Unmarshal(data, &tc.placeholder)
+			require.NoError(t, err)
+			config := newMSDecoderConfig()
+			config.Result = tc.obj
+			decoder, err := mapstructure.NewDecoder(config)
+			require.NoError(t, err)
+			err = decoder.Decode(tc.placeholder)
+			require.NoError(t, err)
+			require.Implements(t, (*VersionedResponse)(nil), tc.obj)
+		})
 	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
 }

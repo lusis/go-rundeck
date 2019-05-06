@@ -6,7 +6,7 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetExecution(t *testing.T) {
@@ -22,32 +22,32 @@ func TestGetExecution(t *testing.T) {
 	}
 
 	obj, oerr := client.GetExecutionInfo(1)
-	assert.NoError(t, oerr)
-	assert.Equal(t, 1, obj.ID)
-	assert.Equal(t, "[url]", obj.HRef)
-	assert.Equal(t, "[url]", obj.Permalink)
-	assert.Equal(t, "[project]", obj.Project)
-	assert.Equal(t, "[user]", obj.User)
-	assert.Equal(t, "succeeded/failed/aborted/timedout/retried/other", obj.Status)
-	assert.Len(t, obj.FailedNodes, 2)
-	assert.Len(t, obj.SuccessfulNodes, 2)
-	assert.Equal(t, "echo hello there [... 5 steps]", obj.Description)
-	assert.Equal(t, "-opt1 testvalue -opt2 a", obj.ArgString)
+	require.NoError(t, oerr)
+	require.Equal(t, 1, obj.ID)
+	require.Equal(t, "[url]", obj.HRef)
+	require.Equal(t, "[url]", obj.Permalink)
+	require.Equal(t, "[project]", obj.Project)
+	require.Equal(t, "[user]", obj.User)
+	require.Equal(t, "succeeded/failed/aborted/timedout/retried/other", obj.Status)
+	require.Len(t, obj.FailedNodes, 2)
+	require.Len(t, obj.SuccessfulNodes, 2)
+	require.Equal(t, "echo hello there [... 5 steps]", obj.Description)
+	require.Equal(t, "-opt1 testvalue -opt2 a", obj.ArgString)
 	job := obj.Job
-	assert.Len(t, job.Options, 2)
-	assert.Equal(t, "[uuid]", job.ID)
-	assert.Equal(t, "[url]", job.HRef)
-	assert.Equal(t, "[url]", job.Permalink)
-	assert.Equal(t, int64(6094), job.AverageDuration)
-	assert.Equal(t, "[name]", job.Name)
-	assert.Equal(t, "[group]", job.Group)
-	assert.Equal(t, "[project]", job.Project)
-	assert.Equal(t, "[description]", job.Description)
+	require.Len(t, job.Options, 2)
+	require.Equal(t, "[uuid]", job.ID)
+	require.Equal(t, "[url]", job.HRef)
+	require.Equal(t, "[url]", job.Permalink)
+	require.Equal(t, int64(6094), job.AverageDuration)
+	require.Equal(t, "[name]", job.Name)
+	require.Equal(t, "[group]", job.Group)
+	require.Equal(t, "[project]", job.Project)
+	require.Equal(t, "[description]", job.Description)
 
 	dateStarted := obj.DateStarted.Date
 	dateEnded := obj.DateEnded.Date
-	assert.Equal(t, 2015, dateStarted.Year())
-	assert.Equal(t, 2016, dateEnded.Year())
+	require.Equal(t, 2015, dateStarted.Year())
+	require.Equal(t, 2016, dateEnded.Year())
 }
 
 func TestGetExecutionInvalidStatusCode(t *testing.T) {
@@ -63,8 +63,8 @@ func TestGetExecutionInvalidStatusCode(t *testing.T) {
 	}
 
 	obj, oerr := client.GetExecutionInfo(1)
-	assert.Error(t, oerr)
-	assert.Nil(t, obj)
+	require.Error(t, oerr)
+	require.Nil(t, obj)
 }
 
 func TestGetExecutionJSONError(t *testing.T) {
@@ -75,8 +75,8 @@ func TestGetExecutionJSONError(t *testing.T) {
 	}
 
 	obj, oerr := client.GetExecutionInfo(1)
-	assert.Error(t, oerr)
-	assert.Nil(t, obj)
+	require.Error(t, oerr)
+	require.Nil(t, obj)
 }
 
 func TestGetExecutionState(t *testing.T) {
@@ -92,8 +92,8 @@ func TestGetExecutionState(t *testing.T) {
 	}
 
 	obj, oerr := client.GetExecutionState(1)
-	assert.NoError(t, oerr)
-	assert.NotNil(t, obj)
+	require.NoError(t, oerr)
+	require.NotNil(t, obj)
 }
 
 func TestGetExecutionStateJSONError(t *testing.T) {
@@ -104,8 +104,8 @@ func TestGetExecutionStateJSONError(t *testing.T) {
 	}
 
 	obj, oerr := client.GetExecutionState(1)
-	assert.Error(t, oerr)
-	assert.Nil(t, obj)
+	require.Error(t, oerr)
+	require.Nil(t, obj)
 }
 
 func TestGetExecutionInvalidStatus(t *testing.T) {
@@ -116,8 +116,8 @@ func TestGetExecutionInvalidStatus(t *testing.T) {
 	}
 
 	obj, oerr := client.GetExecutionState(1)
-	assert.Error(t, oerr)
-	assert.Nil(t, obj)
+	require.Error(t, oerr)
+	require.Nil(t, obj)
 }
 func TestGetExecutionOutput(t *testing.T) {
 	jsonfile, err := responses.GetTestData("execution_output.json")
@@ -132,8 +132,8 @@ func TestGetExecutionOutput(t *testing.T) {
 	}
 
 	obj, oerr := client.GetExecutionOutput(1)
-	assert.NoError(t, oerr)
-	assert.NotNil(t, obj)
+	require.NoError(t, oerr)
+	require.NotNil(t, obj)
 }
 
 func TestDeleteExecution(t *testing.T) {
@@ -144,7 +144,7 @@ func TestDeleteExecution(t *testing.T) {
 	}
 
 	err := client.DeleteExecution(1)
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestDisableExecutionSuccess(t *testing.T) {
@@ -155,8 +155,8 @@ func TestDisableExecutionSuccess(t *testing.T) {
 	}
 
 	res, err := client.DisableExecution(1)
-	assert.NoError(t, err)
-	assert.True(t, res)
+	require.NoError(t, err)
+	require.True(t, res)
 }
 
 func TestDisableExecutionJSONError(t *testing.T) {
@@ -167,8 +167,8 @@ func TestDisableExecutionJSONError(t *testing.T) {
 	}
 
 	res, err := client.DisableExecution(1)
-	assert.Error(t, err)
-	assert.False(t, res)
+	require.Error(t, err)
+	require.False(t, res)
 }
 
 func TestDisableExecutionHTTPError(t *testing.T) {
@@ -179,8 +179,8 @@ func TestDisableExecutionHTTPError(t *testing.T) {
 	}
 
 	res, err := client.DisableExecution(1)
-	assert.Error(t, err)
-	assert.False(t, res)
+	require.Error(t, err)
+	require.False(t, res)
 }
 
 func TestEnableExecutionSuccess(t *testing.T) {
@@ -191,8 +191,8 @@ func TestEnableExecutionSuccess(t *testing.T) {
 	}
 
 	res, err := client.EnableExecution(1)
-	assert.NoError(t, err)
-	assert.True(t, res)
+	require.NoError(t, err)
+	require.True(t, res)
 }
 
 func TestEnableExecutionJSONError(t *testing.T) {
@@ -203,8 +203,8 @@ func TestEnableExecutionJSONError(t *testing.T) {
 	}
 
 	res, err := client.EnableExecution(1)
-	assert.Error(t, err)
-	assert.False(t, res)
+	require.Error(t, err)
+	require.False(t, res)
 }
 
 func TestEnableExecutionHTTPError(t *testing.T) {
@@ -215,8 +215,8 @@ func TestEnableExecutionHTTPError(t *testing.T) {
 	}
 
 	res, err := client.EnableExecution(1)
-	assert.Error(t, err)
-	assert.False(t, res)
+	require.Error(t, err)
+	require.False(t, res)
 }
 
 func TestAbortExecution(t *testing.T) {
@@ -229,8 +229,8 @@ func TestAbortExecution(t *testing.T) {
 	defer server.Close()
 
 	obj, oerr := client.AbortExecution(1)
-	assert.NoError(t, oerr)
-	assert.NotNil(t, obj)
+	require.NoError(t, oerr)
+	require.NotNil(t, obj)
 }
 
 func TestAbortExecutionAsUser(t *testing.T) {
@@ -243,8 +243,8 @@ func TestAbortExecutionAsUser(t *testing.T) {
 	defer server.Close()
 
 	obj, oerr := client.AbortExecution(1, AbortExecutionAsUser("auser"))
-	assert.NoError(t, oerr)
-	assert.NotNil(t, obj)
+	require.NoError(t, oerr)
+	require.NotNil(t, obj)
 }
 
 func TestAbortExecutionHTTPError(t *testing.T) {
@@ -257,8 +257,8 @@ func TestAbortExecutionHTTPError(t *testing.T) {
 	defer server.Close()
 
 	obj, oerr := client.AbortExecution(1)
-	assert.Error(t, oerr)
-	assert.Nil(t, obj)
+	require.Error(t, oerr)
+	require.Nil(t, obj)
 }
 
 func TestAbortExecutionOptionError(t *testing.T) {
@@ -276,8 +276,8 @@ func TestAbortExecutionOptionError(t *testing.T) {
 	defer server.Close()
 
 	obj, oerr := client.AbortExecution(1, myopt())
-	assert.Error(t, oerr)
-	assert.Nil(t, obj)
+	require.Error(t, oerr)
+	require.Nil(t, obj)
 }
 
 func TestAbortExecutionJSONError(t *testing.T) {
@@ -286,6 +286,6 @@ func TestAbortExecutionJSONError(t *testing.T) {
 	defer server.Close()
 
 	obj, oerr := client.AbortExecution(1)
-	assert.Error(t, oerr)
-	assert.Nil(t, obj)
+	require.Error(t, oerr)
+	require.Nil(t, obj)
 }

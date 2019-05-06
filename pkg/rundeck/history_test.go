@@ -5,7 +5,7 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetHistory(t *testing.T) {
@@ -20,8 +20,8 @@ func TestGetHistory(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListHistory("testproject", nil)
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestGetHistoryNotFound(t *testing.T) {
@@ -36,8 +36,8 @@ func TestGetHistoryNotFound(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.ListHistory("testproject", nil)
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }
 
 func TestGetHistoryDecodeError(t *testing.T) {
@@ -47,8 +47,8 @@ func TestGetHistoryDecodeError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.ListHistory("testproject", nil)
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }
 
 func TestGetHistoryOptions(t *testing.T) {
@@ -64,6 +64,6 @@ func TestGetHistoryOptions(t *testing.T) {
 	}
 	obj, cErr := client.ListHistory("testproject", map[string]string{"foo": "bar"})
 
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }

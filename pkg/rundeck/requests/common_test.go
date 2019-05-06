@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type testTS struct {
@@ -20,14 +20,14 @@ func TestMarshalJSONTime(t *testing.T) {
 	}
 	str := fmt.Sprintf(`{"datetime":"2016-11-23T12:20:55+0000"}`)
 	res, resErr := json.Marshal(s)
-	assert.NoError(t, resErr)
+	require.NoError(t, resErr)
 
-	assert.Equal(t, str, string(res))
+	require.Equal(t, str, string(res))
 }
 
 func TestMarshalJSONTimeNil(t *testing.T) {
 	s := &testTS{}
 	res, resErr := json.Marshal(s)
-	assert.NoError(t, resErr)
-	assert.NotEmpty(t, string(res))
+	require.NoError(t, resErr)
+	require.NotEmpty(t, string(res))
 }

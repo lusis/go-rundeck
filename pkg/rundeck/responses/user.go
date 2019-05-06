@@ -42,3 +42,14 @@ const ListUsersResponseTestFile = "users.json"
 func (u ListUsersResponse) minVersion() int  { return 21 }
 func (u ListUsersResponse) maxVersion() int  { return CurrentVersion }
 func (u ListUsersResponse) deprecated() bool { return false }
+
+// AuthenticatedUserRoles represents the details of the authenticated user's roles
+type AuthenticatedUserRoles struct {
+	Roles []string `json:"roles"`
+}
+
+const AuthenticatedUserRolesTestFile = "get_authenticated_user_roles.json"
+
+func (u AuthenticatedUserRoles) minVersion() int  { return 31 }
+func (u AuthenticatedUserRoles) maxVersion() int  { return CurrentVersion }
+func (u AuthenticatedUserRoles) deprecated() bool { return false }

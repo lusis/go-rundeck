@@ -30,38 +30,37 @@ func (s *TokenIntegrationTestSuite) SetupSuite() {
 
 func (s *TokenIntegrationTestSuite) TestCreateToken() {
 	createToken, createErr := s.TestClient.CreateToken("admin")
-	s.NoError(createErr)
-	s.NotNil(createToken)
+	s.Require().NoError(createErr)
+	s.Require().NotNil(createToken)
 	s.CreatedTokens = append(s.CreatedTokens, *createToken)
 }
 
 func (s *TokenIntegrationTestSuite) TestGetToken() {
-	createToken, createErr := s.TestClient.CreateToken("admin")
-	if createErr != nil {
-		s.T().Fatalf("Can't create a token. cannot continue: %s", createErr.Error())
-	}
+	createToken, err := s.TestClient.CreateToken("admin")
+	s.Require().NoError(err)
+
 	s.CreatedTokens = append(s.CreatedTokens, *createToken)
-	getToken, getErr := s.TestClient.GetToken(createToken.Token)
-	s.NoError(getErr)
-	s.Equal(createToken.ID, getToken.ID)
+	getToken, err := s.TestClient.GetToken(createToken.Token)
+	s.Require().NoError(err)
+	s.Require().Equal(createToken.ID, getToken.ID)
 }
 
 func (s *TokenIntegrationTestSuite) TestListTokens() {
-	list, listErr := s.TestClient.ListTokens()
-	s.NoError(listErr)
-	s.Len(list, len(s.CreatedTokens))
+	list, err := s.TestClient.ListTokens()
+	s.Require().NoError(err)
+	s.Require().Len(list, len(s.CreatedTokens))
 }
 
 func (s *TokenIntegrationTestSuite) TestListTokensForUser() {
-	allTokens, allErr := s.TestClient.ListTokensForUser("admin")
-	s.NoError(allErr)
-	s.Len(allTokens, len(s.CreatedTokens))
+	allTokens, err := s.TestClient.ListTokensForUser("admin")
+	s.Require().NoError(err)
+	s.Require().Len(allTokens, len(s.CreatedTokens))
 }
 
 func TestIntegrationTokenSuite(t *testing.T) {
-	if testRundeckRunning() {
-		suite.Run(t, &TokenIntegrationTestSuite{})
-	} else {
-		t.Skip("rundeck isn't running for integration testing")
+	if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
 	}
+	
+	suite.Run(t, &TokenIntegrationTestSuite{})
 }

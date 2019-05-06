@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck"
-	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -32,21 +31,22 @@ func (s *SCMIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Project,
 		props["resources.source.1.config.delay"] = "10"
 		props["resources.source.1.config.count"] = "100"
 	}
-	project, createErr := s.TestClient.CreateProject(projectName, props)
-	require.NoError(s.T(), createErr)
+	project, err := s.TestClient.CreateProject(projectName, props)
+	s.Require().NoError(err)
 	s.Lock()
 	s.CreatedProjects = append(s.CreatedProjects, *project)
 	s.Unlock()
-	jobbytes, joberr := testJobFromTemplate(projectName+"-job", "job for "+projectName)
-	require.NoError(s.T(), joberr)
+	jobbytes, err := testJobFromTemplate(projectName+"-job", "job for "+projectName)
+	s.Require().NoError(err)
 
-	importJob, importErr := s.TestClient.ImportJob(project.Name,
+	importJob, err := s.TestClient.ImportJob(project.Name,
 		bytes.NewReader(jobbytes),
 		rundeck.ImportFormat("yaml"),
 		rundeck.ImportUUID("remove"))
-	require.NoError(s.T(), importErr)
-	j, jerr := s.TestClient.GetJobMetaData(importJob.Succeeded[0].ID)
-	require.NoError(s.T(), jerr)
+	s.Require().NoError(err)
+
+	j, err := s.TestClient.GetJobMetaData(importJob.Succeeded[0].ID)
+	s.Require().NoError(err)
 	return *project, *j
 }
 
@@ -57,7 +57,6 @@ func (s *SCMIntegrationTestSuite) SetupSuite() {
 }
 
 func (s *SCMIntegrationTestSuite) TearDownSuite() {
-
 	for _, p := range s.CreatedProjects {
 		e := s.TestClient.DeleteProject(p.Name)
 		if e != nil {
@@ -67,46 +66,47 @@ func (s *SCMIntegrationTestSuite) TearDownSuite() {
 }
 
 func TestIntegrationSCMSuite(t *testing.T) {
-	if testRundeckRunning() {
-		suite.Run(t, &SCMIntegrationTestSuite{})
-	} else {
-		t.Skip("rundeck isn't running for integration testing")
+	if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
 	}
+
+	suite.Run(t, &SCMIntegrationTestSuite{})
 }
 
 func (s *SCMIntegrationTestSuite) TestListSCMPlugins() {
 	project, _ := s.testCreateProject(false)
-	res, resErr := s.TestClient.ListSCMPlugins(project.Name)
-	require.NoError(s.T(), resErr)
-	s.Len(res.Import, 1)
-	s.Len(res.Export, 1)
-	s.Equal("git-export", res.Export[0].Type)
-	s.Equal("git-import", res.Import[0].Type)
+	res, err := s.TestClient.ListSCMPlugins(project.Name)
+	s.Require().NoError(err)
+	s.Require().Len(res.Import, 1)
+	s.Require().Len(res.Export, 1)
+	s.Require().Equal("git-export", res.Export[0].Type)
+	s.Require().Equal("git-import", res.Import[0].Type)
 }
 
 func (s *SCMIntegrationTestSuite) TestGetSCMPluginInputFields() {
 	project, _ := s.testCreateProject(false)
-	res, resErr := s.TestClient.ListSCMPlugins(project.Name)
-	require.NoError(s.T(), resErr)
+	res, err := s.TestClient.ListSCMPlugins(project.Name)
+	s.Require().NoError(err)
+
 	// We're going to spot check a few fields
 	for _, p := range res.Export {
 		fields, fieldsErr := s.TestClient.GetProjectSCMPluginInputFields(project.Name, "export", p.Type)
-		s.NoError(fieldsErr)
-		s.NotEmpty(fields.Integration)
-		s.NotEmpty(fields.Type)
+		s.Require().NoError(fieldsErr)
+		s.Require().NotEmpty(fields.Integration)
+		s.Require().NotEmpty(fields.Type)
 		for _, f := range fields.Fields {
-			s.NotEmpty(f.Name)
-			s.NotEmpty(f.Description)
+			s.Require().NotEmpty(f.Name)
+			s.Require().NotEmpty(f.Description)
 		}
 	}
 	for _, p := range res.Import {
 		fields, fieldsErr := s.TestClient.GetProjectSCMPluginInputFields(project.Name, "import", p.Type)
-		s.NoError(fieldsErr)
-		s.NotEmpty(fields.Integration)
-		s.NotEmpty(fields.Type)
+		s.Require().NoError(fieldsErr)
+		s.Require().NotEmpty(fields.Integration)
+		s.Require().NotEmpty(fields.Type)
 		for _, f := range fields.Fields {
-			s.NotEmpty(f.Name)
-			s.NotEmpty(f.Description)
+			s.Require().NotEmpty(f.Name)
+			s.Require().NotEmpty(f.Description)
 		}
 	}
 }
@@ -124,10 +124,10 @@ func (s *SCMIntegrationTestSuite) TestSetupSCMPluginExport() {
 		"branch":                "master",
 		"strictHostKeyChecking": "no",
 	}
-	res, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", params)
-	require.NoError(s.T(), resErr)
-	s.True(res.Success)
-	s.Nil(res.ValidationErrors)
+	res, err := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", params)
+	s.Require().NoError(err)
+	s.Require().True(res.Success)
+	s.Require().Nil(res.ValidationErrors)
 }
 
 func (s *SCMIntegrationTestSuite) TestSetupSCMPluginImport() {
@@ -142,10 +142,10 @@ func (s *SCMIntegrationTestSuite) TestSetupSCMPluginImport() {
 		"useFilePattern":        "true",
 		"filePattern":           ".*yaml",
 	}
-	res, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "import", "git-import", params)
-	require.NoError(s.T(), resErr)
-	s.True(res.Success)
-	s.Nil(res.ValidationErrors)
+	res, err := s.TestClient.SetupSCMPluginForProject(project.Name, "import", "git-import", params)
+	s.Require().NoError(err)
+	s.Require().True(res.Success)
+	s.Require().Nil(res.ValidationErrors)
 }
 
 // TestPerformProjectSCMActionExport
@@ -166,26 +166,25 @@ func (s *SCMIntegrationTestSuite) TestSCMActionProjectExport() {
 		"branch":                "master",
 		"strictHostKeyChecking": "no",
 	}
-	_, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
-	require.NoError(s.T(), resErr)
+	_, err := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
+	s.Require().NoError(err)
 	params := map[string]string{
 		"message": fmt.Sprintf("commit for integration test: %s", project.Name),
 		"push":    "true",
 	}
 
-	plugins, pluginsErr := s.TestClient.ListSCMPlugins(project.Name)
-	require.NoError(s.T(), pluginsErr)
-	if !plugins.Export[0].Enabled {
-		s.T().Fatalf("export plugin is not enabled. cannot continue: %s", plugins.Export[0].Description)
-	}
+	plugins, err := s.TestClient.ListSCMPlugins(project.Name)
+	s.Require().NoError(err)
+	s.Require().True(plugins.Export[0].Enabled)
 
-	jobbytes, joberr := testJobFromTemplate(project.Name+"-job-2", "job for "+project.Name)
-	require.NoError(s.T(), joberr)
-	_, importErr := s.TestClient.ImportJob(project.Name,
+
+	jobbytes, err := testJobFromTemplate(project.Name+"-job-2", "job for "+project.Name)
+	s.Require().NoError(err)
+	_, err = s.TestClient.ImportJob(project.Name,
 		bytes.NewReader(jobbytes),
 		rundeck.ImportFormat("yaml"),
 		rundeck.ImportUUID("remove"))
-	require.NoError(s.T(), importErr)
+	s.Require().NoError(err)
 	doneFunc := func() (bool, error) {
 		time.Sleep(1 * time.Second)
 		info, infoErr := s.TestClient.GetProjectSCMStatus(project.Name, "export")
@@ -204,21 +203,20 @@ func (s *SCMIntegrationTestSuite) TestSCMActionProjectExport() {
 		}
 		return false, nil
 	}
-	_, doneErr := s.TestClient.WaitFor(doneFunc, 15*time.Second)
-	if doneErr != nil {
-		s.T().Fatalf("never saw a status message. cannot continue: %s", doneErr)
-	}
-	aif, aifErr := s.TestClient.GetProjectSCMActionInputFields(project.Name, "export", "project-commit")
-	require.NoError(s.T(), aifErr)
+	_, err = s.TestClient.WaitFor(doneFunc, 15*time.Second)
+	s.Require().NoError(err)
+
+	aif, err := s.TestClient.GetProjectSCMActionInputFields(project.Name, "export", "project-commit")
+	s.Require().NoError(err)
 
 	exportItems := aif.ExportItems[0]
 
-	action, actionErr := s.TestClient.PerformProjectSCMAction(project.Name, aif.Integration, aif.ActionID,
+	action, err := s.TestClient.PerformProjectSCMAction(project.Name, aif.Integration, aif.ActionID,
 		rundeck.SCMActionInput(params),
 		rundeck.SCMActionJobs(exportItems.Job.JobID))
-	require.NoError(s.T(), actionErr)
-	s.True(action.Success)
-	s.Len(action.ValidationErrors, 0)
+	s.Require().NoError(err)
+	s.Require().True(action.Success)
+	s.Require().Len(action.ValidationErrors, 0)
 }
 
 func (s *SCMIntegrationTestSuite) TestSCMActionProjectFailure() {
@@ -227,9 +225,9 @@ func (s *SCMIntegrationTestSuite) TestSCMActionProjectFailure() {
 		"committerName":  "John E. Vincent",
 		"committerEmail": "lusis.org+github.com@gmail.com",
 	}
-	res, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
-	s.Nil(res)
-	s.Error(resErr)
+	res, err := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
+	s.Require().Nil(res)
+	s.Require().Error(err)
 }
 
 func (s *SCMIntegrationTestSuite) TestSCMActionProjectDisableEnable() {
@@ -244,12 +242,12 @@ func (s *SCMIntegrationTestSuite) TestSCMActionProjectDisableEnable() {
 		"branch":                "master",
 		"strictHostKeyChecking": "no",
 	}
-	_, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
-	require.NoError(s.T(), resErr)
-	dErr := s.TestClient.DisableSCMPluginForProject(project.Name, "export", "git-export")
-	s.NoError(dErr)
-	eErr := s.TestClient.EnableSCMPluginForProject(project.Name, "export", "git-export")
-	s.NoError(eErr)
+	_, err := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
+	s.Require().NoError(err)
+	err = s.TestClient.DisableSCMPluginForProject(project.Name, "export", "git-export")
+	s.Require().NoError(err)
+	err = s.TestClient.EnableSCMPluginForProject(project.Name, "export", "git-export")
+	s.Require().NoError(err)
 }
 
 func (s *SCMIntegrationTestSuite) TestSCMActionJobDiff() {
@@ -264,20 +262,20 @@ func (s *SCMIntegrationTestSuite) TestSCMActionJobDiff() {
 		"branch":                "master",
 		"strictHostKeyChecking": "no",
 	}
-	_, resErr := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
-	require.NoError(s.T(), resErr)
+	_, err := s.TestClient.SetupSCMPluginForProject(project.Name, "export", "git-export", scmparams)
+	s.Require().NoError(err)
 
-	plugins, pluginsErr := s.TestClient.ListSCMPlugins(project.Name)
-	require.NoError(s.T(), pluginsErr)
-	require.True(s.T(), plugins.Export[0].Enabled)
+	plugins, err := s.TestClient.ListSCMPlugins(project.Name)
+	s.Require().NoError(err)
+	s.Require().True(plugins.Export[0].Enabled)
 
-	jobbytes, joberr := testJobFromTemplate(project.Name+"-job-2", "job for "+project.Name)
-	require.NoError(s.T(), joberr)
-	importedJob, importErr := s.TestClient.ImportJob(project.Name,
+	jobbytes, err := testJobFromTemplate(project.Name+"-job-2", "job for "+project.Name)
+	s.Require().NoError(err)
+	importedJob, err := s.TestClient.ImportJob(project.Name,
 		bytes.NewReader(jobbytes),
 		rundeck.ImportFormat("yaml"),
 		rundeck.ImportUUID("remove"))
-	require.NoError(s.T(), importErr)
+	s.Require().NoError(err)
 	doneFunc := func() (bool, error) {
 		time.Sleep(1 * time.Second)
 		info, infoErr := s.TestClient.GetProjectSCMStatus(project.Name, "export")
@@ -296,12 +294,12 @@ func (s *SCMIntegrationTestSuite) TestSCMActionJobDiff() {
 		}
 		return false, nil
 	}
-	_, doneErr := s.TestClient.WaitFor(doneFunc, 15*time.Second)
-	require.NoError(s.T(), doneErr)
+	_, err = s.TestClient.WaitFor(doneFunc, 15*time.Second)
+	s.Require().NoError(err)
 
 	jobid := importedJob.Succeeded[0].ID
-	diff, diffErr := s.TestClient.GetJobSCMDiff(jobid, "export")
-	require.NoError(s.T(), diffErr)
-	require.NotEmpty(s.T(), diff.ID)
-	require.NotEmpty(s.T(), diff.Project)
+	diff, err := s.TestClient.GetJobSCMDiff(jobid, "export")
+	s.Require().NoError(err)
+	s.Require().NotEmpty(diff.ID)
+	s.Require().NotEmpty(diff.Project)
 }

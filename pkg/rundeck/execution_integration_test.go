@@ -31,20 +31,16 @@ func (s *ExecutionIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Pr
 		props["resources.source.1.config.delay"] = "10"
 		props["resources.source.1.config.count"] = "100"
 	}
-	project, createErr := s.TestClient.CreateProject(projectName, props)
-	if createErr != nil {
-		s.T().Fatalf("Unable to create test project: %s", createErr.Error())
-	}
+	project, err := s.TestClient.CreateProject(projectName, props)
+	s.Require().NoError(err)
 	s.Lock()
 	s.CreatedProjects = append(s.CreatedProjects, *project)
 	s.Unlock()
-	importJob, importErr := s.TestClient.ImportJob(project.Name,
+	importJob, err := s.TestClient.ImportJob(project.Name,
 		strings.NewReader(testJobDefinition),
 		rundeck.ImportFormat("yaml"),
 		rundeck.ImportUUID("remove"))
-	if importErr != nil {
-		s.T().Fatalf("job did not import. cannot continue: %s", importErr.Error())
-	}
+	s.Require().NoError(err)
 	return *project, *importJob
 }
 
@@ -68,59 +64,43 @@ func (s *ExecutionIntegrationTestSuite) TestAbortExecution() {
 	_, job := s.testCreateProject(true)
 	jobID := job.Succeeded[0].ID
 	runTime := time.Now().Add(1 * time.Hour)
-	ahe, aheErr := s.TestClient.RunJob(jobID, rundeck.RunJobRunAt(runTime))
-	if aheErr != nil {
-		s.T().Fatalf("unable to start job. cannot continue: %s", aheErr.Error())
-	}
-	exec, execErr := s.TestClient.GetExecutionInfo(ahe.ID)
-	if execErr != nil {
-		s.T().Fatalf("unable to get execution. cannot continue: %s", execErr.Error())
-	}
-	if exec.Status != "scheduled" {
-		s.T().Fatal("cannot schedule job. cannot continue")
-	}
-	info, infoErr := s.TestClient.AbortExecution(ahe.ID)
-	if infoErr != nil {
-		s.T().Fatalf("unable to abort execution. cannot continue: %s", infoErr.Error())
-	}
-	s.Equal(fmt.Sprintf("%d", ahe.ID), info.Execution.ID)
+	ahe, err := s.TestClient.RunJob(jobID, rundeck.RunJobRunAt(runTime))
+	s.Require().NoError(err)
+
+	exec, err := s.TestClient.GetExecutionInfo(ahe.ID)
+	s.Require().NoError(err)
+	s.Require().Equal("scheduled", exec.Status)
+
+	info, err := s.TestClient.AbortExecution(ahe.ID)
+	s.Require().NoError(err)
+	s.Require().Equal(fmt.Sprintf("%d", ahe.ID), info.Execution.ID)
 }
 
 func (s *ExecutionIntegrationTestSuite) TestAbortExecutionAsUser() {
 	_, job := s.testCreateProject(true)
 	jobID := job.Succeeded[0].ID
 	runtime := time.Now().Add(1 * time.Hour)
-	ahe, aheErr := s.TestClient.RunJob(jobID, rundeck.RunJobRunAt(runtime))
-	if aheErr != nil {
-		s.T().Fatalf("unable to run adhoc command. cannot continue: %s", aheErr.Error())
-	}
+	ahe, err := s.TestClient.RunJob(jobID, rundeck.RunJobRunAt(runtime))
+	s.Require().NoError(err)
 
-	check, checkErr := s.TestClient.GetExecutionInfo(ahe.ID)
-	if checkErr != nil {
-		s.T().Fatalf("unable to get execution info. cannot continue: %s", checkErr)
-	}
-	if check.Status != "scheduled" {
-		s.T().Fatal("cannot schedule job. cannot continue")
-	}
+	check, err := s.TestClient.GetExecutionInfo(ahe.ID)
+	s.Require().NoError(err)
+	s.Require().Equal("scheduled", check.Status)
 
-	info, infoErr := s.TestClient.AbortExecution(ahe.ID, rundeck.AbortExecutionAsUser("auser"))
-	if infoErr != nil {
-		s.T().Fatalf("unabled to abort execution. cannot continue: %s", infoErr.Error())
-	}
-	s.Equal(fmt.Sprintf("%d", ahe.ID), info.Execution.ID)
+	info, err := s.TestClient.AbortExecution(ahe.ID, rundeck.AbortExecutionAsUser("auser"))
+	s.Require().NoError(err)
+	s.Require().Equal(fmt.Sprintf("%d", ahe.ID), info.Execution.ID)
 
 }
 
 func (s *ExecutionIntegrationTestSuite) TestGetExecutionInfo() {
 	project, _ := s.testCreateProject(true)
-	ahe, aheErr := s.TestClient.RunAdHocCommand(project.Name, "ps -ef", rundeck.CmdThreadCount(1))
-	if aheErr != nil {
-		s.T().Fatalf("unable to run adhoc command. cannot continue: %s", aheErr.Error())
-	}
+	ahe, err := s.TestClient.RunAdHocCommand(project.Name, "ps -ef", rundeck.CmdThreadCount(1))
+	s.Require().NoError(err)
 
-	info, infoErr := s.TestClient.GetExecutionInfo(ahe.Execution.ID)
-	s.NoError(infoErr)
-	s.NotNil(info)
+	info, err := s.TestClient.GetExecutionInfo(ahe.Execution.ID)
+	s.Require().NoError(err)
+	s.Require().NotNil(info)
 }
 
 func (s *ExecutionIntegrationTestSuite) TestBulkDeleteExecutions() {
@@ -129,10 +109,8 @@ func (s *ExecutionIntegrationTestSuite) TestBulkDeleteExecutions() {
 	var runningIDs []int
 	// start 5 jobs
 	for i := 1; i <= 5; i++ {
-		ahe, aheErr := s.TestClient.RunJob(jobID)
-		if aheErr != nil {
-			s.T().Fatalf("unable to run job. cannot continue: %s", aheErr.Error())
-		}
+		ahe, err := s.TestClient.RunJob(jobID)
+		s.Require().NoError(err)
 		runningIDs = append(runningIDs, ahe.ID)
 		doneFunc := func() (bool, error) {
 			time.Sleep(500 * time.Millisecond)
@@ -142,30 +120,26 @@ func (s *ExecutionIntegrationTestSuite) TestBulkDeleteExecutions() {
 			}
 			return info.Completed, nil
 		}
-		_, doneErr := s.TestClient.WaitFor(doneFunc, 10*time.Second)
-		if doneErr != nil {
-			s.T().Fatalf("job could not be checked. cannot continue: %s", doneErr.Error())
-		}
+		_, err = s.TestClient.WaitFor(doneFunc, 10*time.Second)
+		s.Require().NoError(err)
 	}
 
-	bd, bderr := s.TestClient.BulkDeleteExecutions(runningIDs...)
-	s.NoError(bderr)
-	s.Equal(bd.SuccessCount, len(runningIDs))
+	bd, err := s.TestClient.BulkDeleteExecutions(runningIDs...)
+	s.Require().NoError(err)
+	s.Require().Equal(bd.SuccessCount, len(runningIDs))
 }
 
 func (s *ExecutionIntegrationTestSuite) TestListRunningExecutions() {
 	project, job := s.testCreateProject(false)
 	jobID := job.Succeeded[0].ID
 
-	ahe, aheErr := s.TestClient.RunJob(jobID)
-	if aheErr != nil {
-		s.T().Fatalf("unable to run job. cannot continue: %s", aheErr.Error())
-	}
+	ahe, err := s.TestClient.RunJob(jobID)
+	s.Require().NoError(err)
 
-	bd, bderr := s.TestClient.ListRunningExecutions(project.Name)
-	s.NoError(bderr)
-	s.Len(bd.Executions, 1)
-	s.Equal(jobID, bd.Executions[0].Job.ID)
+	bd, err := s.TestClient.ListRunningExecutions(project.Name)
+	s.Require().NoError(err)
+	s.Require().Len(bd.Executions, 1)
+	s.Require().Equal(jobID, bd.Executions[0].Job.ID)
 	doneFunc := func() (bool, error) {
 		time.Sleep(500 * time.Millisecond)
 		info, infoErr := s.TestClient.GetExecutionState(ahe.ID)
@@ -175,15 +149,15 @@ func (s *ExecutionIntegrationTestSuite) TestListRunningExecutions() {
 		return info.Completed, nil
 	}
 	// wait for the job to be done before we exit
-	done, doneErr := s.TestClient.WaitFor(doneFunc, 10*time.Second)
-	s.NoError(doneErr)
-	s.True(done)
+	done, err := s.TestClient.WaitFor(doneFunc, 10*time.Second)
+	s.Require().NoError(err)
+	s.Require().True(done)
 }
 
 func TestIntegrationExecutionSuite(t *testing.T) {
-	if testRundeckRunning() {
-		suite.Run(t, &ExecutionIntegrationTestSuite{})
-	} else {
-		t.Skip("rundeck isn't running for integration testing")
+	if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
 	}
+
+	suite.Run(t, &ExecutionIntegrationTestSuite{})
 }

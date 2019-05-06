@@ -9,7 +9,7 @@ import (
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 	yaml "gopkg.in/yaml.v2"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func testFailedJobOption() RunJobOption {
@@ -30,8 +30,8 @@ func TestGetJobMetaData(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.GetJobMetaData("1")
-	assert.NoError(t, oErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, oErr)
+	require.NotNil(t, obj)
 }
 
 func TestGetJobMetaDataHTTPError(t *testing.T) {
@@ -46,8 +46,8 @@ func TestGetJobMetaDataHTTPError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.GetJobMetaData("1")
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }
 
 func TestGetJobMetaDataJSONError(t *testing.T) {
@@ -57,8 +57,8 @@ func TestGetJobMetaDataJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.GetJobMetaData("1")
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }
 
 func TestGetJobDefinition(t *testing.T) {
@@ -73,12 +73,12 @@ func TestGetJobDefinition(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.GetJobDefinition("1", "yaml")
-	assert.NoError(t, oErr)
-	assert.NotEmpty(t, obj)
+	require.NoError(t, oErr)
+	require.NotEmpty(t, obj)
 	data := &responses.JobYAMLResponse{}
 	yErr := yaml.Unmarshal(obj, &data)
-	assert.NoError(t, yErr)
-	assert.NotNil(t, data)
+	require.NoError(t, yErr)
+	require.NotNil(t, data)
 }
 
 func TestGetJobDefinitionHTTPError(t *testing.T) {
@@ -93,8 +93,8 @@ func TestGetJobDefinitionHTTPError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.GetJobDefinition("1", "yaml")
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }
 
 func TestGetJobInfo(t *testing.T) {
@@ -109,8 +109,8 @@ func TestGetJobInfo(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.GetJobInfo("1")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestListJobs(t *testing.T) {
@@ -125,8 +125,8 @@ func TestListJobs(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListJobs("testproject")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestListJobsJSONError(t *testing.T) {
@@ -136,8 +136,8 @@ func TestListJobsJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListJobs("testproject")
-	assert.Error(t, cErr)
-	assert.Empty(t, obj)
+	require.Error(t, cErr)
+	require.Empty(t, obj)
 }
 
 func TestListJobsHTTPError(t *testing.T) {
@@ -147,8 +147,8 @@ func TestListJobsHTTPError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListJobs("testproject")
-	assert.Error(t, cErr)
-	assert.Empty(t, obj)
+	require.Error(t, cErr)
+	require.Empty(t, obj)
 }
 
 func TestRunJobOption(t *testing.T) {
@@ -164,39 +164,39 @@ func TestRunJobOption(t *testing.T) {
 	}
 	for _, opt := range opts {
 		if err := opt(jobOpts); err != nil {
-			assert.NoError(t, err)
+			require.NoError(t, err)
 		}
 	}
-	assert.Equal(t, "-foo bar", jobOpts.ArgString)
-	assert.Equal(t, "auser", jobOpts.AsUser)
-	assert.Equal(t, "bar", jobOpts.Options["foo"])
-	assert.Equal(t, "DEBUG", jobOpts.LogLevel)
-	assert.NotNil(t, jobOpts.RunAtTime)
-	assert.Equal(t, ".*", jobOpts.Filter)
+	require.Equal(t, "-foo bar", jobOpts.ArgString)
+	require.Equal(t, "auser", jobOpts.AsUser)
+	require.Equal(t, "bar", jobOpts.Options["foo"])
+	require.Equal(t, "DEBUG", jobOpts.LogLevel)
+	require.NotNil(t, jobOpts.RunAtTime)
+	require.Equal(t, ".*", jobOpts.Filter)
 }
 
 func TestRunJobOptionError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	res, err := client.RunJob("abcdefg", testFailedJobOption())
-	assert.Nil(t, res)
-	assert.Error(t, err)
+	require.Nil(t, res)
+	require.Error(t, err)
 }
 
 func TestRunJobHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 500)
 	defer server.Close()
 	res, err := client.RunJob("abcdefg")
-	assert.Nil(t, res)
-	assert.Error(t, err)
+	require.Nil(t, res)
+	require.Error(t, err)
 }
 
 func TestRunJobJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	res, err := client.RunJob("abcdefg")
-	assert.Nil(t, res)
-	assert.Error(t, err)
+	require.Nil(t, res)
+	require.Error(t, err)
 }
 
 func TestDeleteJobFound(t *testing.T) {
@@ -206,7 +206,7 @@ func TestDeleteJobFound(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	err := client.DeleteJob("testproject")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestDeleteJobNotFound(t *testing.T) {
@@ -216,23 +216,23 @@ func TestDeleteJobNotFound(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	err := client.DeleteJob("testproject")
-	assert.EqualError(t, ErrMissingResource, err.Error())
+	require.EqualError(t, ErrMissingResource, err.Error())
 }
 
 func TestGetRequiredOptsHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 500)
 	defer server.Close()
 	res, err := client.GetRequiredOpts("abcdefg")
-	assert.Nil(t, res)
-	assert.Error(t, err)
+	require.Nil(t, res)
+	require.Error(t, err)
 }
 
 func TestGetRequiredOptsYAMLError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte("1234"), "application/json", 200)
 	defer server.Close()
 	res, err := client.GetRequiredOpts("abcdefg")
-	assert.Nil(t, res)
-	assert.Error(t, err)
+	require.Nil(t, res)
+	require.Error(t, err)
 }
 
 func TestGetRequiredOpts(t *testing.T) {
@@ -247,24 +247,24 @@ func TestGetRequiredOpts(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.GetRequiredOpts("abcdefg")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestGetJobOptsHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 500)
 	defer server.Close()
 	res, err := client.GetJobOpts("abcdefg")
-	assert.Nil(t, res)
-	assert.Error(t, err)
+	require.Nil(t, res)
+	require.Error(t, err)
 }
 
 func TestGetJobOptsYAMLError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte("1234"), "application/json", 200)
 	defer server.Close()
 	res, err := client.GetJobOpts("abcdefg")
-	assert.Nil(t, res)
-	assert.Error(t, err)
+	require.Nil(t, res)
+	require.Error(t, err)
 }
 
 func TestGetJobOpts(t *testing.T) {
@@ -279,8 +279,8 @@ func TestGetJobOpts(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.GetJobOpts("abcdefg")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestExportJobInvalidFormat(t *testing.T) {
@@ -290,8 +290,8 @@ func TestExportJobInvalidFormat(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	res, err := client.ExportJob("abcdefg", "json")
-	assert.Nil(t, res)
-	assert.Error(t, err)
+	require.Nil(t, res)
+	require.Error(t, err)
 }
 
 func TestExportJob(t *testing.T) {
@@ -306,8 +306,8 @@ func TestExportJob(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ExportJob("abcdefg", "yaml")
-	assert.NoError(t, cErr)
-	assert.NotEmpty(t, obj)
+	require.NoError(t, cErr)
+	require.NotEmpty(t, obj)
 }
 
 func TestExportJobHTTPError(t *testing.T) {
@@ -322,8 +322,8 @@ func TestExportJobHTTPError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.ExportJob("abcdefg", "yaml")
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }
 
 func TestDeleteAllExecutionsForJob(t *testing.T) {
@@ -338,8 +338,8 @@ func TestDeleteAllExecutionsForJob(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.DeleteAllExecutionsForJob("abcdefg")
-	assert.NoError(t, oErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, oErr)
+	require.NotNil(t, obj)
 }
 
 func TestDeleteAllExecutionsForJobHTTPError(t *testing.T) {
@@ -354,8 +354,8 @@ func TestDeleteAllExecutionsForJobHTTPError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.DeleteAllExecutionsForJob("abcdefg")
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }
 
 func TestDeleteAllExecutionsForJobJSONError(t *testing.T) {
@@ -365,6 +365,6 @@ func TestDeleteAllExecutionsForJobJSONError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.DeleteAllExecutionsForJob("abcdefg")
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }

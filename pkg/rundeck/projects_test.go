@@ -9,7 +9,7 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetProject(t *testing.T) {
@@ -24,13 +24,13 @@ func TestGetProject(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, getErr := client.GetProjectInfo("testproject")
-	assert.NoError(t, getErr)
-	assert.NotNil(t, obj)
-	assert.NotEmpty(t, obj.Properties)
-	assert.Len(t, obj.Properties, 32)
-	assert.Equal(t, "[API Href]", obj.URL)
-	assert.Equal(t, "testproject", obj.Name)
-	assert.Equal(t, "test project", obj.Description)
+	require.NoError(t, getErr)
+	require.NotNil(t, obj)
+	require.NotEmpty(t, obj.Properties)
+	require.Len(t, obj.Properties, 32)
+	require.Equal(t, "[API Href]", obj.URL)
+	require.Equal(t, "testproject", obj.Name)
+	require.Equal(t, "test project", obj.Description)
 }
 
 func TestGetProjectHTTPError(t *testing.T) {
@@ -45,9 +45,9 @@ func TestGetProjectHTTPError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, err := client.GetProjectInfo("testproject")
-	assert.Error(t, err)
-	assert.EqualError(t, ErrMissingResource, err.Error())
-	assert.Nil(t, obj)
+	require.Error(t, err)
+	require.EqualError(t, ErrMissingResource, err.Error())
+	require.Nil(t, obj)
 }
 
 func TestGetProjectDecodeError(t *testing.T) {
@@ -57,8 +57,8 @@ func TestGetProjectDecodeError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.GetProjectInfo("testproject")
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }
 
 func TestListProjects(t *testing.T) {
@@ -73,13 +73,13 @@ func TestListProjects(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListProjects()
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
-	assert.Len(t, obj, 1)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
+	require.Len(t, obj, 1)
 	project := obj[0]
-	assert.Equal(t, "[API Href]", project.URL)
-	assert.Equal(t, "testproject", project.Name)
-	assert.Equal(t, "test project", project.Description)
+	require.Equal(t, "[API Href]", project.URL)
+	require.Equal(t, "testproject", project.Name)
+	require.Equal(t, "test project", project.Description)
 }
 
 func TestListProjectsDecodeError(t *testing.T) {
@@ -89,8 +89,8 @@ func TestListProjectsDecodeError(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.ListProjects()
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
+	require.Error(t, oErr)
+	require.Nil(t, obj)
 }
 
 func TestListProjectsNotFound(t *testing.T) {
@@ -100,9 +100,9 @@ func TestListProjectsNotFound(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, oErr := client.ListProjects()
-	assert.Error(t, oErr)
-	assert.Nil(t, obj)
-	assert.EqualError(t, ErrMissingResource, oErr.Error())
+	require.Error(t, oErr)
+	require.Nil(t, obj)
+	require.EqualError(t, ErrMissingResource, oErr.Error())
 }
 
 func TestDeleteProject(t *testing.T) {
@@ -112,7 +112,7 @@ func TestDeleteProject(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	err := client.DeleteProject("abc123")
-	assert.NoError(t, err)
+	require.NoError(t, err)
 }
 
 func TestDeleteProjectNotFound(t *testing.T) {
@@ -122,7 +122,7 @@ func TestDeleteProjectNotFound(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	err := client.DeleteProject("abc123")
-	assert.EqualError(t, ErrMissingResource, err.Error())
+	require.EqualError(t, ErrMissingResource, err.Error())
 }
 
 func TestCreateProject(t *testing.T) {
@@ -134,13 +134,13 @@ func TestCreateProject(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 201)
 	defer server.Close()
 	obj, getErr := client.CreateProject("testproject", nil)
-	assert.NoError(t, getErr)
-	assert.NotNil(t, obj)
-	assert.NotEmpty(t, obj.Properties)
-	assert.Len(t, obj.Properties, 32)
-	assert.Equal(t, "[API Href]", obj.URL)
-	assert.Equal(t, "testproject", obj.Name)
-	assert.Equal(t, "test project", obj.Description)
+	require.NoError(t, getErr)
+	require.NotNil(t, obj)
+	require.NotEmpty(t, obj.Properties)
+	require.Len(t, obj.Properties, 32)
+	require.Equal(t, "[API Href]", obj.URL)
+	require.Equal(t, "testproject", obj.Name)
+	require.Equal(t, "test project", obj.Description)
 }
 
 func TestCreateProjectHTTPError(t *testing.T) {
@@ -152,16 +152,16 @@ func TestCreateProjectHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 400)
 	defer server.Close()
 	obj, getErr := client.CreateProject("testproject", nil)
-	assert.Error(t, getErr)
-	assert.Nil(t, obj)
+	require.Error(t, getErr)
+	require.Nil(t, obj)
 }
 
 func TestCreateProjectJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 201)
 	defer server.Close()
 	obj, getErr := client.CreateProject("testproject", nil)
-	assert.Error(t, getErr)
-	assert.Nil(t, obj)
+	require.Error(t, getErr)
+	require.Nil(t, obj)
 }
 
 func TestGetProjectConfiguration(t *testing.T) {
@@ -173,17 +173,17 @@ func TestGetProjectConfiguration(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetProjectConfiguration("testproject")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
-	assert.Len(t, obj, 33)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
+	require.Len(t, obj, 33)
 }
 
 func TestGetProjectConfigurationJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetProjectConfiguration("testproject")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestGetProjectConfigurationHTTPError(t *testing.T) {
@@ -195,8 +195,8 @@ func TestGetProjectConfigurationHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
 	obj, cErr := client.GetProjectConfiguration("testproject")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestGetProjectArchiveExport(t *testing.T) {
@@ -205,7 +205,7 @@ func TestGetProjectArchiveExport(t *testing.T) {
 	var buf bytes.Buffer
 	writer := bufio.NewWriter(&buf)
 	cerr := client.GetProjectArchiveExport("testproject", writer)
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 }
 
 func TestGetProjectArchiveExportOptions(t *testing.T) {
@@ -223,7 +223,7 @@ func TestGetProjectArchiveExportOptions(t *testing.T) {
 		ProjectExportReadmes(true),
 	}
 	cerr := client.GetProjectArchiveExport("testproject", writer, opts...)
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 }
 
 func TestGetProjectArchiveHTTPError(t *testing.T) {
@@ -232,7 +232,7 @@ func TestGetProjectArchiveHTTPError(t *testing.T) {
 	var buf bytes.Buffer
 	writer := bufio.NewWriter(&buf)
 	cerr := client.GetProjectArchiveExport("testproject", writer)
-	assert.Error(t, cerr)
+	require.Error(t, cerr)
 }
 
 func TestGetProjectArchiveExportOptionError(t *testing.T) {
@@ -246,7 +246,7 @@ func TestGetProjectArchiveExportOptionError(t *testing.T) {
 		}(),
 	}
 	cerr := client.GetProjectArchiveExport("testproject", writer, opts...)
-	assert.Error(t, cerr)
+	require.Error(t, cerr)
 }
 
 func TestGetProjectArchiveExportAsync(t *testing.T) {
@@ -258,8 +258,8 @@ func TestGetProjectArchiveExportAsync(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetProjectArchiveExportAsync("testproject")
-	assert.NoError(t, cErr)
-	assert.NotEmpty(t, obj)
+	require.NoError(t, cErr)
+	require.NotEmpty(t, obj)
 }
 
 func TestGetProjectArchiveExportAsyncOptions(t *testing.T) {
@@ -277,8 +277,8 @@ func TestGetProjectArchiveExportAsyncOptions(t *testing.T) {
 		}(),
 	}
 	c, cerr := client.GetProjectArchiveExportAsync("testproject", opts...)
-	assert.Error(t, cerr)
-	assert.Empty(t, c)
+	require.Error(t, cerr)
+	require.Empty(t, c)
 }
 
 func TestGetProjectArchiveExportAsyncOptionError(t *testing.T) {
@@ -300,8 +300,8 @@ func TestGetProjectArchiveExportAsyncOptionError(t *testing.T) {
 		ProjectExportReadmes(true),
 	}
 	c, cerr := client.GetProjectArchiveExportAsync("testproject", opts...)
-	assert.NoError(t, cerr)
-	assert.NotEmpty(t, c)
+	require.NoError(t, cerr)
+	require.NotEmpty(t, c)
 }
 
 func TestGetProjectArchiveExportAsyncHTTPError(t *testing.T) {
@@ -313,16 +313,16 @@ func TestGetProjectArchiveExportAsyncHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
 	obj, cErr := client.GetProjectArchiveExportAsync("testproject")
-	assert.Error(t, cErr)
-	assert.Empty(t, obj)
+	require.Error(t, cErr)
+	require.Empty(t, obj)
 }
 
 func TestGetProjectArchiveExportAsyncJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetProjectArchiveExportAsync("testproject")
-	assert.Error(t, cErr)
-	assert.Empty(t, obj)
+	require.Error(t, cErr)
+	require.Empty(t, obj)
 }
 
 func TestGetProjectArchiveExportAsyncStatus(t *testing.T) {
@@ -334,8 +334,8 @@ func TestGetProjectArchiveExportAsyncStatus(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetProjectArchiveExportAsyncStatus("testproject", "ABCDEFG")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestGetProjectArchiveExportAsyncStatusHTTPError(t *testing.T) {
@@ -347,16 +347,16 @@ func TestGetProjectArchiveExportAsyncStatusHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
 	obj, cErr := client.GetProjectArchiveExportAsyncStatus("testproject", "abcdefg")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestGetProjectArchiveExportAsyncStatusJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.GetProjectArchiveExportAsyncStatus("testproject", "abcdefg")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestGetProjectArchiveExportAsyncDownload(t *testing.T) {
@@ -365,7 +365,7 @@ func TestGetProjectArchiveExportAsyncDownload(t *testing.T) {
 	var buf bytes.Buffer
 	writer := bufio.NewWriter(&buf)
 	cerr := client.GetProjectArchiveExportAsyncDownload("testproject", "abcdefg", writer)
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 }
 
 func TestGetProjectArchiveExportAsyncDownloadHTTPError(t *testing.T) {
@@ -374,7 +374,7 @@ func TestGetProjectArchiveExportAsyncDownloadHTTPError(t *testing.T) {
 	var buf bytes.Buffer
 	writer := bufio.NewWriter(&buf)
 	cerr := client.GetProjectArchiveExportAsyncDownload("testproject", "abcdefg", writer)
-	assert.Error(t, cerr)
+	require.Error(t, cerr)
 }
 
 func TestGetProjectArchiveImport(t *testing.T) {
@@ -386,8 +386,8 @@ func TestGetProjectArchiveImport(t *testing.T) {
 	defer server.Close()
 
 	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"))
-	assert.NoError(t, cerr)
-	assert.NotNil(t, res)
+	require.NoError(t, cerr)
+	require.NotNil(t, res)
 }
 
 func TestGetProjectArchiveImportOptions(t *testing.T) {
@@ -405,8 +405,8 @@ func TestGetProjectArchiveImportOptions(t *testing.T) {
 		ProjectImportConfigs(true),
 	}
 	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"), opts...)
-	assert.NoError(t, cerr)
-	assert.NotNil(t, res)
+	require.NoError(t, cerr)
+	require.NotNil(t, res)
 }
 
 func TestGetProjectArchiveImportOptionError(t *testing.T) {
@@ -424,38 +424,38 @@ func TestGetProjectArchiveImportOptionError(t *testing.T) {
 	}
 
 	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"), opts...)
-	assert.Error(t, cerr)
-	assert.Nil(t, res)
+	require.Error(t, cerr)
+	require.Nil(t, res)
 }
 
 func TestGetProjectArchiveImportJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"))
-	assert.Error(t, cerr)
-	assert.Nil(t, res)
+	require.Error(t, cerr)
+	require.Nil(t, res)
 }
 
 func TestGetProjectArchiveImportHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 500)
 	defer server.Close()
 	res, cerr := client.ProjectArchiveImport("testproject", strings.NewReader("hello"))
-	assert.Error(t, cerr)
-	assert.Nil(t, res)
+	require.Error(t, cerr)
+	require.Nil(t, res)
 }
 
 func TestPutProjectConfigurationKey(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	cerr := client.PutProjectConfigurationKey("testproject", "mykey", "myval")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 }
 
 func TestPutProjectConfigurationKeyHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 500)
 	defer server.Close()
 	cerr := client.PutProjectConfigurationKey("testproject", "mykey", "myval")
-	assert.Error(t, cerr)
+	require.Error(t, cerr)
 }
 
 func TestGetProjectConfigurationKey(t *testing.T) {
@@ -463,8 +463,8 @@ func TestGetProjectConfigurationKey(t *testing.T) {
 	defer server.Close()
 
 	res, cerr := client.GetProjectConfigurationKey("testproject", "resources.source.1.type")
-	assert.NoError(t, cerr)
-	assert.Equal(t, "stub", res)
+	require.NoError(t, cerr)
+	require.Equal(t, "stub", res)
 }
 
 func TestGetProjectConfigurationKeyHTTPError(t *testing.T) {
@@ -472,8 +472,8 @@ func TestGetProjectConfigurationKeyHTTPError(t *testing.T) {
 	defer server.Close()
 
 	res, cerr := client.GetProjectConfigurationKey("testproject", "resources.source.1.type")
-	assert.Error(t, cerr)
-	assert.Empty(t, res)
+	require.Error(t, cerr)
+	require.Empty(t, res)
 }
 
 func TestDeleteProjectConfigurationKey(t *testing.T) {
@@ -481,7 +481,7 @@ func TestDeleteProjectConfigurationKey(t *testing.T) {
 	defer server.Close()
 
 	cerr := client.DeleteProjectConfigurationKey("testproject", "resources.source.1.type")
-	assert.NoError(t, cerr)
+	require.NoError(t, cerr)
 }
 
 func TestDeleteProjectConfigurationKeyHTTPError(t *testing.T) {
@@ -489,7 +489,7 @@ func TestDeleteProjectConfigurationKeyHTTPError(t *testing.T) {
 	defer server.Close()
 
 	cerr := client.DeleteProjectConfigurationKey("testproject", "resources.source.1.type")
-	assert.Error(t, cerr)
+	require.Error(t, cerr)
 }
 
 func TestPutProjectConfiguration(t *testing.T) {
@@ -501,9 +501,9 @@ func TestPutProjectConfiguration(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(conf), "application/json", 200)
 	defer server.Close()
 	res, cerr := client.PutProjectConfiguration("testproject", data)
-	assert.NoError(t, cerr)
-	assert.Equal(t, "bar", res["foo"])
-	assert.Equal(t, "qux", res["baz"])
+	require.NoError(t, cerr)
+	require.Equal(t, "bar", res["foo"])
+	require.Equal(t, "qux", res["baz"])
 }
 
 func TestPutProjectConfigurationHTTPError(t *testing.T) {
@@ -515,7 +515,7 @@ func TestPutProjectConfigurationHTTPError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(conf), "application/json", 500)
 	defer server.Close()
 	_, cerr := client.PutProjectConfiguration("testproject", data)
-	assert.Error(t, cerr)
+	require.Error(t, cerr)
 }
 
 func TestPutProjectConfigurationJSONError(t *testing.T) {
@@ -526,5 +526,5 @@ func TestPutProjectConfigurationJSONError(t *testing.T) {
 	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
 	_, cerr := client.PutProjectConfiguration("testproject", data)
-	assert.Error(t, cerr)
+	require.Error(t, cerr)
 }

@@ -5,360 +5,156 @@ import (
 	"testing"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestListSCMPluginsResponseImport(t *testing.T) {
-	obj := &ListSCMPluginsResponse{}
-	data, dataErr := getAssetBytes(ListSCMPluginsResponseImportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
+func TestSCMReponses(t *testing.T) {
+	testCases := []struct{
+		name string
+		placeholder interface{}
+		obj interface{}
+		testfile string
+	}{
+		{
+			name: "ListSCMPluginsResponseImport",
+			placeholder: make([]map[string]interface{},1 ,1),
+			obj: &ListSCMPluginsResponse{},
+			testfile: ListSCMPluginsResponseImportTestFile,
+		},
+		{
+			name: "ListSCMPluginsResponseExport",
+			placeholder: make(map[string]interface{}),
+			obj: &ListSCMPluginsResponse{},
+			testfile: ListSCMPluginsResponseExportTestFile,
+		},
+		{
+			name: "GetSCMPluginInputFieldsResponseImport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetSCMPluginInputFieldsResponse{},
+			testfile: GetSCMPluginInputFieldsResponseImportTestData,
+		},
+		{
+			name: "GetSCMPluginInputFieldsResponseExport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetSCMPluginInputFieldsResponse{},
+			testfile: GetSCMPluginInputFieldsResponseExportTestData,
+		},
+		{
+			name: "SCMPluginForProjectResponseEnableImport",
+			placeholder: make(map[string]interface{}),
+			obj: &SCMPluginForProjectResponse{},
+			testfile: SCMPluginForProjectResponseEnableImportTestFile,
+		},
+		{
+			name: "SCMPluginForProjectResponseDisableImport",
+			placeholder: make(map[string]interface{}),
+			obj: &SCMPluginForProjectResponse{},
+			testfile: SCMPluginForProjectResponseDisableImportTestFile,
+		},
+		{
+			name: "SCMPluginForProjectResponseEnableExport",
+			placeholder: make(map[string]interface{}),
+			obj: &SCMPluginForProjectResponse{},
+			testfile: SCMPluginForProjectResponseEnableExportTestFile,
+		},
+		{
+			name: "SCMPluginForProjectResponseDisableExport",
+			placeholder: make(map[string]interface{}),
+			obj: &SCMPluginForProjectResponse{},
+			testfile: SCMPluginForProjectResponseDisableExportTestFile,
+		},
+		{
+			name: "GetProjectSCMStatusResponseImport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetProjectSCMStatusResponse{},
+			testfile: GetProjectSCMStatusResponseImportTestFile,
+		},
+		{
+			name: "GetProjectSCMStatusResponseExport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetProjectSCMStatusResponse{},
+			testfile: GetProjectSCMStatusResponseExportTestFile,
+		},
+		{
+			name: "GetProjectSCMConfigResponseImport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetProjectSCMConfigResponse{},
+			testfile: GetProjectSCMConfigResponseImportTestFile,
+		},
+		{
+			name: "GetProjectSCMConfigResponseExport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetProjectSCMConfigResponse{},
+			testfile: GetProjectSCMConfigResponseExportTestFile,
+		},
+		{
+			name: "GetSCMActionInputFieldsResponseProjectImport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetSCMActionInputFieldsResponse{},
+			testfile: GetSCMActionInputFieldsResponseTestFileProjectImport,
+		},
+		{
+			name: "GetSCMActionInputFieldsResponseProjectExport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetSCMActionInputFieldsResponse{},
+			testfile: GetSCMActionInputFieldsResponseTestFileProjectExport,
+		},
+		{
+			name: "GetSCMActionInputFieldsResponseJobImport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetSCMActionInputFieldsResponse{},
+			testfile: GetSCMActionInputFieldsResponseTestFileJobImport,
+		},
+		{
+			name: "GetSCMActionInputFieldsResponseJobExport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetSCMActionInputFieldsResponse{},
+			testfile: GetSCMActionInputFieldsResponseTestFileJobExport,
+		},
+		{
+			name: "GetJobSCMStatusResponseImport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetJobSCMStatusResponse{},
+			testfile: GetJobSCMStatusResponseTestFileImport,
+		},
+		{
+			name: "GetJobSCMStatusResponseExport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetJobSCMStatusResponse{},
+			testfile: GetJobSCMStatusResponseTestFileExport,
+		},
+		{
+			name: "GetJobSCMDiffResponseExport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetJobSCMDiffResponse{},
+			testfile: GetJobSCMDiffResponseTestFileExport,
+		},
+		{
+			name: "GetJobSCMDiffResponseImport",
+			placeholder: make(map[string]interface{}),
+			obj: &GetJobSCMDiffResponse{},
+			testfile: GetJobSCMDiffResponseTestFileImport,
+		},
 	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			data, err := getAssetBytes(tc.testfile)
+			require.NoError(t, err)
+			err = json.Unmarshal(data, &tc.placeholder)
+			require.NoError(t, err)
+			config := newMSDecoderConfig()
+			config.Result = tc.obj
+			decoder, err := mapstructure.NewDecoder(config)
+			require.NoError(t, err)
+			err = decoder.Decode(tc.placeholder)
+			require.NoError(t, err)
+			require.Implements(t, (*VersionedResponse)(nil), tc.obj)
+		})
+	}
 }
 
-func TestListSCMPluginsResponseExport(t *testing.T) {
-	obj := &ListSCMPluginsResponse{}
-	data, dataErr := getAssetBytes(ListSCMPluginsResponseExportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
 
 func TestSCMPluginResponse(t *testing.T) {
 	obj := SCMPluginResponse{}
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetSCMPluginInputFieldsResponseImport(t *testing.T) {
-	obj := &GetSCMPluginInputFieldsResponse{}
-	data, dataErr := getAssetBytes(GetSCMPluginInputFieldsResponseImportTestData)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetSCMPluginInputFieldsResponseExport(t *testing.T) {
-	obj := &GetSCMPluginInputFieldsResponse{}
-	data, dataErr := getAssetBytes(GetSCMPluginInputFieldsResponseExportTestData)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestSCMPluginForProjectResponseEnableImport(t *testing.T) {
-	obj := &SCMPluginForProjectResponse{}
-	data, dataErr := getAssetBytes(SCMPluginForProjectResponseEnableImportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestSCMPluginForProjectResponseDisableImport(t *testing.T) {
-	obj := &SCMPluginForProjectResponse{}
-	data, dataErr := getAssetBytes(SCMPluginForProjectResponseDisableImportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestSCMPluginForProjectResponseEnableExport(t *testing.T) {
-	obj := &SCMPluginForProjectResponse{}
-	data, dataErr := getAssetBytes(SCMPluginForProjectResponseEnableExportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestSCMPluginForProjectResponseDisableExport(t *testing.T) {
-	obj := &SCMPluginForProjectResponse{}
-	data, dataErr := getAssetBytes(SCMPluginForProjectResponseDisableExportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetProjectSCMStatusResponseImport(t *testing.T) {
-	obj := &GetProjectSCMStatusResponse{}
-	data, dataErr := getAssetBytes(GetProjectSCMStatusResponseImportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetProjectSCMStatusResponseExport(t *testing.T) {
-	obj := &GetProjectSCMStatusResponse{}
-	data, dataErr := getAssetBytes(GetProjectSCMStatusResponseExportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetProjectSCMConfigResponseImport(t *testing.T) {
-	obj := &GetProjectSCMConfigResponse{}
-	data, dataErr := getAssetBytes(GetProjectSCMConfigResponseImportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetProjectSCMConfigResponseExport(t *testing.T) {
-	obj := &GetProjectSCMConfigResponse{}
-	data, dataErr := getAssetBytes(GetProjectSCMConfigResponseExportTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetSCMActionInputFieldsResponseProjectImport(t *testing.T) {
-	obj := &GetSCMActionInputFieldsResponse{}
-	data, dataErr := getAssetBytes(GetSCMActionInputFieldsResponseTestFileProjectImport)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetSCMActionInputFieldsResponseProjectExport(t *testing.T) {
-	obj := &GetSCMActionInputFieldsResponse{}
-	data, dataErr := getAssetBytes(GetSCMActionInputFieldsResponseTestFileProjectExport)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetSCMActionInputFieldsResponseJobImport(t *testing.T) {
-	obj := &GetSCMActionInputFieldsResponse{}
-	data, dataErr := getAssetBytes(GetSCMActionInputFieldsResponseTestFileJobImport)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetSCMActionInputFieldsResponseJobExport(t *testing.T) {
-	obj := &GetSCMActionInputFieldsResponse{}
-	data, dataErr := getAssetBytes(GetSCMActionInputFieldsResponseTestFileJobExport)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetJobSCMStatusResponseImport(t *testing.T) {
-	obj := &GetJobSCMStatusResponse{}
-	data, dataErr := getAssetBytes(GetJobSCMStatusResponseTestFileImport)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetJobSCMStatusResponseExport(t *testing.T) {
-	obj := &GetJobSCMStatusResponse{}
-	data, dataErr := getAssetBytes(GetJobSCMStatusResponseTestFileExport)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetJobSCMDiffResponseExport(t *testing.T) {
-	obj := &GetJobSCMDiffResponse{}
-	data, dataErr := getAssetBytes(GetJobSCMDiffResponseTestFileExport)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestGetJobSCMDiffResponseImport(t *testing.T) {
-	obj := &GetJobSCMDiffResponse{}
-	data, dataErr := getAssetBytes(GetJobSCMDiffResponseTestFileImport)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
+	require.Implements(t, (*VersionedResponse)(nil), obj)
 }

@@ -203,13 +203,13 @@ func testRundeckRunning() bool {
 }
 
 func testJobFromTemplate(name, description string) ([]byte, error) {
-	t, tErr := template.New("tmp_template").Parse(testJobDefinitionTemplate)
-	if tErr != nil {
-		return nil, tErr
+	t, err := template.New("tmp_template").Parse(testJobDefinitionTemplate)
+	if err != nil {
+		return nil, err
 	}
 	var b bytes.Buffer
 	funcMap := template.FuncMap{"Description": name, "Name": description + "-job"}
-	err := t.Execute(&b, &funcMap)
+	err = t.Execute(&b, &funcMap)
 	if err != nil {
 		return nil, err
 	}
@@ -232,9 +232,10 @@ func testGenerateRandomName(resourceType string) string {
 }
 
 func TestIntegrationBasicAuth(t *testing.T) {
-	if !testRundeckRunning() {
-		t.Skip("rundeck not running for integration tests")
+  if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
 	}
+
 	client, err := rundeck.NewBasicAuthClient(testIntegrationUsername, testIntegrationPassword, testIntegrationURL)
 	require.NoError(t, err)
 	info, infoErr := client.GetSystemInfo()
@@ -243,8 +244,8 @@ func TestIntegrationBasicAuth(t *testing.T) {
 }
 
 func TestIntegrationTokenAuth(t *testing.T) {
-	if !testRundeckRunning() {
-		t.Skip("rundeck not running for integration tests")
+	if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
 	}
 	client, err := rundeck.NewTokenAuthClient(testIntegrationToken, testIntegrationURL)
 	require.NoError(t, err)
@@ -254,10 +255,12 @@ func TestIntegrationTokenAuth(t *testing.T) {
 }
 
 func TestIntegrationInvalidBasicAuth(t *testing.T) {
-	if !testRundeckRunning() {
-		t.Skip("rundeck not running for integration tests")
-	}
-	client, _ := rundeck.NewBasicAuthClient("bob", "bob", testIntegrationURL)
+	if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
+  }
+  
+  client, err := rundeck.NewBasicAuthClient("bob", "bob", testIntegrationURL)
+  require.NoError(t, err)
 	info, infoErr := client.GetSystemInfo()
 	require.Error(t, infoErr)
 	require.Nil(t, info)

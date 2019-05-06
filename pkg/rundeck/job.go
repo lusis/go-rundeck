@@ -81,7 +81,8 @@ func RunJobLogLevel(l string) RunJobOption {
 // RunJobRunAt runs the specified job at the specified time
 func RunJobRunAt(t time.Time) RunJobOption {
 	return func(r *requests.RunJobRequest) error {
-		r.RunAtTime = &requests.JSONTime{t} // nolint: vet
+		//nolint:govet
+		r.RunAtTime = &requests.JSONTime{t}
 		return nil
 	}
 }
