@@ -5,23 +5,23 @@ import (
 	"testing"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestSystemInfoResponse(t *testing.T) {
 	obj := &SystemInfoResponse{}
 
-	data, dataErr := getAssetBytes(SystemInfoResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
+	data, err := getAssetBytes(SystemInfoResponseTestFile)
+	require.NoError(t, err)
 	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
+	err = json.Unmarshal(data, &placeholder)
+	require.NoError(t, err)
 	config := newMSDecoderConfig()
 	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
+	decoder, err := mapstructure.NewDecoder(config)
+	require.NoError(t, err)
+
+	err = decoder.Decode(placeholder)
+	require.NoError(t, err)
+	require.Implements(t, (*VersionedResponse)(nil), obj)
 }

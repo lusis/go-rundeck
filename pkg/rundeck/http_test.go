@@ -5,7 +5,7 @@ import (
 
 	httpclient "github.com/lusis/go-rundeck/pkg/httpclient"
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestHTTP404(t *testing.T) {
@@ -18,13 +18,13 @@ func TestHTTP404(t *testing.T) {
 	}
 	for n, f := range funcs {
 		res, err := f("/", requestExpects(200))
-		assert.Nil(t, res, n+" body should be nil")
-		assert.Error(t, err, n+" should return an error")
-		assert.IsType(t, ErrMissingResource, err, n+" should return ErrMissingResource")
+		require.Nil(t, res, n+" body should be nil")
+		require.Error(t, err, n+" should return an error")
+		require.IsType(t, ErrMissingResource, err, n+" should return ErrMissingResource")
 	}
 	_, err := client.httpDelete("/f", requestExpects(204))
-	assert.Error(t, err, "delete should return an error")
-	assert.IsType(t, ErrMissingResource, err, "delete should return ErrMissingResource")
+	require.Error(t, err, "delete should return an error")
+	require.IsType(t, ErrMissingResource, err, "delete should return ErrMissingResource")
 }
 
 func TestRDErrorResponse(t *testing.T) {
@@ -42,11 +42,11 @@ func TestRDErrorResponse(t *testing.T) {
 	}
 	for n, f := range funcs {
 		res, reserr := f("/", requestExpects(200))
-		assert.Nil(t, res, n+" body should be nil")
-		assert.Error(t, reserr, n+" should return an error")
-		assert.Equal(t, "something blew up", reserr.Error())
+		require.Nil(t, res, n+" body should be nil")
+		require.Error(t, reserr, n+" should return an error")
+		require.Equal(t, "something blew up", reserr.Error())
 	}
 	_, reserr := client.httpDelete("/f", requestExpects(204))
-	assert.Error(t, reserr, "delete should return an error")
-	assert.Equal(t, "something blew up", reserr.Error())
+	require.Error(t, reserr, "delete should return an error")
+	require.Equal(t, "something blew up", reserr.Error())
 }

@@ -5,7 +5,7 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetSystemInfo(t *testing.T) {
@@ -21,8 +21,8 @@ func TestGetSystemInfo(t *testing.T) {
 	}
 
 	s, err := client.GetSystemInfo()
-	assert.NoError(t, err)
-	assert.NotNil(t, s)
+	require.NoError(t, err)
+	require.NotNil(t, s)
 }
 
 func TestGetSystemJSONError(t *testing.T) {
@@ -33,8 +33,8 @@ func TestGetSystemJSONError(t *testing.T) {
 	}
 
 	s, err := client.GetSystemInfo()
-	assert.Error(t, err)
-	assert.Nil(t, s)
+	require.Error(t, err)
+	require.Nil(t, s)
 }
 
 func TestGetSystemInvalidStatus(t *testing.T) {
@@ -45,6 +45,6 @@ func TestGetSystemInvalidStatus(t *testing.T) {
 	}
 
 	s, err := client.GetSystemInfo()
-	assert.Error(t, err)
-	assert.Nil(t, s)
+	require.Error(t, err)
+	require.Nil(t, s)
 }

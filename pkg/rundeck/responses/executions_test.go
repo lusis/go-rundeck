@@ -5,164 +5,128 @@ import (
 	"testing"
 
 	"github.com/mitchellh/mapstructure"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
-func TestExecutionResponse(t *testing.T) {
-	obj := &ExecutionResponse{}
-	data, dataErr := getAssetBytes(ExecutionResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
+func TestExecutionReponses(t *testing.T) {
+	testCases := []struct{
+		name string
+		placeholder interface{}
+		obj interface{}
+		testfile string
+	}{
+		{
+			name: "ExecutionResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &ExecutionResponse{},
+			testfile: ExecutionResponseTestFile,
+		},
+		{
+			name: "ListRunningExecutionsResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &ListRunningExecutionsResponse{},
+			testfile: ListRunningExecutionsResponseTestFile,
+		},
+		{
+			name: "ExecutionInputFilesResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &ExecutionInputFilesResponse{},
+			testfile: ExecutionInputFilesResponseTestFile,
+		},
+		{
+			name: "BulkDeleteExecutionsResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &BulkDeleteExecutionsResponse{},
+			testfile: BulkDeleteExecutionsResponseTestFile,
+		},
+		{
+			name: "AdHocExecutionResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &AdHocExecutionResponse{},
+			testfile: AdHocExecutionResponseTestFile,
+		},
+		{
+			name: "ExecutionOutputResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &ExecutionOutputResponse{},
+			testfile: ExecutionOutputResponseTestFile,
+		},
+		{
+			name: "ExecutionsMetricsResponse",
+			placeholder: make(map[string]interface{}),
+			obj: &ExecutionsMetricsResponse{},
+			testfile: ExecutionsMetricsResponseTestFile,
+		},
 	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			data, err := getAssetBytes(tc.testfile)
+			require.NoError(t, err)
+			err = json.Unmarshal(data, &tc.placeholder)
+			require.NoError(t, err)
+			config := newMSDecoderConfig()
+			config.Result = tc.obj
+			decoder, err := mapstructure.NewDecoder(config)
+			require.NoError(t, err)
+			err = decoder.Decode(tc.placeholder)
+			require.NoError(t, err)
+			require.Implements(t, (*VersionedResponse)(nil), tc.obj)
+		})
+	}
 }
 
-func TestListRunningExecutionsResponse(t *testing.T) {
-	obj := &ListRunningExecutionsResponse{}
-	data, dataErr := getAssetBytes(ListRunningExecutionsResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
 
-func TestExecutionInputFilesResponse(t *testing.T) {
-	obj := &ExecutionInputFilesResponse{}
-	data, dataErr := getAssetBytes(ExecutionInputFilesResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
 
-func TestBulkDeleteExecutionsResponse(t *testing.T) {
-	obj := &BulkDeleteExecutionsResponse{}
-	data, dataErr := getAssetBytes(BulkDeleteExecutionsResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
 
 func TestExecutionStateResponse(t *testing.T) {
 	obj := &ExecutionStateResponse{}
-	data, dataErr := getAssetBytes(ExecutionStateResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
+	data, err := getAssetBytes(ExecutionStateResponseTestFile)
+	require.NoError(t, err)
 	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
+	err = json.Unmarshal(data, &placeholder)
+	require.NoError(t, err)
 	config := newMSDecoderConfig()
 	config.Result = obj
 	// because of Steps, we need to be lax for this test and we'll check the Steps themselves
 	config.ErrorUnused = false
 	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
+	require.NoError(t, newErr)
 	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-	assert.Len(t, obj.Steps, obj.StepCount)
+	require.NoError(t, dErr)
+	require.Implements(t, (*VersionedResponse)(nil), obj)
+	require.Len(t, obj.Steps, obj.StepCount)
 }
 
 func TestExecutionStateExecutionStepResponse(t *testing.T) {
 	esr := &ExecutionStateResponse{}
-	data, dataErr := getAssetBytes(ExecutionStateResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
+	data, err := getAssetBytes(ExecutionStateResponseTestFile)
+	require.NoError(t, err)
 	// first we want to actually json unmarshal here
-	jerr := json.Unmarshal(data, esr)
-	assert.NoError(t, jerr)
+	err = json.Unmarshal(data, esr)
+	require.NoError(t, err)
 
 	sr := &ExecutionStepResponse{}
 	config := newMSDecoderConfig()
 	config.Result = sr
 	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
+	require.NoError(t, newErr)
 	dErr := decoder.Decode(esr.Steps[0])
-	assert.NoError(t, dErr)
+	require.NoError(t, dErr)
 }
 
 func TestExecutionStateWorkflowStepResponse(t *testing.T) {
 	esr := &ExecutionStateResponse{}
-	data, dataErr := getAssetBytes(ExecutionStateResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
+	data, err := getAssetBytes(ExecutionStateResponseTestFile)
+	require.NoError(t, err)
 	// first we want to actually json unmarshal here
-	jerr := json.Unmarshal(data, esr)
-	assert.NoError(t, jerr)
+	err = json.Unmarshal(data, esr)
+	require.NoError(t, err)
 
 	sr := &WorkflowStepResponse{}
 	config := newMSDecoderConfig()
 	config.Result = sr
 	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
+	require.NoError(t, newErr)
 	dErr := decoder.Decode(esr.Steps[1])
-	assert.NoError(t, dErr)
-}
-func TestAdHocExecutionResponse(t *testing.T) {
-	obj := &AdHocExecutionResponse{}
-	data, dataErr := getAssetBytes(AdHocExecutionResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
-}
-
-func TestExecutionOutputResponse(t *testing.T) {
-	obj := &ExecutionOutputResponse{}
-	data, dataErr := getAssetBytes(ExecutionOutputResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
-	placeholder := make(map[string]interface{})
-	_ = json.Unmarshal(data, &placeholder)
-	config := newMSDecoderConfig()
-	config.Result = obj
-	decoder, newErr := mapstructure.NewDecoder(config)
-	assert.NoError(t, newErr)
-	dErr := decoder.Decode(placeholder)
-	assert.NoError(t, dErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
+	require.NoError(t, dErr)
 }

@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestEnableSchedule(t *testing.T) {
@@ -15,8 +15,8 @@ func TestEnableSchedule(t *testing.T) {
 	}
 
 	res, err := client.EnableSchedule("1")
-	assert.NoError(t, err)
-	assert.True(t, res)
+	require.NoError(t, err)
+	require.True(t, res)
 }
 
 func TestDisableSchedule(t *testing.T) {
@@ -27,8 +27,8 @@ func TestDisableSchedule(t *testing.T) {
 	}
 
 	res, err := client.DisableSchedule("1")
-	assert.NoError(t, err)
-	assert.True(t, res)
+	require.NoError(t, err)
+	require.True(t, res)
 }
 func TestBulkEnableSchedule(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.BulkToggleResponseTestFile)
@@ -39,8 +39,8 @@ func TestBulkEnableSchedule(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.BulkEnableSchedule("a", "b", "c")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }
 
 func TestBulkDisableSchedule(t *testing.T) {
@@ -52,6 +52,6 @@ func TestBulkDisableSchedule(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	obj, cErr := client.BulkDisableSchedule("a", "b", "c")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
 }

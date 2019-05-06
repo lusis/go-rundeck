@@ -6,397 +6,324 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestListSystemAclPolicies(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.ACLResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.ListSystemACLPolicies()
-	assert.Equal(t, "", s.Path)
-	assert.Equal(t, "directory", s.Type)
-	assert.NotEmpty(t, s.Href)
-	assert.Len(t, s.Resources, 1)
-	assert.Equal(t, "name.aclpolicy", s.Resources[0].Path)
-	assert.Equal(t, "file", s.Resources[0].Type)
-	assert.Equal(t, "name.aclpolicy", s.Resources[0].Name)
-	assert.NotEmpty(t, s.Href)
+	require.NoError(t, err)
+	require.Equal(t, "", s.Path)
+	require.Equal(t, "directory", s.Type)
+	require.NotEmpty(t, s.Href)
+	require.Len(t, s.Resources, 1)
+	require.Equal(t, "name.aclpolicy", s.Resources[0].Path)
+	require.Equal(t, "file", s.Resources[0].Type)
+	require.Equal(t, "name.aclpolicy", s.Resources[0].Name)
+	require.NotEmpty(t, s.Href)
 
 }
 
 func TestListSystemAclPoliciesHTTPError(t *testing.T) {
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 500)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.ListSystemACLPolicies()
-	assert.Error(t, err)
-	assert.Nil(t, s)
+	require.Error(t, err)
+	require.Nil(t, s)
 }
 
 func TestListSystemAclPoliciesJSONError(t *testing.T) {
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.ListSystemACLPolicies()
-	assert.Error(t, err)
-	assert.Nil(t, s)
+	require.Error(t, err)
+	require.Nil(t, s)
 }
 
 func TestGetSystemAclPolicy(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/yaml", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/yaml", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.GetSystemACLPolicy("foo")
-	assert.NoError(t, err)
-	assert.NotNil(t, s)
+	require.NoError(t, err)
+	require.NotNil(t, s)
 }
 
 func TestGetSystemAclPolicyHTTPError(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/yaml", 500)
+	client, server, err := newTestRundeckClient(jsonfile, "application/yaml", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.GetSystemACLPolicy("foo")
-	assert.Error(t, err)
-	assert.Nil(t, s)
+	require.Error(t, err)
+	require.Nil(t, s)
 }
 
 func TestCreateSystemACLPolicy(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/yaml", 201)
+	client, server, err := newTestRundeckClient([]byte(""), "application/yaml", 201)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.CreateSystemACLPolicy("foo", bytes.NewReader(jsonfile))
-	assert.NoError(t, pErr)
+	require.NoError(t, pErr)
 }
 
 func TestCreateSystemACLPolicyConflict(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/yaml", 409)
+	client, server, err := newTestRundeckClient([]byte(""), "application/yaml", 409)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.CreateSystemACLPolicy("foo", bytes.NewReader(jsonfile))
-	assert.Error(t, pErr)
-	assert.EqualError(t, pErr, ErrResourceConflict.Error())
+	require.Error(t, pErr)
+	require.EqualError(t, pErr, ErrResourceConflict.Error())
 }
 
 func TestCreateSystemACLPolicyValidationErrors(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.FailedACLValidationResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 400)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 400)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.CreateSystemACLPolicy("foo", bytes.NewReader([]byte("")))
-	assert.Error(t, pErr)
-	assert.NotEmpty(t, pErr.Error())
+	require.Error(t, pErr)
+	require.NotEmpty(t, pErr.Error())
 }
 
 func TestUpdateSystemACLPolicy(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/yaml", 200)
+	client, server, err := newTestRundeckClient([]byte(""), "application/yaml", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.UpdateSystemACLPolicy("foo", bytes.NewReader(jsonfile))
-	assert.NoError(t, pErr)
+	require.NoError(t, pErr)
 }
 
 func TestUpdateSystemACLPolicyConflict(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/yaml", 409)
+	client, server, err := newTestRundeckClient([]byte(""), "application/yaml", 409)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.UpdateSystemACLPolicy("foo", bytes.NewReader(jsonfile))
-	assert.Error(t, pErr)
-	assert.EqualError(t, pErr, ErrResourceConflict.Error())
+	require.Error(t, pErr)
+	require.EqualError(t, pErr, ErrResourceConflict.Error())
 }
 
 func TestUpdateSystemACLPolicyValidationErrors(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.FailedACLValidationResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 400)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 400)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.UpdateSystemACLPolicy("foo", bytes.NewReader([]byte("")))
-	assert.Error(t, pErr)
-	assert.NotEmpty(t, pErr.Error())
+	require.Error(t, pErr)
+	require.NotEmpty(t, pErr.Error())
 }
 
 func TestDeleteSystemACLPolicy(t *testing.T) {
-	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 204)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 204)
 	defer server.Close()
+	require.NoError(t, err)
+
 	pErr := client.DeleteSystemACLPolicy("foo")
-	assert.NoError(t, pErr)
+	require.NoError(t, pErr)
 }
 
 func TestDeleteSystemACLPolicyHTTPError(t *testing.T) {
-	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 404)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 404)
 	defer server.Close()
+	require.NoError(t, err)
 	pErr := client.DeleteSystemACLPolicy("foo")
-	assert.Error(t, pErr)
+	require.Error(t, pErr)
 }
 
 func TestListProjectAclPolicies(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.ACLResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.ListProjectACLPolicies("testproject")
-	assert.Equal(t, "", s.Path)
-	assert.Equal(t, "directory", s.Type)
-	assert.NotEmpty(t, s.Href)
-	assert.Len(t, s.Resources, 1)
-	assert.Equal(t, "name.aclpolicy", s.Resources[0].Path)
-	assert.Equal(t, "file", s.Resources[0].Type)
-	assert.Equal(t, "name.aclpolicy", s.Resources[0].Name)
-	assert.NotEmpty(t, s.Href)
+	require.NoError(t, err)
+	require.Equal(t, "", s.Path)
+	require.Equal(t, "directory", s.Type)
+	require.NotEmpty(t, s.Href)
+	require.Len(t, s.Resources, 1)
+	require.Equal(t, "name.aclpolicy", s.Resources[0].Path)
+	require.Equal(t, "file", s.Resources[0].Type)
+	require.Equal(t, "name.aclpolicy", s.Resources[0].Name)
+	require.NotEmpty(t, s.Href)
 
 }
 
 func TestListProjectAclPoliciesHTTPError(t *testing.T) {
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 500)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.ListProjectACLPolicies("testproject")
-	assert.Error(t, err)
-	assert.Nil(t, s)
+	require.Error(t, err)
+	require.Nil(t, s)
 }
 
 func TestListProjectAclPoliciesJSONError(t *testing.T) {
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.ListProjectACLPolicies("testproject")
-	assert.Error(t, err)
-	assert.Nil(t, s)
+	require.Error(t, err)
+	require.Nil(t, s)
 }
 
 func TestGetProjectAclPolicy(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/yaml", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/yaml", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.GetProjectACLPolicy("foo", "bar")
-	assert.NoError(t, err)
-	assert.NotNil(t, s)
+	require.NoError(t, err)
+	require.NotNil(t, s)
 }
 
 func TestGetProjectAclPolicyHTTPError(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/yaml", 500)
+	client, server, err := newTestRundeckClient(jsonfile, "application/yaml", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	s, err := client.GetProjectACLPolicy("foo", "bar")
-	assert.Error(t, err)
-	assert.Nil(t, s)
+	require.Error(t, err)
+	require.Nil(t, s)
 }
 
 func TestDeleteProjectACLPolicy(t *testing.T) {
-	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 204)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 204)
 	defer server.Close()
+	require.NoError(t, err)
 	pErr := client.DeleteProjectACLPolicy("foo", "bar")
-	assert.NoError(t, pErr)
+	require.NoError(t, pErr)
 }
 
 func TestDeleteProjectACLPolicyHTTPError(t *testing.T) {
-	client, server, _ := newTestRundeckClient([]byte(""), "application/json", 404)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 404)
 	defer server.Close()
+	require.NoError(t, err)
 	pErr := client.DeleteProjectACLPolicy("foo", "bar")
-	assert.Error(t, pErr)
+	require.Error(t, pErr)
 }
 
 func TestCreateProjectACLPolicy(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/yaml", 201)
+	client, server, err := newTestRundeckClient([]byte(""), "application/yaml", 201)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.CreateProjectACLPolicy("foo", "bar", bytes.NewReader(jsonfile))
-	assert.NoError(t, pErr)
+	require.NoError(t, pErr)
 }
 
 func TestCreateProjectACLPolicyConflict(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/yaml", 409)
+	client, server, err := newTestRundeckClient([]byte(""), "application/yaml", 409)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.CreateProjectACLPolicy("foo", "bar", bytes.NewReader(jsonfile))
-	assert.Error(t, pErr)
-	assert.EqualError(t, pErr, ErrResourceConflict.Error())
+	require.Error(t, pErr)
+	require.EqualError(t, pErr, ErrResourceConflict.Error())
 }
 
 func TestCreateProjectACLPolicyValidationErrors(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.FailedACLValidationResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 400)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 400)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.CreateProjectACLPolicy("foo", "bar", bytes.NewReader([]byte("")))
-	assert.Error(t, pErr)
-	assert.NotEmpty(t, pErr.Error())
+	require.Error(t, pErr)
+	require.NotEmpty(t, pErr.Error())
 }
 
 func TestUpdateProjectACLPolicy(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/yaml", 200)
+	client, server, err := newTestRundeckClient([]byte(""), "application/yaml", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.UpdateProjectACLPolicy("foo", "bar", bytes.NewReader(jsonfile))
-	assert.NoError(t, pErr)
+	require.NoError(t, pErr)
 }
 
 func TestUpdateProjectACLPolicyConflict(t *testing.T) {
 	jsonfile, err := responses.GetTestData("foo.aclpolicy")
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/yaml", 409)
+	client, server, err := newTestRundeckClient([]byte(""), "application/yaml", 409)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.UpdateProjectACLPolicy("foo", "bar", bytes.NewReader(jsonfile))
-	assert.Error(t, pErr)
-	assert.EqualError(t, pErr, ErrResourceConflict.Error())
+	require.Error(t, pErr)
+	require.EqualError(t, pErr, ErrResourceConflict.Error())
 }
 
 func TestUpdateProjectACLPolicyValidationErrors(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.FailedACLValidationResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 400)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 400)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
 	pErr := client.UpdateProjectACLPolicy("foo", "bar", bytes.NewReader([]byte("")))
-	assert.Error(t, pErr)
-	assert.NotEmpty(t, pErr.Error())
+	require.Error(t, pErr)
+	require.NotEmpty(t, pErr.Error())
 }

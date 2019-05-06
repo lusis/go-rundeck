@@ -8,7 +8,7 @@ import (
 	requests "github.com/lusis/go-rundeck/pkg/rundeck/requests"
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func testFailedAdHocOption() AdHocRunOption {
@@ -31,115 +31,99 @@ func testFailedAdHocScriptOption(e string) AdHocScriptOption {
 
 func TestRunAdHoc(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocCommand("testproject", "ps -ef")
-	assert.NoError(t, resErr)
-	assert.NotNil(t, res)
-	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
-	assert.Equal(t, 1, res.Execution.ID)
-	assert.Equal(t, "[API Href]", res.Execution.HRef)
-	assert.Equal(t, "[GUI Href]", res.Execution.Permalink)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocCommand("testproject", "ps -ef")
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.Equal(t, "Immediate execution scheduled (X)", res.Message)
+	require.Equal(t, 1, res.Execution.ID)
+	require.Equal(t, "[API Href]", res.Execution.HRef)
+	require.Equal(t, "[GUI Href]", res.Execution.Permalink)
 }
 
 func TestRunAdHocWithOptions(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
+
 	options := []AdHocRunOption{
 		CmdRunAs("auser"),
 		CmdNodeFilters("*"),
 		CmdThreadCount(2),
 		CmdKeepGoing(true),
 	}
-	res, resErr := client.RunAdHocCommand("testproject", "ps -ef", options...)
-	assert.NoError(t, resErr)
-	assert.NotNil(t, res)
-	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
-	assert.Equal(t, 1, res.Execution.ID)
-	assert.Equal(t, "[API Href]", res.Execution.HRef)
-	assert.Equal(t, "[GUI Href]", res.Execution.Permalink)
+	res, err := client.RunAdHocCommand("testproject", "ps -ef", options...)
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.Equal(t, "Immediate execution scheduled (X)", res.Message)
+	require.Equal(t, 1, res.Execution.ID)
+	require.Equal(t, "[API Href]", res.Execution.HRef)
+	require.Equal(t, "[GUI Href]", res.Execution.Permalink)
 }
 
 func TestRunAdHocWithFailingOption(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocCommand("testproject", "ps -ef", testFailedAdHocOption())
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
-	assert.IsType(t, &OptionError{}, resErr)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocCommand("testproject", "ps -ef", testFailedAdHocOption())
+	require.Error(t, err)
+	require.Nil(t, res)
+	require.IsType(t, &OptionError{}, err)
 }
 
 func TestRunAdHocJSONError(t *testing.T) {
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocCommand("testproject", "ps -ef")
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
-	assert.IsType(t, &UnmarshalError{}, resErr)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocCommand("testproject", "ps -ef")
+	require.Error(t, err)
+	require.Nil(t, res)
+	require.IsType(t, &UnmarshalError{}, err)
 }
 
 func TestRunAdHocHTTPError(t *testing.T) {
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 500)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocCommand("testproject", "ps -ef")
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocCommand("testproject", "ps -ef")
+	require.Error(t, err)
+	require.Nil(t, res)
 }
 
 func TestRunAdHocScript(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"))
-	assert.NoError(t, resErr)
-	assert.NotNil(t, res)
-	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
-	assert.Equal(t, 1, res.Execution.ID)
-	assert.Equal(t, "[API Href]", res.Execution.HRef)
-	assert.Equal(t, "[GUI Href]", res.Execution.Permalink)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"))
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.Equal(t, "Immediate execution scheduled (X)", res.Message)
+	require.Equal(t, 1, res.Execution.ID)
+	require.Equal(t, "[API Href]", res.Execution.HRef)
+	require.Equal(t, "[GUI Href]", res.Execution.Permalink)
 }
 
 func TestRunAdHocScriptOptions(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	opts := []AdHocScriptOption{
 		ScriptArgsQuoted(true),
@@ -151,89 +135,75 @@ func TestRunAdHocScriptOptions(t *testing.T) {
 		ScriptNodeFilters(".*"),
 		ScriptRunAs("auser"),
 	}
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"), opts...)
-	assert.NoError(t, resErr)
-	assert.NotNil(t, res)
-	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
-	assert.Equal(t, 1, res.Execution.ID)
-	assert.Equal(t, "[API Href]", res.Execution.HRef)
-	assert.Equal(t, "[GUI Href]", res.Execution.Permalink)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"), opts...)
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.Equal(t, "Immediate execution scheduled (X)", res.Message)
+	require.Equal(t, 1, res.Execution.ID)
+	require.Equal(t, "[API Href]", res.Execution.HRef)
+	require.Equal(t, "[GUI Href]", res.Execution.Permalink)
 }
 
 func TestRunAdHocScriptFailedOption(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"), testFailedAdHocScriptOption("foo"))
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"), testFailedAdHocScriptOption("foo"))
+	require.Error(t, err)
+	require.Nil(t, res)
 }
 
 func TestRunAdHocScriptHTTPError(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"))
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"))
+	require.Error(t, err)
+	require.Nil(t, res)
 }
 
 func TestRunAdHocScriptJSONError(t *testing.T) {
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
+	require.NoError(t, err)
 
-	res, resErr := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"))
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	res, err := client.RunAdHocScript("testproject", strings.NewReader("ps -ef"))
+	require.Error(t, err)
+	require.Nil(t, res)
 }
 
 func TestRunAdHocScriptURL(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh")
-	assert.NoError(t, resErr)
-	assert.NotNil(t, res)
-	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
-	assert.Equal(t, 1, res.Execution.ID)
-	assert.Equal(t, "[API Href]", res.Execution.HRef)
-	assert.Equal(t, "[GUI Href]", res.Execution.Permalink)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh")
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.Equal(t, "Immediate execution scheduled (X)", res.Message)
+	require.Equal(t, 1, res.Execution.ID)
+	require.Equal(t, "[API Href]", res.Execution.HRef)
+	require.Equal(t, "[GUI Href]", res.Execution.Permalink)
 }
 
 func TestRunAdHocScriptURLOptions(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
 	opts := []AdHocScriptURLOption{
 		ScriptURLArgsQuoted(true),
@@ -246,59 +216,51 @@ func TestRunAdHocScriptURLOptions(t *testing.T) {
 		ScriptURLRunAs("auser"),
 	}
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh", opts...)
-	assert.NoError(t, resErr)
-	assert.NotNil(t, res)
-	assert.Equal(t, "Immediate execution scheduled (X)", res.Message)
-	assert.Equal(t, 1, res.Execution.ID)
-	assert.Equal(t, "[API Href]", res.Execution.HRef)
-	assert.Equal(t, "[GUI Href]", res.Execution.Permalink)
+	require.NoError(t, err)
+	
+	res, err := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh", opts...)
+	require.NoError(t, err)
+	require.NotNil(t, res)
+	require.Equal(t, "Immediate execution scheduled (X)", res.Message)
+	require.Equal(t, 1, res.Execution.ID)
+	require.Equal(t, "[API Href]", res.Execution.HRef)
+	require.Equal(t, "[GUI Href]", res.Execution.Permalink)
 }
 
 func TestRunAdHocScriptURLOptionError(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 200)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh", testFailedAdHocFromURLOption("foo"))
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh", testFailedAdHocFromURLOption("foo"))
+	require.Error(t, err)
+	require.Nil(t, res)
 }
 
 func TestRunAdHocScriptFromURLHTTPError(t *testing.T) {
 	jsonfile, err := responses.GetTestData(responses.AdHocExecutionResponseTestFile)
-	if err != nil {
-		t.Fatalf(err.Error())
-	}
+	require.NoError(t, err)
 
-	client, server, cErr := newTestRundeckClient(jsonfile, "application/json", 500)
+	client, server, err := newTestRundeckClient(jsonfile, "application/json", 500)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh")
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh")
+	require.Error(t, err)
+	require.Nil(t, res)
 }
 
 func TestRunAdHocScriptFromURLJSONError(t *testing.T) {
-	client, server, cErr := newTestRundeckClient([]byte(""), "application/json", 200)
+	client, server, err := newTestRundeckClient([]byte(""), "application/json", 200)
 	defer server.Close()
-	if cErr != nil {
-		t.Fatalf(cErr.Error())
-	}
-	res, resErr := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh")
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.NoError(t, err)
+
+	res, err := client.RunAdHocScriptFromURL("testproject", "http://localhost/script.sh")
+	require.Error(t, err)
+	require.Nil(t, res)
 }

@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func testFailedImportOption() JobImportOption {
@@ -24,8 +24,8 @@ func TestJobImport(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	res, resErr := client.ImportJob("testproject", bytes.NewReader(jsonfile), ImportFormat("yaml"))
-	assert.NoError(t, resErr)
-	assert.NotNil(t, res)
+	require.NoError(t, resErr)
+	require.NotNil(t, res)
 }
 
 func TestJobImportOptions(t *testing.T) {
@@ -41,8 +41,8 @@ func TestJobImportOptions(t *testing.T) {
 		ImportFormat("yaml"),
 		ImportDupe("foo"),
 		ImportUUID("foo"))
-	assert.NoError(t, resErr)
-	assert.NotNil(t, res)
+	require.NoError(t, resErr)
+	require.NotNil(t, res)
 }
 
 func TestJobImportInvalidFormat(t *testing.T) {
@@ -54,8 +54,8 @@ func TestJobImportInvalidFormat(t *testing.T) {
 	client, server, _ := newTestRundeckClient(jsonfile, "application/json", 200)
 	defer server.Close()
 	res, resErr := client.ImportJob("testproject", bytes.NewReader(jsonfile), ImportFormat("text"))
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.Error(t, resErr)
+	require.Nil(t, res)
 }
 
 func TestJobImportHTTPError(t *testing.T) {
@@ -68,8 +68,8 @@ func TestJobImportHTTPError(t *testing.T) {
 
 	defer server.Close()
 	res, resErr := client.ImportJob("testproject", bytes.NewReader(jsonfile), ImportFormat("yaml"))
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.Error(t, resErr)
+	require.Nil(t, res)
 }
 
 func TestJobImportJSONError(t *testing.T) {
@@ -82,8 +82,8 @@ func TestJobImportJSONError(t *testing.T) {
 
 	defer server.Close()
 	res, resErr := client.ImportJob("testproject", bytes.NewReader(jsonfile), ImportFormat("yaml"))
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.Error(t, resErr)
+	require.Nil(t, res)
 }
 
 func TestJobImportVersionError(t *testing.T) {
@@ -97,8 +97,8 @@ func TestJobImportVersionError(t *testing.T) {
 
 	defer server.Close()
 	res, resErr := client.ImportJob("testproject", bytes.NewReader(jsonfile), ImportFormat("yaml"))
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.Error(t, resErr)
+	require.Nil(t, res)
 }
 
 func TestJobImportOptionError(t *testing.T) {
@@ -111,6 +111,6 @@ func TestJobImportOptionError(t *testing.T) {
 
 	defer server.Close()
 	res, resErr := client.ImportJob("testproject", bytes.NewReader(jsonfile), testFailedImportOption())
-	assert.Error(t, resErr)
-	assert.Nil(t, res)
+	require.Error(t, resErr)
+	require.Nil(t, res)
 }

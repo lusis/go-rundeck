@@ -5,7 +5,7 @@ import (
 
 	"github.com/lusis/go-rundeck/pkg/rundeck/responses"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestGetResources(t *testing.T) {
@@ -20,9 +20,9 @@ func TestGetResources(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListResourcesForProject("testproject")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
-	assert.Len(t, *obj, 11)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
+	require.Len(t, *obj, 11)
 }
 
 func TestGetResourcesInvalidJSON(t *testing.T) {
@@ -32,8 +32,8 @@ func TestGetResourcesInvalidJSON(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListResourcesForProject("testproject")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestGetResourcesInvalidStatusCode(t *testing.T) {
@@ -43,8 +43,8 @@ func TestGetResourcesInvalidStatusCode(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.ListResourcesForProject("testproject")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestGetResource(t *testing.T) {
@@ -59,9 +59,9 @@ func TestGetResource(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.GetResourceInfo("testproject", "node-0-fake")
-	assert.NoError(t, cErr)
-	assert.NotNil(t, obj)
-	assert.Equal(t, "node-0-fake", obj.NodeName)
+	require.NoError(t, cErr)
+	require.NotNil(t, obj)
+	require.Equal(t, "node-0-fake", obj.NodeName)
 }
 
 func TestGetResourceInvalidJSON(t *testing.T) {
@@ -71,8 +71,8 @@ func TestGetResourceInvalidJSON(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.GetResourceInfo("testproject", "node-0-fake")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }
 
 func TestGetResourceInvalidStatusCode(t *testing.T) {
@@ -82,6 +82,6 @@ func TestGetResourceInvalidStatusCode(t *testing.T) {
 		t.Fatalf(cErr.Error())
 	}
 	obj, cErr := client.GetResourceInfo("testproject", "node-0-fake")
-	assert.Error(t, cErr)
-	assert.Nil(t, obj)
+	require.Error(t, cErr)
+	require.Nil(t, obj)
 }

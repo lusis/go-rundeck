@@ -3,18 +3,16 @@ package responses
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	yaml "gopkg.in/yaml.v2"
 )
 
 func TestJobYAMLResponse(t *testing.T) {
 	obj := &JobYAMLResponse{}
-	data, dataErr := getAssetBytes(JobYAMLResponseTestFile)
-	if dataErr != nil {
-		t.Fatalf(dataErr.Error())
-	}
+	data, err := getAssetBytes(JobYAMLResponseTestFile)
+	require.NoError(t, err)
 
-	yErr := yaml.UnmarshalStrict(data, &obj)
-	assert.NoError(t, yErr)
-	assert.Implements(t, (*VersionedResponse)(nil), obj)
+	err = yaml.UnmarshalStrict(data, &obj)
+	require.NoError(t, err)
+	require.Implements(t, (*VersionedResponse)(nil), obj)
 }

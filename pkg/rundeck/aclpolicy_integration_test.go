@@ -29,20 +29,16 @@ func (s *ACLPolicyIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Pr
 		props["resources.source.1.config.delay"] = "10"
 		props["resources.source.1.config.count"] = "100"
 	}
-	project, createErr := s.TestClient.CreateProject(projectName, props)
-	if createErr != nil {
-		s.T().Fatalf("Unable to create test project: %s", createErr.Error())
-	}
+	project, err := s.TestClient.CreateProject(projectName, props)
+	s.Require().NoError(err)
 	s.Lock()
 	s.CreatedProjects = append(s.CreatedProjects, *project)
 	s.Unlock()
-	importJob, importErr := s.TestClient.ImportJob(project.Name,
+	importJob, err := s.TestClient.ImportJob(project.Name,
 		strings.NewReader(testJobDefinition),
 		rundeck.ImportFormat("yaml"),
 		rundeck.ImportUUID("remove"))
-	if importErr != nil {
-		s.T().Fatalf("job did not import. cannot continue: %s", importErr.Error())
-	}
+	s.Require().NoError(err)
 	return *project, *importJob
 }
 
@@ -64,13 +60,11 @@ func (s *ACLPolicyIntegrationTestSuite) TearDownSuite() {
 
 func (s *ACLPolicyIntegrationTestSuite) TestSystemACLPolicyLifecycle() {
 	aclName := s.T().Name()
-	aclErr := s.TestClient.CreateSystemACLPolicy(aclName, strings.NewReader(testSystemACLPolicy))
-	if aclErr != nil {
-		s.T().Fatalf("cannot create a system acl policy. cannot continue: %s", aclErr.Error())
-	}
+	err := s.TestClient.CreateSystemACLPolicy(aclName, strings.NewReader(testSystemACLPolicy))
+	s.Require().NoError(err)
 
-	list, listErr := s.TestClient.ListSystemACLPolicies()
-	s.NoError(listErr)
+	list, err := s.TestClient.ListSystemACLPolicies()
+	s.Require().NoError(err)
 	found := false
 	for _, entry := range list.Resources {
 		if entry.Name == aclName+".aclpolicy" {
@@ -78,35 +72,27 @@ func (s *ACLPolicyIntegrationTestSuite) TestSystemACLPolicyLifecycle() {
 			break
 		}
 	}
-	s.True(found)
-	acl, getErr := s.TestClient.GetSystemACLPolicy(aclName)
-	if getErr != nil {
-		s.T().Fatalf("cannot get created policy. cannot continue: %s", getErr.Error())
-	}
-	s.Equal(testSystemACLPolicy, string(acl))
-	uAclErr := s.TestClient.UpdateSystemACLPolicy(aclName, strings.NewReader(testSystemACLPolicySecondary))
-	if uAclErr != nil {
-		s.T().Fatalf("cannot update policy. cannot continue: %s", uAclErr.Error())
-	}
-	uacl, ugetErr := s.TestClient.GetSystemACLPolicy(aclName)
-	if ugetErr != nil {
-		s.T().Fatalf("cannot get created policy. cannot continue: %s", ugetErr.Error())
-	}
-	s.Equal(testSystemACLPolicySecondary, string(uacl))
-	delErr := s.TestClient.DeleteSystemACLPolicy(aclName)
-	s.NoError(delErr)
+	s.Require().True(found)
+	acl, err := s.TestClient.GetSystemACLPolicy(aclName)
+	s.Require().NoError(err)
+	s.Require().Equal(testSystemACLPolicy, string(acl))
+	err = s.TestClient.UpdateSystemACLPolicy(aclName, strings.NewReader(testSystemACLPolicySecondary))
+	s.Require().NoError(err)
+	uacl, err := s.TestClient.GetSystemACLPolicy(aclName)
+	s.Require().NoError(err)
+	s.Require().Equal(testSystemACLPolicySecondary, string(uacl))
+	err = s.TestClient.DeleteSystemACLPolicy(aclName)
+	s.Require().NoError(err)
 }
 
 func (s *ACLPolicyIntegrationTestSuite) TestProjectACLPolicyLifecycle() {
 	project, _ := s.testCreateProject(false)
 	aclName := s.T().Name()
-	aclErr := s.TestClient.CreateProjectACLPolicy(project.Name, aclName, strings.NewReader(testProjectACLPolicy))
-	if aclErr != nil {
-		s.T().Fatalf("cannot create a project acl policy. cannot continue: %s", aclErr.Error())
-	}
+	err := s.TestClient.CreateProjectACLPolicy(project.Name, aclName, strings.NewReader(testProjectACLPolicy))
+	s.Require().NoError(err)
 
-	list, listErr := s.TestClient.ListProjectACLPolicies(project.Name)
-	s.NoError(listErr)
+	list, err := s.TestClient.ListProjectACLPolicies(project.Name)
+	s.Require().NoError(err)
 	found := false
 	for _, entry := range list.Resources {
 		if entry.Name == aclName+".aclpolicy" {
@@ -114,30 +100,24 @@ func (s *ACLPolicyIntegrationTestSuite) TestProjectACLPolicyLifecycle() {
 			break
 		}
 	}
-	s.True(found)
-	acl, getErr := s.TestClient.GetProjectACLPolicy(project.Name, aclName)
-	if getErr != nil {
-		s.T().Fatalf("cannot get created policy. cannot continue: %s", getErr.Error())
-	}
-	s.Equal(testProjectACLPolicy, string(acl))
-	uAclErr := s.TestClient.UpdateProjectACLPolicy(project.Name, aclName, strings.NewReader(testProjectACLPolicySecondary))
-	if uAclErr != nil {
-		s.T().Fatalf("cannot update policy. cannot continue: %s", uAclErr.Error())
-	}
-	uacl, ugetErr := s.TestClient.GetProjectACLPolicy(project.Name, aclName)
-	if ugetErr != nil {
-		s.T().Fatalf("cannot get created policy. cannot continue: %s", ugetErr.Error())
-	}
-	s.Equal(testProjectACLPolicySecondary, string(uacl))
-	delErr := s.TestClient.DeleteProjectACLPolicy(project.Name, aclName)
-	s.NoError(delErr)
+	s.Require().True(found)
+	acl, err := s.TestClient.GetProjectACLPolicy(project.Name, aclName)
+	s.Require().NoError(err)
+	s.Require().Equal(testProjectACLPolicy, string(acl))
+	err = s.TestClient.UpdateProjectACLPolicy(project.Name, aclName, strings.NewReader(testProjectACLPolicySecondary))
+	s.Require().NoError(err)
 
+	uacl, err := s.TestClient.GetProjectACLPolicy(project.Name, aclName)
+	s.Require().NoError(err)
+	s.Require().Equal(testProjectACLPolicySecondary, string(uacl))
+	err = s.TestClient.DeleteProjectACLPolicy(project.Name, aclName)
+	s.Require().NoError(err)
 }
 
 func TestIntegrationACLPolicySuite(t *testing.T) {
-	if testRundeckRunning() {
-		suite.Run(t, &ACLPolicyIntegrationTestSuite{})
-	} else {
-		t.Skip("rundeck isn't running for integration testing")
+	if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
 	}
+
+	suite.Run(t, &ACLPolicyIntegrationTestSuite{})
 }

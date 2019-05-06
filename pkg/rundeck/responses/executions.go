@@ -299,3 +299,30 @@ const ExecutionOutputResponseTestFile = "execution_output.json"
 func (a ExecutionOutputResponse) minVersion() int  { return 21 }
 func (a ExecutionOutputResponse) maxVersion() int  { return CurrentVersion }
 func (a ExecutionOutputResponse) deprecated() bool { return false }
+
+// ExecutionsMetricsResponse represents the response for getting executions metrics
+type ExecutionsMetricsResponse struct {
+	Duration struct {
+		Average *JSONDuration `json:"average"`
+		Min     *JSONDuration `json:"min"`
+		Max     *JSONDuration `json:"max"`
+	} `json:"duration"`
+	Total  int `json:"total"`
+	Status struct {
+		Running         int `json:"running"`
+		Other           int `json:"other"`
+		Aborted         int `json:"aborted"`
+		Failed          int `json:"failed"`
+		Succeeded       int `json:"succeeded"`
+		TimedOut        int `json:"timedout"`
+		FailedWithRetry int `json:"failed-with-retry"`
+		Scheduled       int `json:"scheduled"`
+	}
+}
+
+// ExecutionsMetricsResponseTestFile is test data for getting system-wide execution metrics
+const ExecutionsMetricsResponseTestFile = "get_executions_metrics.json"
+
+func (a ExecutionsMetricsResponse) minVersion() int  { return 29 }
+func (a ExecutionsMetricsResponse) maxVersion() int  { return CurrentVersion }
+func (a ExecutionsMetricsResponse) deprecated() bool { return false }

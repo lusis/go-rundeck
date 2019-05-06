@@ -76,6 +76,9 @@ func (a ProjectArchiveExportAsyncResponse) deprecated() bool { return false }
 // ProjectImportArchiveResponseTestFile is test data for a ProjectImportArchiveResponse
 const ProjectImportArchiveResponseTestFile = "project_archive_import.json"
 
+// ProjectImportArchiveFailedResponseTestFile is test data for a failed ProjectImportArchiveResponse
+const ProjectImportArchiveFailedResponseTestFile = "project_archive_import_failed.json"
+
 // ProjectImportArchiveResponse represents the response from a project archive import
 type ProjectImportArchiveResponse struct {
 	ImportStatus    string    `json:"import_status"`
@@ -87,3 +90,13 @@ type ProjectImportArchiveResponse struct {
 func (a ProjectImportArchiveResponse) minVersion() int  { return 19 }
 func (a ProjectImportArchiveResponse) maxVersion() int  { return CurrentVersion }
 func (a ProjectImportArchiveResponse) deprecated() bool { return false }
+
+// ProjectExecutionsMetricsResponse represents the response for getting execution metrics for a project
+type ProjectExecutionsMetricsResponse ExecutionsMetricsResponse
+
+// ProjectExectionsMetricsResponseTestFile is the test data
+const ProjectExecutionsMetricsResponseTestFile = "get_project_executions_metrics.json"
+
+func (a ProjectExecutionsMetricsResponse) minVersion() int  { return 29 }
+func (a ProjectExecutionsMetricsResponse) maxVersion() int  { return CurrentVersion }
+func (a ProjectExecutionsMetricsResponse) deprecated() bool { return false }

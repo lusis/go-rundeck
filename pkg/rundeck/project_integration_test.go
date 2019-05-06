@@ -33,28 +33,21 @@ func (s *ProjectIntegrationTestSuite) testCreateProject(slow bool) (rundeck.Proj
 		props["resources.source.1.config.delay"] = "10"
 		props["resources.source.1.config.count"] = "100"
 	}
-	project, createErr := s.TestClient.CreateProject(projectName, props)
-	if createErr != nil {
-		s.T().Fatalf("Unable to create test project: %s", createErr.Error())
-	}
+	project, err := s.TestClient.CreateProject(projectName, props)
+	s.Require().NoError(err)
 	s.Lock()
 	s.CreatedProjects = append(s.CreatedProjects, *project)
 	s.Unlock()
-	jobbytes, joberr := testJobFromTemplate(projectName+"-job", "job for "+projectName)
-	if joberr != nil {
-		s.T().Fatalf("cannot create a job import from template. cannot continue: %s", joberr.Error())
-	}
-	importJob, importErr := s.TestClient.ImportJob(project.Name,
+	jobbytes, err := testJobFromTemplate(projectName+"-job", "job for "+projectName)
+	s.Require().NoError(err)
+	importJob, err := s.TestClient.ImportJob(project.Name,
 		bytes.NewReader(jobbytes),
 		rundeck.ImportFormat("yaml"),
 		rundeck.ImportUUID("remove"))
-	if importErr != nil {
-		s.T().Fatalf("job did not import. cannot continue: %s", importErr.Error())
-	}
-	j, jerr := s.TestClient.GetJobMetaData(importJob.Succeeded[0].ID)
-	if jerr != nil {
-		s.T().Fatalf("unable to get job meta data for imported job. cannot continue: %s", jerr.Error())
-	}
+	s.Require().NoError(err)
+
+	j, err := s.TestClient.GetJobMetaData(importJob.Succeeded[0].ID)
+	s.Require().NoError(err)
 	return *project, *j
 }
 
@@ -82,14 +75,12 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationCreateProject() {
 		props[k] = v
 	}
 
-	project, createErr := s.TestClient.CreateProject(name, props)
-	if createErr != nil {
-		s.T().Fatalf("Unable to create test project: %s", createErr.Error())
-	}
+	project, err := s.TestClient.CreateProject(name, props)
+	s.Require().NoError(err)
 	s.CreatedProjects = append(s.CreatedProjects, *project)
 
-	listProjects, listErr := s.TestClient.ListProjects()
-	s.NoError(listErr)
+	listProjects, err := s.TestClient.ListProjects()
+	s.Require().NoError(err)
 	var foundProject bool
 
 	for _, p := range listProjects {
@@ -97,71 +88,67 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationCreateProject() {
 			foundProject = true
 		}
 	}
-	s.True(foundProject)
+	s.Require().True(foundProject)
 }
 
 func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectInfo() {
 	project, _ := s.testCreateProject(false)
-	getProject, getErr := s.TestClient.GetProjectInfo(project.Name)
-	s.NoError(getErr)
+	getProject, err := s.TestClient.GetProjectInfo(project.Name)
+	s.Require().NoError(err)
 	for k, v := range project.Properties {
-		s.Equal(v, getProject.Properties[k])
+		s.Require().Equal(v, getProject.Properties[k])
 	}
 }
 
 func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectResources() {
 	project, _ := s.testCreateProject(true)
-	resources, getErr := s.TestClient.ListResourcesForProject(project.Name)
-	s.NoError(getErr)
-	s.Len(*resources, 100)
+	resources, err := s.TestClient.ListResourcesForProject(project.Name)
+	s.Require().NoError(err)
+	s.Require().Len(*resources, 100)
 }
 
 func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectReadme() {
 	project, _ := s.testCreateProject(true)
 	var readme = `# project readme\nthis is the project readme`
-	putErr := s.TestClient.PutProjectReadme(project.Name, strings.NewReader(readme))
-	if putErr != nil {
-		s.Fail("cannot upload readme. cannot continue. %s", putErr)
-	}
+	err := s.TestClient.PutProjectReadme(project.Name, strings.NewReader(readme))
+	s.Require().NoError(err)
 	defer s.TestClient.DeleteProjectReadme(project.Name) // nolint: errcheck
-	get, getErr := s.TestClient.GetProjectReadme(project.Name)
-	s.NoError(getErr)
-	s.Equal(readme, get)
+	get, err := s.TestClient.GetProjectReadme(project.Name)
+	s.Require().NoError(err)
+	s.Require().Equal(readme, get)
 
 }
 
 func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectMotd() {
 	project, _ := s.testCreateProject(true)
 	var motd = `# project motd\n*stuff is broken*`
-	putErr := s.TestClient.PutProjectMotd(project.Name, strings.NewReader(motd))
-	if putErr != nil {
-		s.Fail("cannot upload motd. cannot continue. %s", putErr)
-	}
+	err := s.TestClient.PutProjectMotd(project.Name, strings.NewReader(motd))
+	s.Require().NoError(err)
 	defer s.TestClient.DeleteProjectMotd(project.Name) // nolint: errcheck
-	get, getErr := s.TestClient.GetProjectMotd(project.Name)
-	s.NoError(getErr)
-	s.Equal(motd, get)
+	get, err := s.TestClient.GetProjectMotd(project.Name)
+	s.Require().NoError(err)
+	s.Require().Equal(motd, get)
 
 }
 
 func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectResource() {
 	project, _ := s.testCreateProject(true)
 	resource, err := s.TestClient.GetResourceInfo(project.Name, "node-1-stub")
-	s.NoError(err)
-	s.NotEmpty(resource.FileCopier)
-	s.NotEmpty(resource.NodeExectutor)
-	s.NotEmpty(resource.NodeName)
-	s.NotEmpty(resource.HostName)
-	s.NotEmpty(resource.UserName)
-	s.Equal(resource.Tags, "stub")
+	s.Require().NoError(err)
+	s.Require().NotEmpty(resource.FileCopier)
+	s.Require().NotEmpty(resource.NodeExectutor)
+	s.Require().NotEmpty(resource.NodeName)
+	s.Require().NotEmpty(resource.HostName)
+	s.Require().NotEmpty(resource.UserName)
+	s.Require().Equal(resource.Tags, "stub")
 }
 
 func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectConfiguration() {
 	project, _ := s.testCreateProject(true)
-	pc, pcerr := s.TestClient.GetProjectConfiguration(project.Name)
-	s.NoError(pcerr)
+	pc, err := s.TestClient.GetProjectConfiguration(project.Name)
+	s.Require().NoError(err)
 	for k, v := range project.Properties {
-		s.Equal(v, pc[k])
+		s.Require().Equal(v, pc[k])
 	}
 }
 
@@ -170,11 +157,9 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationProjectImport() {
 	tmpDir := os.TempDir()
 
 	output := filepath.Join(tmpDir, project.Name+".zip")
-	f, fErr := os.Create(output)
+	f, err := os.Create(output)
 	defer os.Remove(output) // nolint: errcheck
-	if fErr != nil {
-		s.T().Fatalf("unable to create output file. cannot continue: %s", fErr)
-	}
+	s.Require().NoError(err)
 	opts := []rundeck.ProjectExportOption{
 		rundeck.ProjectExportAll(true),
 		rundeck.ProjectExportConfigs(true),
@@ -183,30 +168,25 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationProjectImport() {
 		rundeck.ProjectExportReadmes(true),
 	}
 	// Export created project
-	perr := s.TestClient.GetProjectArchiveExport(project.Name, f, opts...)
-	if perr != nil {
-		s.T().Fatalf("cannot export project: %s", perr.Error())
-	}
+	err = s.TestClient.GetProjectArchiveExport(project.Name, f, opts...)
+	s.Require().NoError(err)
 
 	// import the file into a new project
 	destProject, _ := s.testCreateProject(true)
 
-	data, dataErr := os.Open(output)
+	data, err := os.Open(output)
 	defer data.Close() // nolint: errcheck
-	if dataErr != nil {
-		s.T().Fatalf("cannot open import file: %s", dataErr.Error())
-	}
-	imported, impErr := s.TestClient.ProjectArchiveImport(destProject.Name, data, rundeck.ProjectImportConfigs(true), rundeck.ProjectImportJobUUIDs("remove"))
-	if impErr != nil {
-		s.T().Fatalf("could not import project. cannot continue: %s", impErr.Error())
-	}
-	s.Equal("successful", imported.ImportStatus)
-	checkImport, checkErr := s.TestClient.GetProjectInfo(destProject.Name)
-	if checkErr != nil {
-		s.T().Fatalf("could not get the newly imported project. cannot continue: %s", checkErr.Error())
-	}
+	s.Require().NoError(err)
+
+	imported, err := s.TestClient.ProjectArchiveImport(destProject.Name, data, rundeck.ProjectImportConfigs(true), rundeck.ProjectImportJobUUIDs("remove"))
+	s.Require().NoError(err)
+
+	s.Require().Equal("successful", imported.ImportStatus)
+	checkImport, err := s.TestClient.GetProjectInfo(destProject.Name)
+	s.Require().NoError(err)
+
 	for k, v := range project.Properties {
-		s.Equal(v, checkImport.Properties[k])
+		s.Require().Equal(v, checkImport.Properties[k])
 	}
 }
 
@@ -215,11 +195,10 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationProjectAsyncExportImport() 
 	tmpDir := os.TempDir()
 
 	output := filepath.Join(tmpDir, project.Name+"-async.zip")
-	f, fErr := os.Create(output)
+	f, err := os.Create(output)
 	defer os.Remove(output) // nolint: errcheck
-	if fErr != nil {
-		s.T().Fatalf("unable to create output file. cannot continue: %s", fErr)
-	}
+	s.Require().NoError(err)
+
 	opts := []rundeck.ProjectExportOption{
 		rundeck.ProjectExportAll(true),
 		rundeck.ProjectExportConfigs(true),
@@ -228,12 +207,9 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationProjectAsyncExportImport() 
 		rundeck.ProjectExportReadmes(true),
 	}
 	// Export created project
-	token, perr := s.TestClient.GetProjectArchiveExportAsync(project.Name, opts...)
-	if perr != nil {
-		s.T().Fatalf("cannot export project: %s", perr.Error())
-	}
-
-	s.NotEmpty(token)
+	token, err := s.TestClient.GetProjectArchiveExportAsync(project.Name, opts...)
+	s.Require().NoError(err)
+	s.Require().NotEmpty(token)
 
 	// this is our doneFunc.
 	// we poll with the token until it's done
@@ -246,33 +222,29 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationProjectAsyncExportImport() 
 		return info.Ready, nil
 	}
 
-	done, doneErr := s.TestClient.WaitFor(doneFunc, 5*time.Second)
-	s.NoError(doneErr)
-	s.True(done)
+	done, err := s.TestClient.WaitFor(doneFunc, 5*time.Second)
+	s.Require().NoError(err)
+	s.Require().True(done)
 
-	downloadErr := s.TestClient.GetProjectArchiveExportAsyncDownload(project.Name, token, f)
-	if downloadErr != nil {
-		s.T().Fatalf("could not download project archive. cannot continue: %s", downloadErr.Error())
-	}
+	err = s.TestClient.GetProjectArchiveExportAsyncDownload(project.Name, token, f)
+	s.Require().NoError(err)
+
 	// import the file into a new project
 	destProject, _ := s.testCreateProject(true)
 
-	data, dataErr := os.Open(output)
+	data, err := os.Open(output)
 	defer data.Close() // nolint: errcheck
-	if dataErr != nil {
-		s.T().Fatalf("cannot open import file: %s", dataErr.Error())
-	}
-	imported, impErr := s.TestClient.ProjectArchiveImport(destProject.Name, data, rundeck.ProjectImportConfigs(true), rundeck.ProjectImportJobUUIDs("remove"))
-	if impErr != nil {
-		s.T().Fatalf("could not import project. cannot continue: %s", impErr.Error())
-	}
-	s.Equal("successful", imported.ImportStatus)
-	checkImport, checkErr := s.TestClient.GetProjectInfo(destProject.Name)
-	if checkErr != nil {
-		s.T().Fatalf("could not get the newly imported project. cannot continue: %s", checkErr.Error())
-	}
+	s.Require().NoError(err)
+
+	imported, err := s.TestClient.ProjectArchiveImport(destProject.Name, data, rundeck.ProjectImportConfigs(true), rundeck.ProjectImportJobUUIDs("remove"))
+	s.Require().NoError(err)
+
+	s.Require().Equal("successful", imported.ImportStatus)
+	checkImport, err := s.TestClient.GetProjectInfo(destProject.Name)
+	s.Require().NoError(err)
+
 	for k, v := range project.Properties {
-		s.Equal(v, checkImport.Properties[k])
+		s.Require().Equal(v, checkImport.Properties[k])
 	}
 }
 
@@ -281,11 +253,10 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectArchiveExportImpo
 	tmpDir := os.TempDir()
 
 	output := filepath.Join(tmpDir, project.Name+".zip")
-	f, fErr := os.Create(output)
+	f, err := os.Create(output)
 	defer os.Remove(output) // nolint: errcheck
-	if fErr != nil {
-		s.T().Fatalf("unable to create output file. cannot continue: %s", fErr)
-	}
+	s.Require().NoError(err)
+
 	opts := []rundeck.ProjectExportOption{
 		rundeck.ProjectExportAll(true),
 		rundeck.ProjectExportConfigs(true),
@@ -294,61 +265,54 @@ func (s *ProjectIntegrationTestSuite) TestIntegrationGetProjectArchiveExportImpo
 		rundeck.ProjectExportReadmes(true),
 	}
 	// Export created project
-	perr := s.TestClient.GetProjectArchiveExport(project.Name, f, opts...)
-	if perr != nil {
-		s.T().Fatalf("cannot export project: %s", perr.Error())
-	}
+	err = s.TestClient.GetProjectArchiveExport(project.Name, f, opts...)
+	s.Require().NoError(err)
 
 	// import the file into a new project
 	destProject, _ := s.testCreateProject(true)
-	data, dataErr := os.Open(output)
+	data, err := os.Open(output)
 	defer data.Close() // nolint: errcheck
-	if dataErr != nil {
-		s.T().Fatalf(dataErr.Error())
-	}
-	imported, impErr := s.TestClient.ProjectArchiveImport(destProject.Name, data, rundeck.ProjectImportJobUUIDs("remove"))
-	if impErr != nil {
-		s.T().Fatalf("could not import project. cannot continue: %s", impErr.Error())
-	}
-	s.Empty(imported.Errors)
-	s.Equal("successful", imported.ImportStatus)
-	checkImport, checkErr := s.TestClient.GetProjectInfo(destProject.Name)
-	if checkErr != nil {
-		s.T().Fatalf("could not get the newly imported project. cannot continue: %s", checkErr.Error())
-	}
-	s.NotEqual(project.Description, checkImport.Description)
+	s.Require().NoError(err)
+
+	imported, err := s.TestClient.ProjectArchiveImport(destProject.Name, data, rundeck.ProjectImportJobUUIDs("remove"))
+	s.Require().NoError(err)
+
+	s.Require().Empty(imported.Errors)
+	s.Require().Equal("successful", imported.ImportStatus)
+	checkImport, err := s.TestClient.GetProjectInfo(destProject.Name)
+	s.Require().NoError(err)
+	s.Require().NotEqual(project.Description, checkImport.Description)
 
 }
 
 func (s *ProjectIntegrationTestSuite) TestIntegrationProjectConfigurationKeys() {
 	project, _ := s.testCreateProject(true)
 
-	_, checkErr := s.TestClient.GetProjectInfo(project.Name)
-	if checkErr != nil {
-		s.T().Fatalf("could not get the newly imported project. cannot continue: %s", checkErr.Error())
-	}
-	nodeSource, nodeSourceErr := s.TestClient.GetProjectConfigurationKey(project.Name, "resources.source.1.type")
-	s.NoError(nodeSourceErr)
-	s.Equal("stub", nodeSource)
-	putKeyErr := s.TestClient.PutProjectConfigurationKey(project.Name, "foo", "bar")
-	s.NoError(putKeyErr)
-	checkKey, checkKeyErr := s.TestClient.GetProjectConfigurationKey(project.Name, "foo")
-	s.NoError(checkKeyErr)
-	s.Equal(checkKey, "bar")
-	replaceConf, replaceConfErr := s.TestClient.PutProjectConfiguration(project.Name, project.Properties)
-	s.NoError(replaceConfErr)
-	s.NotContains(replaceConf, "foo")
-	deleteErr := s.TestClient.DeleteProjectConfigurationKey(project.Name, "project.description")
-	s.NoError(deleteErr)
-	_, checkAgainKeyErr := s.TestClient.GetProjectConfigurationKey(project.Name, "project.description")
+	_, err := s.TestClient.GetProjectInfo(project.Name)
+	s.Require().NoError(err)
+
+	nodeSource, err := s.TestClient.GetProjectConfigurationKey(project.Name, "resources.source.1.type")
+	s.Require().NoError(err)
+	s.Require().Equal("stub", nodeSource)
+	err = s.TestClient.PutProjectConfigurationKey(project.Name, "foo", "bar")
+	s.Require().NoError(err)
+	checkKey, err := s.TestClient.GetProjectConfigurationKey(project.Name, "foo")
+	s.Require().NoError(err)
+	s.Require().Equal(checkKey, "bar")
+	replaceConf, err := s.TestClient.PutProjectConfiguration(project.Name, project.Properties)
+	s.Require().NoError(err)
+	s.Require().NotContains(replaceConf, "foo")
+	err = s.TestClient.DeleteProjectConfigurationKey(project.Name, "project.description")
+	s.Require().NoError(err)
+	_, err = s.TestClient.GetProjectConfigurationKey(project.Name, "project.description")
 	// key should be missing
-	s.Error(checkAgainKeyErr)
+	s.Require().Error(err)
 }
 
 func TestIntegrationProjectSuite(t *testing.T) {
-	if testRundeckRunning() {
-		suite.Run(t, new(ProjectIntegrationTestSuite))
-	} else {
-		t.Skip("rundeck isn't running for integration testing")
+	if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
 	}
+
+	suite.Run(t, new(ProjectIntegrationTestSuite))
 }

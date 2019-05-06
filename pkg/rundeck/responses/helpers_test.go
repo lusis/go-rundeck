@@ -21,21 +21,32 @@ func testReadJSON(filename string) ([]byte, error) {
 // newMSDecoderConfig returns a new mapstructure.DecoderConfig we can use for strict validation
 // in testing
 func newMSDecoderConfig() *mapstructure.DecoderConfig {
-	// This converts our custom JSONTime properly
+	// This converts our custom JSONTime/JSONDuration properly
 	jsonTimeHook := func(f reflect.Type, t reflect.Type, data interface{}) (interface{}, error) {
+		// we only work on strings
 		if f.Kind() != reflect.String {
 			return data, nil
 		}
-		if t != reflect.TypeOf(&JSONTime{time.Now()}) {
-			return data, nil
+
+		// first we check if it's a JSONTime
+		if t == reflect.TypeOf(&JSONTime{time.Time{}}) {
+			// Convert it by parsing
+			tTime, err := time.Parse(rdTime, data.(string))
+			if err != nil {
+				return nil, err
+			}
+			return JSONTime{tTime}, nil
 		}
 
-		// Convert it by parsing
-		tTime, tErr := time.Parse(rdTime, data.(string))
-		if tErr != nil {
-			return nil, tErr
+		// Next we check if it's a JSONDuration
+		sampleDuration, _ := time.ParseDuration("1s")
+		if t == reflect.TypeOf(&JSONDuration{sampleDuration}) {
+			dur, err := time.ParseDuration(data.(string))
+			if err != nil { return nil, err}
+			return JSONDuration{dur}, nil
 		}
-		return JSONTime{tTime}, nil
+
+		return data, nil
 	}
 	return &mapstructure.DecoderConfig{
 		ErrorUnused:      true,

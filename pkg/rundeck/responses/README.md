@@ -53,21 +53,20 @@ Example:
 ```go
 func TestHistoryResponse(t *testing.T) {
     obj := &HistoryResponse{}
-    data, dataErr := getAssetBytes(HistoryResponseTestFile)
-    if dataErr != nil {
-        t.Fatalf(dataErr.Error())
-    }
+    data, err := getAssetBytes(HistoryResponseTestFile)
+    require.NoError(t, err)
     // unmarshal into a map[string]interface
     placeholder := make(map[string]interface{})
-    _ = json.Unmarshal(data, &placeholder)
+    err = json.Unmarshal(data, &placeholder)
+    require.NoError(t, err)
     // create a new decoder config and set the result to our instance of type
     config := newMSDecoderConfig()
     config.Result = obj
-    decoder, newErr := mapstructure.NewDecoder(config)
-    assert.NoError(t, newErr)
+    decoder, err := mapstructure.NewDecoder(config)
+    require.NoError(t, err)
     // attempt to decode our unmarshalled data
-    dErr := decoder.Decode(placeholder)
-    assert.NoError(t, dErr)
+    err = decoder.Decode(placeholder)
+    require.NoError(t, err)
 }
 ```
 

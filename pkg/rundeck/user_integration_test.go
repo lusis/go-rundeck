@@ -17,7 +17,8 @@ type UserIntegrationTestSuite struct {
 
 func (s *UserIntegrationTestSuite) SetupSuite() {
 	client := testNewTokenAuthClient()
-	userClient, _ := rundeck.NewTokenAuthClient(testIntegrationUserToken, testIntegrationURL)
+	userClient, err := rundeck.NewTokenAuthClient(testIntegrationUserToken, testIntegrationURL)
+	s.Require().NoError(err)
 	s.TestClient = client
 	s.UserTestClient = userClient
 	adminProfile := rundeck.User{}
@@ -32,10 +33,8 @@ func (s *UserIntegrationTestSuite) SetupSuite() {
 	userProfile.LastName = "User"
 	userProfile.Email = "alpha@user.com"
 	s.UserProfile = userProfile
-	_, muperr := s.TestClient.ModifyUserProfile(&s.AdminProfile)
-	if muperr != nil {
-		s.T().Fatalf("can't populate inititial profile for admin user. cannot continue: %s", muperr.Error())
-	}
+	_, err = s.TestClient.ModifyUserProfile(&s.AdminProfile)
+	s.Require().NoError(err)
 }
 
 func (s *UserIntegrationTestSuite) TearDownSuite() {
@@ -43,43 +42,40 @@ func (s *UserIntegrationTestSuite) TearDownSuite() {
 }
 
 func (s *UserIntegrationTestSuite) TestGetCurrentUserProfile() {
-	up, uperr := s.TestClient.GetCurrentUserProfile()
-	s.NoError(uperr)
-	s.Equal(s.AdminProfile, *up)
+	up, err := s.TestClient.GetCurrentUserProfile()
+	s.Require().NoError(err)
+	s.Require().Equal(s.AdminProfile, *up)
 }
 
 func (s *UserIntegrationTestSuite) TestGetUserProfile() {
-	up, uperr := s.TestClient.GetUserProfile("admin")
-	s.NoError(uperr)
-	s.Equal(s.AdminProfile, *up)
+	up, err := s.TestClient.GetUserProfile("admin")
+	s.Require().NoError(err)
+	s.Require().Equal(s.AdminProfile, *up)
 }
 
 func (s *UserIntegrationTestSuite) TestListUsers() {
-	up, uperr := s.TestClient.ListUsers()
-	s.NoError(uperr)
-	s.Len(up, 1)
+	up, err := s.TestClient.ListUsers()
+	s.Require().NoError(err)
+	s.Require().Len(up, 1)
 }
 
-// Need to open some rundeck bugs on this.
-// Can't seem to update a profile for any user that hasn't logged in via the UI the first time except for admin
-/*
 func (s *UserIntegrationTestSuite) TestModifyUserProfile() {
-	mup, muperr := s.TestClient.ModifyUserProfile(s.AdminProfile)
-	s.NoError(muperr)
-	s.NotNil(mup)
-	up, uperr := s.UserTestClient.ModifyUserProfile(s.UserProfile)
-	s.Error(uperr)
-	s.Nil(up)
+	mup, err := s.TestClient.ModifyUserProfile(&s.AdminProfile)
+	s.Require().NoError(err)
+	s.Require().NotNil(mup)
+	up, err := s.UserTestClient.ModifyUserProfile(&s.UserProfile)
+	s.Require().Error(err)
+	s.Require().Nil(up)
 }
 
 func (s *UserIntegrationTestSuite) TestModifyOtherUserProfile() {
 
 }
-*/
+
 func TestIntegrationUserSuite(t *testing.T) {
-	if testRundeckRunning() {
-		suite.Run(t, &UserIntegrationTestSuite{})
-	} else {
-		t.Skip("rundeck isn't running for integration testing")
+	if testing.Short() || testRundeckRunning() == false {
+		t.Skip("skipping integration testing")
 	}
+
+	suite.Run(t, &UserIntegrationTestSuite{})
 }
