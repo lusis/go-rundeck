@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/cookiejar"
+	"net/url"
 	"os"
 	"strconv"
 
@@ -29,8 +30,8 @@ type Client struct {
 	Config     *ClientConfig
 }
 
-func defaultClientConfig() (*ClientConfig, error) {
-	c, err := defaultHTTPClient(true)
+func defaultClientConfig(authMethod string) (*ClientConfig, error) {
+	c, err := defaultHTTPClient(true, authMethod)
 	if err != nil {
 		return nil, err
 	}
@@ -38,10 +39,11 @@ func defaultClientConfig() (*ClientConfig, error) {
 		VerifySSL:  true,
 		APIVersion: MaxRundeckVersion,
 		HTTPClient: c,
+		AuthMethod: authMethod,
 	}, nil
 }
 
-func defaultHTTPClient(verifySSL bool) (*http.Client, error) {
+func defaultHTTPClient(verifySSL bool, authMethod string) (*http.Client, error) {
 	tlsClientConfig := tls.Config{InsecureSkipVerify: !verifySSL}
 	transport := &http.Transport{TLSClientConfig: &tlsClientConfig}
 	client := &http.Client{Transport: transport}
@@ -52,7 +54,12 @@ func defaultHTTPClient(verifySSL bool) (*http.Client, error) {
 	if err != nil {
 		return nil, err
 	}
-	client.Jar = jar
+	switch authMethod {
+	case basicAuthType:
+		client.Jar = jar
+	case tokenAuthType:
+		client.Jar = &TokenAuthCookieJar{Jar: jar}
+	}
 	return client, nil
 }
 
@@ -65,7 +72,7 @@ func (c *Client) setInsecure() {
 // NewClient creates a new client from the provided `ClientConfig`
 func NewClient(config *ClientConfig) (*Client, error) {
 	if config.HTTPClient == nil {
-		c, err := defaultHTTPClient(config.VerifySSL)
+		c, err := defaultHTTPClient(config.VerifySSL, config.AuthMethod)
 		if err != nil {
 			return nil, err
 		}
@@ -80,24 +87,29 @@ func NewClient(config *ClientConfig) (*Client, error) {
 }
 
 func clientConfigFrom(from string) (*ClientConfig, error) {
-	config, configErr := defaultClientConfig()
-	if configErr != nil {
-		return nil, configErr
-	}
-
+	var configErr error
+	config := &ClientConfig{}
 	switch from {
 	case "environment":
-		if os.Getenv("RUNDECK_URL") == "" {
-			return nil, fmt.Errorf("you must set the environment variable RUNDECK_URL")
-
-		}
 		if os.Getenv("RUNDECK_TOKEN") == "" {
 			if os.Getenv("RUNDECK_USERNAME") == "" || os.Getenv("RUNDECK_PASSWORD") == "" {
 				return nil, fmt.Errorf("you must set either RUNDECK_TOKEN or RUNDECK_USERNAME and RUNDECK_PASSWORD")
 			}
-			config.AuthMethod = basicAuthType
+			config, configErr = defaultClientConfig(basicAuthType)
+			if configErr != nil {
+				return nil, configErr
+			}
+			config.Username = os.Getenv("RUNDECK_USERNAME")
+			config.Password = os.Getenv("RUNDECK_PASSWORD")
 		} else {
-			config.AuthMethod = tokenAuthType
+			config, configErr = defaultClientConfig(tokenAuthType)
+			if configErr != nil {
+				return nil, configErr
+			}
+			config.Token = os.Getenv("RUNDECK_TOKEN")
+		}
+		if os.Getenv("RUNDECK_URL") == "" {
+			return nil, fmt.Errorf("you must set the environment variable RUNDECK_URL")
 		}
 		if os.Getenv("RUNDECK_VERSION") != "" {
 			ver := os.Getenv("RUNDECK_VERSION")
@@ -111,12 +123,6 @@ func clientConfigFrom(from string) (*ClientConfig, error) {
 			config.APIVersion = os.Getenv("RUNDECK_VERSION")
 		}
 		config.BaseURL = os.Getenv("RUNDECK_URL")
-	}
-	if config.AuthMethod == tokenAuthType {
-		config.Token = os.Getenv("RUNDECK_TOKEN")
-	} else {
-		config.Username = os.Getenv("RUNDECK_USERNAME")
-		config.Password = os.Getenv("RUNDECK_PASSWORD")
 	}
 	if os.Getenv("RUNDECK_INSECURE") != "" {
 		config.VerifySSL = false
@@ -139,11 +145,10 @@ func NewClientFromEnv() (*Client, error) {
 
 // NewBasicAuthClient returns a new client configured for basic auth using default settings
 func NewBasicAuthClient(username, password, url string) (*Client, error) {
-	config, configErr := defaultClientConfig()
+	config, configErr := defaultClientConfig(basicAuthType)
 	if configErr != nil {
 		return nil, configErr
 	}
-	config.AuthMethod = basicAuthType
 	config.Username = username
 	config.Password = password
 	config.BaseURL = url
@@ -152,12 +157,25 @@ func NewBasicAuthClient(username, password, url string) (*Client, error) {
 
 // NewTokenAuthClient returns a new client configured for token auth using default settings
 func NewTokenAuthClient(token, url string) (*Client, error) {
-	config, configErr := defaultClientConfig()
+	config, configErr := defaultClientConfig(tokenAuthType)
 	if configErr != nil {
 		return nil, configErr
 	}
-	config.AuthMethod = tokenAuthType
 	config.Token = token
 	config.BaseURL = url
 	return NewClient(config)
+}
+
+type TokenAuthCookieJar struct {
+	*cookiejar.Jar
+}
+
+func (j *TokenAuthCookieJar) SetCookies(u *url.URL, cookies []*http.Cookie) {
+	var filteredCookies []*http.Cookie
+	for _, cookie := range cookies {
+		if cookie.Name != "JSESSIONID" {
+			filteredCookies = append(filteredCookies, cookie)
+		}
+	}
+	j.Jar.SetCookies(u, filteredCookies)
 }

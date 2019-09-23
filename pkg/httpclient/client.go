@@ -24,7 +24,7 @@ type Response struct {
 // Request represents an http request
 type Request struct {
 	httpClient         *http.Client
-	cookieJar          *cookiejar.Jar
+	cookieJar          http.CookieJar
 	url                string
 	method             string
 	contentType        string
@@ -80,7 +80,7 @@ func QueryParams(m map[string]string) RequestOption {
 }
 
 // SetCookieJar sets the cookie jar to be used with requests
-func SetCookieJar(jar *cookiejar.Jar) RequestOption {
+func SetCookieJar(jar http.CookieJar) RequestOption {
 	return func(r *Request) error {
 		r.cookieJar = jar
 		return nil
