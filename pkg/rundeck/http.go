@@ -5,7 +5,6 @@ import (
 	"errors"
 	"io"
 	"net/http"
-	"net/http/cookiejar"
 	"net/url"
 	"strings"
 
@@ -182,13 +181,13 @@ func (rc *Client) authWrap() ([]httpclient.RequestOption, error) {
 			httpclient.AddHeaders(map[string]string{
 				"User-Agent": "rundeck-go.v" + rc.Config.APIVersion,
 			}),
-			httpclient.SetCookieJar(rc.HTTPClient.Jar.(*cookiejar.Jar))}, authErr
+			httpclient.SetCookieJar(rc.HTTPClient.Jar)}, authErr
 	}
 	headers := make(map[string]string, 2)
 	headers["X-Rundeck-Auth-Token"] = rc.Config.Token
 	headers["User-Agent"] = "rundeck-go.v" + rc.Config.APIVersion
-
 	return []httpclient.RequestOption{
+		httpclient.SetCookieJar(rc.HTTPClient.Jar),
 		httpclient.AddHeaders(headers),
 		httpclient.SetClient(rc.HTTPClient),
 	}, nil
@@ -218,7 +217,7 @@ func (rc *Client) basicAuth() error {
 		httpclient.Accept("*/*"),
 		httpclient.WithBody(authData),
 		httpclient.SetClient(rc.HTTPClient),
-		httpclient.SetCookieJar(rc.HTTPClient.Jar.(*cookiejar.Jar)),
+		httpclient.SetCookieJar(rc.HTTPClient.Jar),
 	}
 	authReq, authReqErr := httpclient.Post(authURL, opts...)
 	if authReqErr != nil {
